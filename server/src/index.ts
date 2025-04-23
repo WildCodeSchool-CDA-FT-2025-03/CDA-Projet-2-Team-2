@@ -4,6 +4,7 @@ import { buildSchema } from 'type-graphql';
 
 import { dataSource } from './database/client';
 import { HelloResolver } from './resolvers/hello.resolver';
+import { AuthResolver } from './resolvers/auth.resolver';
 
 import 'dotenv/config';
 import 'reflect-metadata';
@@ -12,7 +13,7 @@ async function startServer() {
   await dataSource.initialize();
 
   const schema = await buildSchema({
-    resolvers: [HelloResolver],
+    resolvers: [HelloResolver, AuthResolver],
   });
 
   const server = new ApolloServer({
@@ -21,6 +22,7 @@ async function startServer() {
 
   const { url } = await startStandaloneServer(server, {
     listen: { port: parseInt(process.env.PORT as string) || 4000 },
+    context: async ({ res }) => ({ res }),
   });
 
   console.info(`🚀 Server ready at ${url}`);
