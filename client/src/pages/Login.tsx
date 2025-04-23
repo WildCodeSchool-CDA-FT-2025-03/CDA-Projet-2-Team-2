@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
-
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,9 +11,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-between h-screen bg-gradient-to-r from-cyan-50 to-blue-50">
-      <Header />
-
+    <>
       <div className="w-full max-w-md px-8 py-10 mx-auto bg-white rounded-lg shadow-sm">
         <h2 className="mb-6 text-xl font-medium text-center text-gray-700">
           Connect on your account
@@ -67,8 +62,6 @@ export default function LoginPage() {
           </button>
         </form>
       </div>
-
-      <Footer />
-    </div>
+    </>
   );
 }
