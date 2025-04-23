@@ -1,3 +1,6 @@
+# Codegen
+graphql-generated.ts
+
 # Logs
 logs
 *.log
