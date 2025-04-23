@@ -1,0 +1,39 @@
+{
+  "name": "medical-agenda",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare": "husky",
+    "lint:client": "cd client && npm run lint",
+    "lint:server": "cd server && npm run lint",
+    "format:client": "cd client && npm run format",
+    "format:server": "cd server && npm run format",
+    "check": "npm run lint:client && npm run lint:server && npm run format:client && npm run format:server",
+    "dev": "concurrently -n \"client,server\" -c \"cyan.bold,green.bold\" \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:docker": "docker compose up",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "install:client": "cd client && npm install",
+    "install:server": "cd server && npm install"
+  },
+  "lint-staged": {
+    "client/**/*.{js,jsx,ts,tsx}": [
+      "npm --prefix client run lint:file",
+      "npm --prefix client run format:file"
+    ],
+    "server/**/*.{js,ts,mjs}": [
+      "npm --prefix server run lint:file",
+      "npm --prefix server run format:file"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.0.0"
+  }
+}

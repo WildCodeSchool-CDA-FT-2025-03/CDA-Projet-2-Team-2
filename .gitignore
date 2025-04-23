@@ -1,0 +1,7 @@
+# Global
+node_modules/
+dist/
+.env
+
+# Server
+db.sqlite
