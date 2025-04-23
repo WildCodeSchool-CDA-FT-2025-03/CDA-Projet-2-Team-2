@@ -13,7 +13,7 @@ export default function LoginPage() {
   return (
     <div className="w-full max-w-md px-8 py-10 mx-auto bg-white rounded-lg shadow-sm">
       <h2 className="mb-6 text-xl font-medium text-center text-gray-700">
-        Connect on your account
+        Se connecter à votre compte
       </h2>
 
       <form onSubmit={handleSubmit}>
@@ -34,7 +34,7 @@ export default function LoginPage() {
 
         <div className="mb-2">
           <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-700">
-            Password
+            Mot de passe
           </label>
           <input
             type="password"
@@ -49,7 +49,7 @@ export default function LoginPage() {
 
         <div className="mb-6 text-right">
           <Link to="/forgot-password" className="text-sm text-pink-400 hover:text-pink-500">
-            Forgot Password ?
+            Mot de passe oublié ?
           </Link>
         </div>
 
@@ -57,7 +57,7 @@ export default function LoginPage() {
           type="submit"
           className="w-full px-4 py-2 text-white bg-blue-900 rounded hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
         >
-          Continue
+          Continuer
         </button>
       </form>
     </div>
