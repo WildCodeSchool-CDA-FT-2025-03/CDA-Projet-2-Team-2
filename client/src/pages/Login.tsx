@@ -1,38 +1,21 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import Header from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     console.info('Credentials submitted:', { email, password });
   };
 
   return (
     <div className="flex flex-col items-center justify-between h-screen bg-gradient-to-r from-cyan-50 to-blue-50">
-      <header className="w-full p-6">
-        <div className="flex items-center">
-          <div className="flex items-center justify-center w-10 h-10 rounded bg-cyan-100">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              className="w-6 h-6 text-teal-600"
-              stroke="currentColor"
-            >
-              <path
-                d="M12 4v16m8-8H4"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-          <h1 className="ml-2 text-xl font-medium text-teal-800">DoctoPlan</h1>
-        </div>
-      </header>
+      <Header />
 
       <div className="w-full max-w-md px-8 py-10 mx-auto bg-white rounded-lg shadow-sm">
         <h2 className="mb-6 text-xl font-medium text-center text-gray-700">
@@ -85,9 +68,7 @@ export default function LoginPage() {
         </form>
       </div>
 
-      <footer className="py-4 text-sm text-gray-600">
-        Made by CareTech with <span className="text-red-500">❤</span>
-      </footer>
+      <Footer />
     </div>
   );
 }
