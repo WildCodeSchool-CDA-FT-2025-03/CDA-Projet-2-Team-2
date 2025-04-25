@@ -1,13 +1,21 @@
+import { useAuth } from '@/hooks/useAuth';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.info('Credentials submitted:', { email, password });
+    try {
+      await login(email, password);
+      navigate('/');
+    } catch (error) {
+      console.error('Erreur lors de la connexion:', error);
+    }
   };
 
   return (
