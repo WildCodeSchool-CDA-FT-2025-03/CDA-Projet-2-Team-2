@@ -1,5 +1,4 @@
 import { createContext, useState, ReactNode } from 'react';
-
 import { useLoginMutation, User } from '@/types/graphql-generated';
 
 export type AuthContextType = {
