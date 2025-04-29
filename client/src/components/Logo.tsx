@@ -11,7 +11,7 @@ export default function Logo() {
           <path d="M12 4v16m8-8H4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-      <h1 className="ml-2 text-xl font-medium text-teal-800">DoctoPlan</h1>
+      <h1 className="ml-2 text-xl font-medium text-blue">DoctoPlan</h1>
     </div>
   );
 }

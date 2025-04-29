@@ -1,5 +1,13 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-white: #FFFDFA;
+  --color-blue: #133F63;
+  --color-blue-gray: #86A6C0;
+  --color-accent: #FC666A;
+  --color-accent-500: #E90B11;
+}
+
 @layer utilities {
   .bg-auth-gradient {
     background-image: linear-gradient(
