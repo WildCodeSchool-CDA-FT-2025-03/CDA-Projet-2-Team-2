@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (data?.login) {
-        setUser(data.login.user);
+        setUser(data.login.user as User);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue lors de la connexion');
