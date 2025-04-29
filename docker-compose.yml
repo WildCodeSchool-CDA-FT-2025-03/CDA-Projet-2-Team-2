@@ -21,6 +21,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:4000 2>&1 | grep -q 'Bad Request' && exit 0 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
 
   seed:
     build:
@@ -28,8 +34,10 @@ services:
       dockerfile: Dockerfile
     command: sh -c "sleep 15 && npm run seed"
     depends_on:
-      - server
-      - postgres
+      server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     volumes:
       - ./server:/app
       - /app/node_modules
@@ -71,8 +79,8 @@ services:
       - ./client:/app
       - /app/node_modules
     depends_on:
-      - server
-      - client
+      server:
+        condition: service_healthy
 
   gateway:
     image: nginx:latest
@@ -82,9 +90,12 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
-      - server
-      - client
-      - codegen
+      server:
+        condition: service_healthy
+      client:
+        condition: service_started
+      codegen:
+        condition: service_started
 
 volumes:
   postgres_data:
