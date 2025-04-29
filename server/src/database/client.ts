@@ -4,6 +4,7 @@ import { Hello } from '../entities/hello.entities';
 import { User } from '../entities/user.entity';
 
 import 'dotenv/config';
+import { Departement } from '../entities/departement.entity';
 
 export const dataSource = new DataSource({
   type: 'postgres',
@@ -12,7 +13,7 @@ export const dataSource = new DataSource({
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_DATABASE || 'doctoplan',
-  entities: [Hello, User],
+  entities: [Hello, User, Departement],
   synchronize: true,
   logging: true,
 });
