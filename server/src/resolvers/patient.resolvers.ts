@@ -4,9 +4,9 @@ import { Patient } from '../entities/patient.entity';
 @Resolver()
 export class PatientResolver {
   @Query(() => Patient)
-  async getPatientByID(@Arg('patientID') patientID: number): Promise<Patient | null> {
+  async getPatientByID(@Arg('patientId') patientId: number): Promise<Patient | null> {
     return await Patient.findOne({
-      where: { id: patientID },
+      where: { id: patientId },
     });
   }
 }
