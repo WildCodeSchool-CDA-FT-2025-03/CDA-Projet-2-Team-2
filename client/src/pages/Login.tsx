@@ -66,7 +66,10 @@ export default function LoginPage() {
         </div>
 
         <div className="mb-6 text-right">
-          <Link to="/forgot-password" className="text-sm text-accent hover:text-accent-500">
+          <Link
+            to="/forgot-password"
+            className="text-sm text-accent hover:text-accent-500 transition duration-200 ease-in-out"
+          >
             Mot de passe oublié ?
           </Link>
         </div>
