@@ -7,8 +7,8 @@ export default function PageNotFound() {
         <h1 className="text-9xl md:text-[300px] w-full select-none text-center font-black text-blue-gray">
           404
         </h1>
-        <p className="text-3xl font-bold text-blue">La page que vous cherchez n&apos;existe pas</p>
-        <p className="text-2xl font-medium break-words text-dull text-blue">
+        <p className="text-3xl font-bold">La page que vous cherchez n&apos;existe pas</p>
+        <p className="text-2xl font-medium break-words text-dull">
           Malheureusement, vous avez peut-être fait une erreur de saisie ou la page a été déplacée
           vers une autre URL.
         </p>

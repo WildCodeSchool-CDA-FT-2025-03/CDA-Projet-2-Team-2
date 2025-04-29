@@ -26,9 +26,7 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-md px-8 py-10 mx-auto bg-white rounded-lg shadow-sm">
-      <h2 className="mb-6 text-xl font-medium text-center text-blue">
-        Se connecter à votre compte
-      </h2>
+      <h2 className="mb-6 text-xl font-medium text-center">Se connecter à votre compte</h2>
 
       {error && (
         <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
@@ -38,7 +36,7 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="email" className="block mb-2 text-sm font-medium text-blue">
+          <label htmlFor="email" className="block mb-2 text-sm font-medium">
             Email
           </label>
           <input
@@ -53,7 +51,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mb-2">
-          <label htmlFor="password" className="block mb-2 text-sm font-medium text-blue">
+          <label htmlFor="password" className="block mb-2 text-sm font-medium">
             Mot de passe
           </label>
           <input
