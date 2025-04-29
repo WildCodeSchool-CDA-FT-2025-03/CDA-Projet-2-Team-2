@@ -18,3 +18,17 @@ export const LOGIN_MUTATION = gql`
     }
   }
 `;
+
+export const ME_QUERY = gql`
+  query Me {
+    me {
+      id
+      email
+      firstname
+      lastname
+      role
+      service
+      status
+    }
+  }
+`;
