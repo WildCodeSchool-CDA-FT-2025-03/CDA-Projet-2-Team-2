@@ -5,8 +5,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    ports:
-      - "5173:5173"
     volumes:
       - ./client:/app
       - /app/node_modules
@@ -17,8 +15,6 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    ports:
-      - "4000:4000"
     volumes:
       - ./server:/app
       - /app/node_modules
@@ -44,9 +40,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=doctoplan
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -55,6 +51,16 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    container_name: adminer
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   codegen:
     build:
