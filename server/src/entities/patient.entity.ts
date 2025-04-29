@@ -41,6 +41,7 @@ export class Patient extends BaseEntity {
   @Column({ type: 'date' })
   birth_date: Date;
 
+  @Field()
   @Column({ type: 'text' })
   note: string;
 
