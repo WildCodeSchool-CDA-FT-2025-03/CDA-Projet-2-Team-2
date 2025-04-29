@@ -7,12 +7,13 @@ import { AuthResolver } from './resolvers/auth.resolver';
 
 import 'dotenv/config';
 import 'reflect-metadata';
+import { DepartementResolver } from './resolvers/departement.resolver';
 
 async function startServer() {
   await dataSource.initialize();
 
   const schema = await buildSchema({
-    resolvers: [AuthResolver],
+    resolvers: [AuthResolver, DepartementResolver],
   });
 
   const server = new ApolloServer({
