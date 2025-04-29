@@ -1,10 +1,10 @@
 import argon2 from 'argon2';
-import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
-import { Response } from 'express';
+import { Resolver, Mutation, Arg, Ctx, Query } from 'type-graphql';
+import { Response, Request } from 'express';
 
 import { User } from '../entities/user.entity';
 import { LoginInput, AuthResponse } from '../types/auth.type';
-import { generateToken } from '../utils/jwt.utils';
+import { generateToken, verifyToken } from '../utils/jwt.utils';
 
 @Resolver()
 export class AuthResolver {
@@ -31,5 +31,38 @@ export class AuthResolver {
     );
 
     return { token, user };
+  }
+
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() context: { req: Request }): Promise<User | null> {
+    try {
+      const cookie = context.req.headers.cookie;
+      if (!cookie) {
+        return null;
+      }
+
+      const cookies = cookie.split(';').reduce(
+        (acc, current) => {
+          const [key, value] = current.trim().split('=');
+          acc[key] = value;
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
+
+      const token = cookies['token'];
+      if (!token) {
+        return null;
+      }
+
+      const decoded = verifyToken(token);
+
+      const user = await User.findOne({ where: { id: decoded.id } });
+
+      return user;
+    } catch (error) {
+      console.error('Error verifying authentication:', error);
+      return null;
+    }
   }
 }
