@@ -22,7 +22,7 @@ async function startServer() {
 
   const { url } = await startStandaloneServer(server, {
     listen: { port: parseInt(process.env.PORT as string) || 4000 },
-    context: async ({ res }) => ({ res }),
+    context: async ({ req, res }) => ({ req, res }),
   });
 
   console.info(`🚀 Server ready at ${url}`);

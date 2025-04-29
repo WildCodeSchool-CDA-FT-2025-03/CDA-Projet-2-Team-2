@@ -1,5 +1,5 @@
-import { createContext, useState, ReactNode } from 'react';
-import { useLoginMutation, User } from '@/types/graphql-generated';
+import { createContext, useState, ReactNode, useEffect } from 'react';
+import { useLoginMutation, useMeQuery, User } from '@/types/graphql-generated';
 
 export type AuthContextType = {
   user: User | null;
@@ -17,6 +17,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   const [loginMutation] = useLoginMutation();
+  const { data: meData } = useMeQuery();
+
+  useEffect(() => {
+    if (!meData) return;
+    const fetchUser = async () => {
+      setUser(meData.me as User);
+      setIsLoading(false);
+    };
+    fetchUser();
+  }, [meData]);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
