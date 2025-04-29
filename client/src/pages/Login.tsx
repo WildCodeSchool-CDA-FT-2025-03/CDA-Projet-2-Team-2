@@ -26,7 +26,7 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-md px-8 py-10 mx-auto bg-white rounded-lg shadow-sm">
-      <h2 className="mb-6 text-xl font-medium text-center">Se connecter à votre compte</h2>
+      <h2 className="mb-6 text-center">Se connecter à votre compte</h2>
 
       {error && (
         <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">

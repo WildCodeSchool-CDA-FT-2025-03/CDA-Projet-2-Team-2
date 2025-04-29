@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.13.5",
+    "@fontsource/inter": "^5.2.5",
+    "@fontsource/nunito": "^5.2.5",
     "@parcel/watcher": "^2.5.1",
     "@tailwindcss/vite": "^4.0.16",
     "eslint-plugin-jsx-a11y": "^6.10.2",
