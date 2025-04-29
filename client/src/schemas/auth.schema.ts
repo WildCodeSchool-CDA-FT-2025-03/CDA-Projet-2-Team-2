@@ -12,8 +12,6 @@ export const LOGIN_MUTATION = gql`
         role
         service
         status
-        createdAt
-        updatedAt
       }
     }
   }
