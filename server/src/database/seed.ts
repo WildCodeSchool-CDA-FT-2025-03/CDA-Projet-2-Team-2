@@ -3,6 +3,7 @@ import { dataSource } from './client';
 import { User, UserRole, UserStatus } from '../entities/user.entity';
 import 'dotenv/config';
 import 'reflect-metadata';
+import { Departement } from '../entities/departement.entity';
 
 async function seedDatabase() {
   console.info('🌱 Starting database seeding...');
@@ -19,6 +20,9 @@ async function seedDatabase() {
       console.info('👤 Admin user already exists, skipping creation');
       return;
     }
+    const newDepartement = new Departement();
+    newDepartement.label = 'Administration';
+    await newDepartement.save();
 
     const hashedPassword = await argon2.hash(process.env.ADMIN_PASSWORD || 'admin123');
 
@@ -28,7 +32,7 @@ async function seedDatabase() {
     adminUser.role = UserRole.ADMIN;
     adminUser.firstname = 'Admin';
     adminUser.lastname = 'User';
-    adminUser.service = 'Administration';
+    adminUser.departement = newDepartement;
     adminUser.status = UserStatus.ACTIVE;
 
     await adminUser.save();
