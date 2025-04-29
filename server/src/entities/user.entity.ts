@@ -1,6 +1,7 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { Planning } from './planning.entity';
+import { Departement } from './departement.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -45,9 +46,9 @@ export class User extends BaseEntity {
   @Column()
   lastname: string;
 
-  @Field()
-  @Column()
-  service: string;
+  @Field(() => Departement)
+  @ManyToOne(() => Departement, (departement) => departement.user)
+  departement: Departement;
 
   @Field(() => String)
   @Column({

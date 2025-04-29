@@ -7,7 +7,11 @@ import { DepartementInput } from '../types/departement.type';
 export class DepartementResolver {
   @Query(() => [Departement])
   async getDepartements(): Promise<Departement[]> {
-    return await Departement.find();
+    return await Departement.find({
+      relations: {
+        user: true,
+      },
+    });
   }
 
   @Mutation(() => Boolean)
