@@ -71,10 +71,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <button
-          type="submit"
-          className="w-full px-4 py-2 text-white bg-blue rounded hover:bg-white hover:text-accent hover:border-accent border-2 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-opacity-50"
-        >
+        <button type="submit" className="cta block mx-auto">
           Continuer
         </button>
       </form>
