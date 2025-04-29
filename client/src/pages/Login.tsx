@@ -7,14 +7,20 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     try {
       await login(email, password);
       navigate('/');
     } catch (error) {
-      console.error('Erreur lors de la connexion:', error);
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Une erreur est survenue lors de la connexion. Veuillez réessayer.',
+      );
     }
   };
 
@@ -23,6 +29,12 @@ export default function LoginPage() {
       <h2 className="mb-6 text-xl font-medium text-center text-gray-700">
         Se connecter à votre compte
       </h2>
+
+      {error && (
+        <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+          {error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

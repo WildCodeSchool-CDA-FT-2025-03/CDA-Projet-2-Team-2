@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue lors de la connexion');
+      throw err;
     } finally {
       setIsLoading(false);
     }
