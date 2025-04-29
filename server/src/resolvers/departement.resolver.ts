@@ -1,6 +1,7 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
-import { Departement, DepartementInput } from '../entities/departement.entity';
+import { Departement } from '../entities/departement.entity';
 import { GraphQLError } from 'graphql';
+import { DepartementInput } from '../types/departement.type';
 
 @Resolver()
 export class DepartementResolver {

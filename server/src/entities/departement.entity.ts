@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Field, ID, InputType, ObjectType } from 'type-graphql';
+import { Field, ID, ObjectType } from 'type-graphql';
 
 export enum DepartementStatus {
   ACTIVE = 'active',
@@ -22,17 +22,15 @@ export class Departement extends BaseEntity {
   @Column({
     type: 'enum',
     enum: DepartementStatus,
-    default: DepartementStatus.PENDING,
+    default: DepartementStatus.ACTIVE,
   })
   status: DepartementStatus;
 
   @Field()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
-}
 
-@InputType()
-export class DepartementInput {
   @Field()
-  label: string;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 }
