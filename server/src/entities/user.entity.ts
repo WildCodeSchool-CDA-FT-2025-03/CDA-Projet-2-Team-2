@@ -1,5 +1,6 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
+import { Planning } from './planning.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -55,6 +56,10 @@ export class User extends BaseEntity {
     default: UserStatus.PENDING,
   })
   status: UserStatus;
+
+  @Field(() => [Planning], { nullable: true })
+  @OneToMany(() => Planning, (planning) => planning.user)
+  plannings: Planning[];
 
   @Field()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

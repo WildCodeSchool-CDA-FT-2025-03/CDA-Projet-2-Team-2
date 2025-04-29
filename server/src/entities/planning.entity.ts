@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { User } from './user.entity';
 
@@ -66,19 +66,13 @@ export class Planning extends BaseEntity {
   sunday_end: string;
 
   @Field(() => User)
-  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.plannings)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Field()
-  @Column()
-  user_id: number;
-
-  @Field()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @Field()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 }
