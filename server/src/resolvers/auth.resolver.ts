@@ -13,7 +13,10 @@ export class AuthResolver {
     @Arg('input') input: LoginInput,
     @Ctx() context: { res: Response },
   ): Promise<AuthResponse> {
-    const user = await User.findOne({ where: { email: input.email } });
+    const user = await User.findOne({
+      where: { email: input.email },
+      relations: ['departement'],
+    });
     if (!user) {
       throw new Error('Invalid email or password');
     }
@@ -57,7 +60,10 @@ export class AuthResolver {
 
       const decoded = verifyToken(token);
 
-      const user = await User.findOne({ where: { id: decoded.id } });
+      const user = await User.findOne({
+        where: { id: decoded.id },
+        relations: ['departement'],
+      });
 
       return user;
     } catch (error) {
