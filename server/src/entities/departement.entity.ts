@@ -19,6 +19,18 @@ export class Departement extends BaseEntity {
   @Column({ unique: true })
   label: string;
 
+  @Field()
+  @Column()
+  building: string;
+
+  @Field()
+  @Column()
+  wing: string;
+
+  @Field()
+  @Column()
+  level: string;
+
   @Field(() => String)
   @Column({
     type: 'enum',

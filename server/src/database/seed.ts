@@ -22,6 +22,9 @@ async function seedDatabase() {
     }
     const newDepartement = new Departement();
     newDepartement.label = 'Administration';
+    newDepartement.building = 'A';
+    newDepartement.wing = 'droite';
+    newDepartement.level = 'RDC';
     await newDepartement.save();
 
     const hashedPassword = await argon2.hash(process.env.ADMIN_PASSWORD || 'admin123');
