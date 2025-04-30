@@ -14,35 +14,35 @@
 
 @layer base {
   body {
-    font-family: 'Inter', sans-serif; 
+    font-family: 'Inter', sans-serif;
   }
 
   p {
-    font-family: 'Inter', sans-serif; 
-    font-weight: 400; 
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
     font-size: 16px;
-    @apply text-blue; 
+    @apply text-blue;
   }
 
   h1 {
-    font-family: 'Nunito', sans-serif; 
+    font-family: 'Nunito', sans-serif;
     font-weight: 900;
     font-size: 24px;
-    @apply text-blue; 
+    @apply text-blue;
   }
 
   h2 {
-    font-family: 'Nunito', sans-serif; 
-    font-weight: 700; 
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
     font-size: 24px;
-    @apply text-blue; 
+    @apply text-blue;
   }
 
   h3 {
-    font-family: 'Nunito', sans-serif; 
-    font-weight: 700; 
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
     font-size: 16px;
-    @apply text-black; 
+    @apply text-black;
   }
 
   label {
@@ -66,7 +66,6 @@
 
 @layer utilities {
   .bg-auth-gradient {
-        background-image: linear-gradient(-315deg, #b4ffdc 0%, #bcd7ff 67%, #a8cbff 80%);
-      }
+    background-image: linear-gradient(-315deg, #b4ffdc 0%, #bcd7ff 67%, #a8cbff 80%);
   }
-
+}
