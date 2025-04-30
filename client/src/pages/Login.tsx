@@ -26,9 +26,7 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-md px-8 py-10 mx-auto bg-white rounded-lg shadow-sm">
-      <h2 className="mb-6 text-xl font-medium text-center text-gray-700">
-        Se connecter à votre compte
-      </h2>
+      <h2 className="mb-6 text-center">Se connecter à votre compte</h2>
 
       {error && (
         <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
@@ -38,7 +36,7 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700">
+          <label htmlFor="email" className="block mb-2 text-sm font-medium">
             Email
           </label>
           <input
@@ -53,7 +51,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mb-2">
-          <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-700">
+          <label htmlFor="password" className="block mb-2 text-sm font-medium">
             Mot de passe
           </label>
           <input
@@ -68,15 +66,15 @@ export default function LoginPage() {
         </div>
 
         <div className="mb-6 text-right">
-          <Link to="/forgot-password" className="text-sm text-pink-400 hover:text-pink-500">
+          <Link
+            to="/forgot-password"
+            className="text-sm text-accent hover:text-accent-500 transition duration-200 ease-in-out"
+          >
             Mot de passe oublié ?
           </Link>
         </div>
 
-        <button
-          type="submit"
-          className="w-full px-4 py-2 text-white bg-blue-900 rounded hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-        >
+        <button type="submit" className="cta block mx-auto">
           Continuer
         </button>
       </form>
