@@ -18,5 +18,5 @@ export const dataSource = new DataSource({
   database: process.env.DB_DATABASE || 'doctoplan',
   entities: [User, Planning, Departement, City, Patient, Log],
   synchronize: true,
-  logging: true,
+  logging: process.env.NODE_ENV === 'development',
 });
