@@ -9,8 +9,10 @@ export const LOGIN_MUTATION = gql`
         email
         firstname
         lastname
+        departement {
+          label
+        }
         role
-        service
         status
       }
     }
@@ -24,8 +26,10 @@ export const ME_QUERY = gql`
       email
       firstname
       lastname
+      departement {
+        label
+      }
       role
-      service
       status
     }
   }
