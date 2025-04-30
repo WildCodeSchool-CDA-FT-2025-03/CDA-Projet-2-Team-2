@@ -11,7 +11,7 @@ export default function ModuleList<T extends { id: string | number }>({
   return (
     <ul className="border-l-4 border-blue rounded-md shadow-sm divide-y divide-gray-100 w-full max-w-md mx-auto bg-white space-y-2">
       {data.map((item, index) => (
-        <li key={item.id} className={`px-4 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-[#E9F2FF]'}`}>
+        <li key={item.id} className={`px-4 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-lightBlue'}`}>
           {/* La fonction "renderItem" permet de personnaliser l'affichage de chaque élément */}
           {renderItem(item, index)}
         </li>
