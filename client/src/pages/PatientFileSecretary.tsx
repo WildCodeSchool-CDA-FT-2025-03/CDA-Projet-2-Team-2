@@ -11,7 +11,8 @@ export default function PatientFileSecretary() {
         <div className="bg-white rounded-2xl shadow p-4">
           <h2 className="text-xl font-semibold mb-4">Informations personnelles</h2>
           <p className="text-gray-600">Bloc à compléter ou personnaliser ultérieurement.</p>
-        </div>
+        </div>{' '}
+        {/* TODO: make a PatientInformations component instead of this div */}
       </section>
 
       {/* Colonne 2 */}

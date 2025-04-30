@@ -20,10 +20,6 @@ const router = createBrowserRouter([
         path: '*',
         element: <PageNotFound />,
       },
-      {
-        path: '/patient-secretary',
-        element: <PatientFileSecretary />,
-      },
     ],
   },
   {
@@ -35,6 +31,10 @@ const router = createBrowserRouter([
           {
             path: '/',
             element: <HomePage />,
+          },
+          {
+            path: '/patient-secretary',
+            element: <PatientFileSecretary />,
           },
         ],
       },
