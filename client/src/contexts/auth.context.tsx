@@ -1,15 +1,6 @@
-import { createContext, useState, ReactNode, useEffect } from 'react';
+import { useState, ReactNode, useEffect, useMemo, useCallback } from 'react';
 import { useLoginMutation, useMeQuery, User } from '@/types/graphql-generated';
-
-export type AuthContextType = {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-  login: (email: string, password: string) => Promise<void>;
-};
-
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext, AuthContextType } from './AuthContext';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -28,42 +19,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fetchUser();
   }, [meData]);
 
-  const login = async (email: string, password: string) => {
-    setIsLoading(true);
-    setError(null);
+  const login = useCallback(
+    async (email: string, password: string) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const { data } = await loginMutation({
-        variables: {
-          input: {
-            email,
-            password,
+      try {
+        const { data } = await loginMutation({
+          variables: {
+            input: {
+              email,
+              password,
+            },
           },
-        },
-      });
+        });
 
-      if (data?.login) {
-        setUser(data.login.user as User);
+        if (data?.login) {
+          setUser(data.login.user as User);
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Une erreur est survenue lors de la connexion',
+        );
+        throw err;
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue lors de la connexion');
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        error,
-        login,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    },
+    [loginMutation, setUser, setIsLoading, setError],
   );
+
+  const contextValue = useMemo<AuthContextType>(
+    () => ({
+      user,
+      isAuthenticated: !!user,
+      isLoading,
+      error,
+      login,
+    }),
+    [user, isLoading, error, login],
+  );
+
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }
+
+export { AuthContext };
+export type { AuthContextType };
