@@ -9,7 +9,7 @@
     "seed": "ts-node src/database/seed.ts",
     "lint": "eslint --config eslint.config.mjs . --ext .ts",
     "lint:fix": "eslint --config eslint.config.mjs . --ext .ts --fix",
-    "lint:file": "eslint --config eslint.config.mjs",
+    "lint:file": "eslint --config eslint.config.mjs --max-warnings=0",
     "format": "prettier --check \"src/**/*.ts\"",
     "format:fix": "prettier --write \"src/**/*.ts\"",
     "format:file": "prettier --check"
