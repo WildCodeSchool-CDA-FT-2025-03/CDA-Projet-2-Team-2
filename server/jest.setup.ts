@@ -2,7 +2,7 @@ import argon2 from 'argon2';
 import { beforeAll, afterAll } from '@jest/globals';
 
 import { dataSource } from './src/database/client';
-import { Departement } from './src/entities/departement.entity';
+import { Departement, DepartementStatus } from './src/entities/departement.entity';
 import { User } from './src/entities/user.entity';
 
 beforeAll(async () => {
@@ -11,6 +11,10 @@ beforeAll(async () => {
 
     const departement = await Departement.insert({
       label: 'Test',
+      building: 'Test',
+      wing: 'Test',
+      level: 'Test',
+      status: DepartementStatus.ACTIVE,
     });
 
     const hash = await argon2.hash('password');
