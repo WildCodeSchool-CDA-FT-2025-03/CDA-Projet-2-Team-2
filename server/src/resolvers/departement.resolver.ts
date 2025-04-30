@@ -19,6 +19,10 @@ export class DepartementResolver {
     try {
       const newDepartement = new Departement();
       newDepartement.label = data.label;
+      newDepartement.building = data.building;
+      newDepartement.wing = data.wing;
+      newDepartement.level = data.level;
+
       await newDepartement.save();
       return true;
     } catch (error) {
