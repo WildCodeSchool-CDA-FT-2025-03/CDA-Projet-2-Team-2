@@ -7,6 +7,7 @@ import Login from '@/pages/Login';
 import PageNotFound from '@/pages/PageNotFound';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import PatientFileSecretary from './pages/PatientFileSecretary';
+import SecretaryDashboard from './pages/secretaryDashboard/SecretaryDashboard';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: '*',
         element: <PageNotFound />,
+      },
+      {
+        path: '/secretary-dashboard',
+        element: <SecretaryDashboard />,
       },
     ],
   },
