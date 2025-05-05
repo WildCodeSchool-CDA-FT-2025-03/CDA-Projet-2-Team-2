@@ -1,8 +1,14 @@
 import jwt from 'jsonwebtoken';
-import { User } from '../entities/user.entity';
+import { User, UserRole } from '../entities/user.entity';
 
-export const generateToken = (user: User): string => {
-  const payload = {
+type TokenPayload = {
+  id: number;
+  email: string;
+  role: UserRole;
+};
+
+export const generateToken = (user: TokenPayload): string => {
+  const payload: TokenPayload = {
     id: user.id,
     email: user.email,
     role: user.role,
