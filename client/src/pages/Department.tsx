@@ -1,19 +1,21 @@
 import { useGetDepartementsQuery } from '@/types/graphql-generated';
+import { Link } from 'react-router-dom';
 
 export default function Department() {
   const { loading, error, data } = useGetDepartementsQuery();
   if (error) return <p>Error</p>;
   if (loading) return <p>Loading</p>;
-
   return (
     <>
       <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4 h-screen">
         <div className="w-full align-center flex flex-col gap-4 h-full p-12">
           <div className="flex items-center mb-4">
             <h2 className="text-xl mr-5 m- font-semibold text-gray-700">Gestion des services</h2>
-            <button className="bg-[#133F63] text-white px-4 py-2 rounded-md">
-              Nouveau service
-            </button>
+            <Link to="/create-department" className="block">
+              <button className="bg-[#133F63] text-white px-4 py-2 rounded-md">
+                Nouveau service
+              </button>
+            </Link>
           </div>
           <div className="bg-[rgba(255,253,250,0.5)]  items-center mb-4">
             <div className="bg-white m-4 w-2/5 relative border border-[rgba(255,253,250,0.5)] rounded-full">

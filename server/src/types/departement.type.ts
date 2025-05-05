@@ -13,4 +13,7 @@ export class DepartementInput {
 
   @Field()
   level: string;
+
+  @Field()
+  status: string;
 }

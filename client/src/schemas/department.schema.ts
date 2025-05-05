@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const DEPARTMENT = gql`
   query GetDepartements {
@@ -12,3 +12,9 @@ export const DEPARTMENT = gql`
     }
   }
 `;
+
+export const CREATE_DEPARTMENT = gql`
+  mutation CreateDepartement($data: DepartementInput!) {
+    createDepartement(data: $data)
+  }
+`
