@@ -6,31 +6,8 @@ type inputPersonnal = {
   patientNum: number;
 };
 
-const initPatient = {
-  adress: '',
-  birth_city: '',
-  birth_date: '',
-  city: {
-    id: '0',
-    city: '',
-    postal_code: '',
-    patients: [],
-  },
-  contact_person: '',
-  email: '',
-  firstname: '',
-  gender: '',
-  id: '0',
-  lastname: '',
-  note: '',
-  phone_number: '',
-  private_assurance: '',
-  referring_physician: '',
-  social_number: '',
-};
-
 export default function PersonnalInformation({ patientNum }: inputPersonnal) {
-  const [savePatient, setPersonnalInfo] = useState<Patient>(initPatient);
+  const [savePatient, setPersonnalInfo] = useState<Patient | null>(null);
   const { loading, error, data } = useGetPatientByIdQuery({
     variables: { patientId: patientNum },
   });
@@ -50,10 +27,10 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
     fetchUser();
   }, [data?.getPatientByID]);
 
-  const HandleInfoPersonnel = (
-    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setPersonnalInfo(() => ({ ...savePatient, [e.target.name]: e.target.value }));
+  const HandleInfoPersonnel = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (savePatient) {
+      setPersonnalInfo(() => ({ ...savePatient, [e.target.name]: e.target.value }));
+    }
   };
 
   const handleSubmitInfo = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -72,63 +49,63 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           name="lastname"
           placeholder="Nom"
           handle={HandleInfoPersonnel}
-          value={savePatient.lastname || ''}
+          value={(savePatient && savePatient.lastname) || ''}
         />
         <InputForm
           title="Prénom"
           name="firstname"
           placeholder="Prénom"
           handle={HandleInfoPersonnel}
-          value={savePatient.firstname || ''}
+          value={(savePatient && savePatient.firstname) || ''}
         />
         <InputForm
           title="Téléphone"
           name="phone_number"
           placeholder="Téléphone"
           handle={HandleInfoPersonnel}
-          value={savePatient.phone_number || ''}
+          value={(savePatient && savePatient.phone_number) || ''}
         />
         <InputForm
           title="Numéro de sécurité sociale"
           name="social_number"
           placeholder="Numéro de sécurité sociale"
           handle={HandleInfoPersonnel}
-          value={savePatient.social_number || ''}
+          value={(savePatient && savePatient.social_number) || ''}
         />
         <InputForm
           title="Assurance"
           name="private_assurance"
           placeholder="Assurance"
           handle={HandleInfoPersonnel}
-          value={savePatient.private_assurance || ''}
+          value={(savePatient && savePatient.private_assurance) || ''}
         />
         <InputForm
           title="Genre"
           name="gender"
           placeholder="Genre"
           handle={HandleInfoPersonnel}
-          value={savePatient.gender || ''}
+          value={(savePatient && savePatient.gender) || ''}
         />
         <InputForm
           title="Date de naissance"
           name="birth_date"
           placeholder="Date de naissance"
           handle={HandleInfoPersonnel}
-          value={savePatient.birth_date || ''}
+          value={(savePatient && savePatient.birth_date) || ''}
         />
         <InputForm
           title="Adresse"
           name="adress"
           placeholder="Adresse"
           handle={HandleInfoPersonnel}
-          value={savePatient.adress || ''}
+          value={(savePatient && savePatient.adress) || ''}
         />
         <InputForm
           title="Code postale"
           name="lastname"
           placeholder="Code postale"
           handle={HandleInfoPersonnel}
-          value={savePatient.city.postal_code || ''}
+          value={(savePatient && savePatient.city.postal_code) || ''}
         />
         <InputForm
           title="Ville"
@@ -136,21 +113,21 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           placeholder="Ville"
           disabled={true}
           handle={HandleInfoPersonnel}
-          value={savePatient.city.city || ''}
+          value={(savePatient && savePatient.city.city) || ''}
         />
         <InputForm
           title="Personne à contacter"
           name="contact_person"
           placeholder="Personne à contacter"
           handle={HandleInfoPersonnel}
-          value={savePatient.contact_person || ''}
+          value={(savePatient && savePatient.contact_person) || ''}
         />
         <InputForm
           title="Médecin traitant"
           name="referring_physician"
           placeholder="Médecin traitant"
           handle={HandleInfoPersonnel}
-          value={savePatient.referring_physician || ''}
+          value={(savePatient && savePatient.referring_physician) || ''}
         />
       </form>
     </>
