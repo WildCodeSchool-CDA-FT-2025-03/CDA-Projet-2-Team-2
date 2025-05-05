@@ -63,6 +63,7 @@ describe('Auth', () => {
   let schema: GraphQLSchema;
   let departementId: number;
   let adminToken: string;
+  let doctorToken: string;
 
   beforeAll(async () => {
     schema = await createSchema();
@@ -72,8 +73,14 @@ describe('Auth', () => {
 
     adminToken = generateToken({
       id: 1,
-      email: 'admin@test.com',
+      email: 'test@test.com',
       role: UserRole.ADMIN,
+    });
+
+    doctorToken = generateToken({
+      id: 2,
+      email: 'doctor@test.com',
+      role: UserRole.DOCTOR,
     });
   });
 
@@ -248,5 +255,33 @@ describe('Auth', () => {
 
     expect(result.errors).toBeDefined();
     expect(result.errors![0].message).toContain('Department not found');
+  });
+
+  it('should not create a user with not admin token', async () => {
+    const result = await graphql({
+      schema,
+      source: print(createUserMutation),
+      variableValues: {
+        input: {
+          email: 'newuser@test.com',
+          password: 'securepassword',
+          firstname: 'New',
+          lastname: 'User',
+          departementId: departementId,
+        },
+      },
+      contextValue: {
+        req: {
+          headers: {
+            cookie: `token=${doctorToken}`,
+          },
+        },
+      },
+    });
+
+    expect(result.errors).toBeDefined();
+    expect(result.errors![0].message).toContain(
+      "Access denied! You don't have permission for this action!",
+    );
   });
 });

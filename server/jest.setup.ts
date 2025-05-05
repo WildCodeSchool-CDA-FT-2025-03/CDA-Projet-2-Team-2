@@ -29,6 +29,17 @@ beforeAll(async () => {
       },
       role: UserRole.ADMIN,
     });
+
+    await User.insert({
+      email: 'doctor@test.com',
+      password: hash,
+      firstname: 'Doctor',
+      lastname: 'Test',
+      departement: {
+        id: departement.identifiers[0].id,
+      },
+      role: UserRole.DOCTOR,
+    });
   } catch (error) {
     console.error('Error initializing database:', error);
     throw error;
