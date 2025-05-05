@@ -3,7 +3,7 @@ import { beforeAll, afterAll } from '@jest/globals';
 
 import { dataSource } from './src/database/client';
 import { Departement, DepartementStatus } from './src/entities/departement.entity';
-import { User } from './src/entities/user.entity';
+import { User, UserRole } from './src/entities/user.entity';
 
 beforeAll(async () => {
   try {
@@ -27,6 +27,18 @@ beforeAll(async () => {
       departement: {
         id: departement.identifiers[0].id,
       },
+      role: UserRole.ADMIN,
+    });
+
+    await User.insert({
+      email: 'doctor@test.com',
+      password: hash,
+      firstname: 'Doctor',
+      lastname: 'Test',
+      departement: {
+        id: departement.identifiers[0].id,
+      },
+      role: UserRole.DOCTOR,
     });
   } catch (error) {
     console.error('Error initializing database:', error);
