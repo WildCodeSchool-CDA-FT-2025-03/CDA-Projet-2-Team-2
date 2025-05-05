@@ -1,18 +1,26 @@
 [
   {
-    "name": "Dr. Who",
+    "name": "Anais Vallee",
+    "speciality": "Ph. Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
     "id": "d1"
   },
   {
-    "name": "Dr. Pupu",
+    "name": "Alain Houx",
+    "specility": "Interne Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
     "id": "d2"
   },
   {
-    "name": "Dr. Maboul",
+    "name": "Bianca Jardin",
+    "specility": "Cadre de sante",
+    "department": "pedopsychiatrie 1",
     "id": "d3"
   },
   {
-    "name": "Dr. House",
+    "name": "Emilie Masser",
+    "specility": "Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
     "id": "d4"
   }
 ]
