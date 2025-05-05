@@ -21,10 +21,6 @@ const router = createBrowserRouter([
         path: '*',
         element: <PageNotFound />,
       },
-      {
-        path: '/secretary-dashboard',
-        element: <SecretaryDashboard />,
-      },
     ],
   },
   {
@@ -36,6 +32,10 @@ const router = createBrowserRouter([
           {
             path: '/',
             element: <HomePage />,
+          },
+          {
+            path: '/secretary-dashboard',
+            element: <SecretaryDashboard />,
           },
           {
             path: '/patient-secretary',
