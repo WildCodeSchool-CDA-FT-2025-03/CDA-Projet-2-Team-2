@@ -22,3 +22,29 @@ export const verifyToken = (token: string): { id: number; email: string; role: s
     throw new Error('Invalid token');
   }
 };
+
+export const parseCookie = (cookie: string): Record<string, string> =>
+  cookie.split(';').reduce(
+    (acc, current) => {
+      const [key, value] = current.trim().split('=');
+      acc[key] = value;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+export const getUserFromToken = async (cookie: string): Promise<User | null> => {
+  const cookies = parseCookie(cookie);
+  const token = cookies['token'];
+
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  const decoded = verifyToken(token);
+  const user = await User.findOne({ where: { id: decoded.id } });
+  if (!user) {
+    throw new Error('User not found');
+  }
+  return user;
+};
