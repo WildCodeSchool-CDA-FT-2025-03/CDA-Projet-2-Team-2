@@ -33,7 +33,7 @@ const router = createBrowserRouter([
             element: <HomePage />,
           },
           {
-            path: '/patient-secretary',
+            path: '/patient-secretary/:id',
             element: <PatientFileSecretary />,
           },
         ],
