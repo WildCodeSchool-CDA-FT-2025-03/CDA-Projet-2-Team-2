@@ -1,10 +1,14 @@
 import argon2 from 'argon2';
-import { Resolver, Mutation, Arg, Ctx, Query } from 'type-graphql';
-import { Response, Request } from 'express';
+import { Resolver, Mutation, Arg, Ctx, Query, UseMiddleware, Authorized } from 'type-graphql';
+import { Response } from 'express';
 
-import { User } from '../entities/user.entity';
+import log from '../utils/log';
+import { User, UserRole, UserStatus } from '../entities/user.entity';
+import { Departement } from '../entities/departement.entity';
 import { LoginInput, AuthResponse } from '../types/auth.type';
-import { generateToken, verifyToken } from '../utils/jwt.utils';
+import { CreateUserInput } from '../types/user.type';
+import { generateToken } from '../utils/jwt.utils';
+import { AuthMiddleware } from '../middlewares/auth.middleware';
 
 @Resolver()
 export class AuthResolver {
@@ -37,38 +41,46 @@ export class AuthResolver {
   }
 
   @Query(() => User, { nullable: true })
-  async me(@Ctx() context: { req: Request }): Promise<User | null> {
-    try {
-      const cookie = context.req.headers.cookie;
-      if (!cookie) {
-        return null;
-      }
+  @UseMiddleware(AuthMiddleware)
+  async me(@Ctx() context: { user: User }): Promise<User | null> {
+    return context.user;
+  }
 
-      const cookies = cookie.split(';').reduce(
-        (acc, current) => {
-          const [key, value] = current.trim().split('=');
-          acc[key] = value;
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-
-      const token = cookies['token'];
-      if (!token) {
-        return null;
-      }
-
-      const decoded = verifyToken(token);
-
-      const user = await User.findOne({
-        where: { id: decoded.id },
-        relations: ['departement'],
-      });
-
-      return user;
-    } catch (error) {
-      console.error('Error verifying authentication:', error);
-      return null;
+  @Mutation(() => User)
+  @Authorized([UserRole.ADMIN])
+  async createUser(@Arg('input') input: CreateUserInput): Promise<User> {
+    const existingUser = await User.findOne({ where: { email: input.email } });
+    if (existingUser) {
+      throw new Error('User with this email already exists');
     }
+
+    const departement = await Departement.findOne({
+      where: { id: input.departementId },
+    });
+
+    if (!departement) {
+      throw new Error('Department not found');
+    }
+
+    const hashedPassword = await argon2.hash(input.password);
+
+    const user = new User();
+    user.email = input.email;
+    user.password = hashedPassword;
+    user.firstname = input.firstname;
+    user.lastname = input.lastname;
+    user.departement = departement;
+    user.role = input.role || User.prototype.role;
+    user.status = input.status || UserStatus.PENDING;
+
+    await user.save();
+
+    await log('User created', {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    return user;
   }
 }
