@@ -7,6 +7,7 @@ export class PatientResolver {
   async getPatientByID(@Arg('patientId') patientId: number): Promise<Patient | null> {
     return await Patient.findOne({
       where: { id: patientId },
+      relations: ['city'],
     });
   }
 }

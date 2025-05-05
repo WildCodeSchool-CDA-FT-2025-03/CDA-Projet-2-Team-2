@@ -1,0 +1,142 @@
+import { useGetPatientByIdQuery, Patient } from '@/types/graphql-generated';
+import InputForm from '@/components/form/InputForm';
+import { useState, useEffect } from 'react';
+
+type inputPersonnal = {
+  patientNum: number;
+};
+
+export default function PersonnalInformation({ patientNum }: inputPersonnal) {
+  const [savePatient, setPersonnalInfo] = useState<Patient | null>(null);
+  const { loading, error, data } = useGetPatientByIdQuery({
+    variables: { patientId: patientNum },
+  });
+
+  useEffect(() => {
+    if (!data?.getPatientByID) return;
+    const fetchUser = async () => {
+      setPersonnalInfo({
+        ...data.getPatientByID,
+        city: {
+          ...data.getPatientByID.city,
+          patients: [],
+        },
+      });
+    };
+    fetchUser();
+  }, [data?.getPatientByID]);
+
+  const HandleInfoPersonnel = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (savePatient) {
+      setPersonnalInfo(() => ({ ...savePatient, [e.target.name]: e.target.value }));
+    }
+  };
+
+  const handleSubmitInfo = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error</p>;
+
+  return (
+    <>
+      <h2 className="text-xl font-semibold mb-4">Informations personnelles</h2>
+      <form onSubmit={handleSubmitInfo}>
+        <InputForm
+          title="Nom"
+          name="lastname"
+          placeholder="Nom"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.lastname) || ''}
+        />
+        <InputForm
+          title="Prénom"
+          name="firstname"
+          placeholder="Prénom"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.firstname) || ''}
+        />
+        <InputForm
+          title="Téléphone"
+          name="phone_number"
+          placeholder="Téléphone"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.phone_number) || ''}
+        />
+        <InputForm
+          title="Email"
+          type="email"
+          name="email"
+          placeholder="Email"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.email) || ''}
+        />
+        <InputForm
+          title="Numéro de sécurité sociale"
+          name="social_number"
+          placeholder="Numéro de sécurité sociale"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.social_number) || ''}
+        />
+        <InputForm
+          title="Assurance"
+          name="private_assurance"
+          placeholder="Assurance"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.private_assurance) || ''}
+        />
+        <InputForm
+          title="Genre"
+          name="gender"
+          placeholder="Genre"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.gender) || ''}
+        />
+        <InputForm
+          title="Date de naissance"
+          name="birth_date"
+          placeholder="Date de naissance"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.birth_date) || ''}
+        />
+        <InputForm
+          title="Adresse"
+          name="adress"
+          placeholder="Adresse"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.adress) || ''}
+        />
+        <InputForm
+          title="Code postale"
+          name="postal_code"
+          placeholder="Code postale"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.city.postal_code) || ''}
+        />
+        <InputForm
+          title="Ville"
+          name="city"
+          placeholder="Ville"
+          disabled={true}
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.city.city) || ''}
+        />
+        <InputForm
+          title="Personne à contacter"
+          name="contact_person"
+          placeholder="Personne à contacter"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.contact_person) || ''}
+        />
+        <InputForm
+          title="Médecin traitant"
+          name="referring_physician"
+          placeholder="Médecin traitant"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.referring_physician) || ''}
+        />
+      </form>
+    </>
+  );
+}
