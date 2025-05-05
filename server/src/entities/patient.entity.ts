@@ -9,8 +9,8 @@ export class Patient extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   email: string;
 
   @Field()

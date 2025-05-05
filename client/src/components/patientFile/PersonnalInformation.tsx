@@ -65,6 +65,14 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           value={(savePatient && savePatient.phone_number) || ''}
         />
         <InputForm
+          title="Email"
+          type="email"
+          name="email"
+          placeholder="Email"
+          handle={HandleInfoPersonnel}
+          value={(savePatient && savePatient.email) || ''}
+        />
+        <InputForm
           title="Numéro de sécurité sociale"
           name="social_number"
           placeholder="Numéro de sécurité sociale"

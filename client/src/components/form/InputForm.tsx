@@ -6,16 +6,18 @@ type inputFormProps = {
   placeholder?: string;
   value: string;
   disabled?: boolean;
+  type?: string;
   handle: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
-function InputForm({ title, name, value, placeholder, disabled, handle }: inputFormProps) {
+function InputForm({ title, name, value, placeholder, disabled, type, handle }: inputFormProps) {
   return (
     <section>
       <label htmlFor={name}>{title}</label>
       <input
-        type="text"
+        type={type || 'text'}
         name={name}
+        id={name}
         value={value}
         placeholder={placeholder}
         disabled={disabled}
