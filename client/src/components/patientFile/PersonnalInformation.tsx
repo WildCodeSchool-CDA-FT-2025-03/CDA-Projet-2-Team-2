@@ -19,7 +19,6 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
         ...data.getPatientByID,
         city: {
           ...data.getPatientByID.city,
-          id: '0',
           patients: [],
         },
       });

@@ -5,6 +5,7 @@ export const PATIENT_QUERY = gql`
     getPatientByID(patientId: $patientId) {
       birth_date
       city {
+        id
         city
         postal_code
       }
