@@ -42,8 +42,24 @@ export class Patient extends BaseEntity {
   birth_date: Date;
 
   @Field()
+  @Column()
+  birth_city: string;
+
+  @Field()
   @Column({ type: 'text' })
   note: string;
+
+  @Field()
+  @Column()
+  adress: string;
+
+  @Field()
+  @Column()
+  referring_physician: string;
+
+  @Field()
+  @Column()
+  contact_person: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
