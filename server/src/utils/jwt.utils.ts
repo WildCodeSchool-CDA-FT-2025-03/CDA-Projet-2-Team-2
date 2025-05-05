@@ -48,7 +48,7 @@ export const getUserFromToken = async (cookie: string): Promise<User | null> => 
   }
 
   const decoded = verifyToken(token);
-  const user = await User.findOne({ where: { id: decoded.id } });
+  const user = await User.findOne({ where: { id: decoded.id }, relations: { departement: true } });
   if (!user) {
     throw new Error('User not found');
   }
