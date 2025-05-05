@@ -1,10 +1,10 @@
-import { useGetDepartementsQuery } from "@/types/graphql-generated";
+import { useGetDepartementsQuery } from '@/types/graphql-generated';
 
 export default function Department() {
   const { loading, error, data } = useGetDepartementsQuery();
   if (error) return <p>Error</p>;
   if (loading) return <p>Loading</p>;
-  
+
   return (
     <>
       <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4 h-screen">
@@ -40,19 +40,23 @@ export default function Department() {
                 />
               </svg>
             </div>
-            {
-              data?.getDepartements.map((department) => (
-                <div key={department.id} className="flex px-3 py-3 m-4 bg-white justify-between px-4 py-2">
-                  <p>{department.label} - Bat {department.building} - Aile {department.wing} - {department.level}</p>
-                  <span
-                    className={`text-white px-5 py-1 rounded text-sm ${department.status === "active" ? "bg-[#49AD7B]" : "bg-[#FC666A]"
-                      }`}
-                  >
-                    {department.status}
-                  </span>
-                </div>
-              ))
-            }
+            {data?.getDepartements.map(department => (
+              <div
+                key={department.id}
+                className="flex px-3 py-3 m-4 bg-white justify-between px-4 py-2"
+              >
+                <p>
+                  {department.label} - Bat {department.building} - Aile {department.wing} -{' '}
+                  {department.level}
+                </p>
+                <span
+                  className={`text-white px-5 py-1 rounded text-sm ${department.status === 'active' ? 'bg-[#49AD7B]' : 'bg-[#FC666A]'
+                    }`}
+                >
+                  {department.status}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
