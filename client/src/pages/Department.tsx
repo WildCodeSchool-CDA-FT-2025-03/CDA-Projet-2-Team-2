@@ -20,8 +20,6 @@ export default function Department() {
               <input
                 type="text"
                 id="dep"
-                // value={}
-                // onChange={}
                 className="w-full px-10 py-3 border border-[rgba(255,253,250,0.5)] rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500"
                 placeholder="Chercher un service"
               />
@@ -50,8 +48,9 @@ export default function Department() {
                   {department.level}
                 </p>
                 <span
-                  className={`text-white px-5 py-1 rounded text-sm ${department.status === 'active' ? 'bg-[#49AD7B]' : 'bg-[#FC666A]'
-                    }`}
+                  className={`text-white px-5 py-1 rounded text-sm ${
+                    department.status === 'active' ? 'bg-[#49AD7B]' : 'bg-[#FC666A]'
+                  }`}
                 >
                   {department.status}
                 </span>
