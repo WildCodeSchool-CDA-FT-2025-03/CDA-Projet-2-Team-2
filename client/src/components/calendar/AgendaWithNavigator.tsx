@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-// import { DayPilot, DayPilotCalendar, DayPilotNavigator } from "@daypilot/daypilot-lite-react";
 import ressourcesData from '../../fakeData/ressourcesData.json';
 import calendarEventsData from '../../fakeData/calendarEventsData.json';
 import { DayPilot, DayPilotCalendar, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
