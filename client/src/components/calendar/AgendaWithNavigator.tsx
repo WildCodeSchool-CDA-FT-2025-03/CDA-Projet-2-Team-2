@@ -3,23 +3,32 @@ import ressourcesData from '../../fakeData/ressourcesData.json';
 import calendarEventsData from '../../fakeData/calendarEventsData.json';
 import { DayPilot, DayPilotCalendar, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { Resource } from '@/types/resource.type';
-import { CalendarEvent } from '@/types/CalendarEvent.type';
+import { Appointment } from '@/types/CalendarEvent.type';
 
 const AgendaWithNavigator = () => {
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [resources, setResources] = useState<Resource[]>([]);
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
     setResources(ressourcesData as Resource[]);
 
-    const convertedEvents: CalendarEvent[] = calendarEventsData.map(event => ({
-      ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
-    }));
+    const convertedAppointments: Appointment[] = calendarEventsData.map(
+      (appointment: Appointment) => {
+        const start = new Date(appointment.start_time);
+        const [hours, minutes] = appointment.duration.split(':').map(Number);
+        const end = new Date(start.getTime() + hours * 60 * 60 * 1000 + minutes * 60 * 1000);
 
-    setEvents(convertedEvents);
+        return {
+          ...appointment,
+          start_time: start.toISOString(),
+          duration: appointment.duration,
+          end_time: end.toISOString(),
+        };
+      },
+    );
+
+    setAppointments(convertedAppointments);
   }, []);
 
   return (
@@ -46,12 +55,12 @@ const AgendaWithNavigator = () => {
     </div>
   `,
         }))}
-        events={events.map(event => ({
+        events={appointments.map(event => ({
           id: event.id,
-          text: event.text,
-          start: new DayPilot.Date(event.start),
-          end: new DayPilot.Date(event.end),
-          resource: event.resource,
+          text: event.patient_name,
+          start: new DayPilot.Date(event.start_time),
+          end: new DayPilot.Date(event.end_time),
+          resource: event.profesional_name,
         }))}
       />
     </div>

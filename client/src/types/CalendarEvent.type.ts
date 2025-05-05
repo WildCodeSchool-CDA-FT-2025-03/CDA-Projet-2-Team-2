@@ -1,7 +1,10 @@
-export interface CalendarEvent {
+export interface Appointment {
   id: string;
-  text: string;
-  start: Date;
-  end: Date;
-  resource: string;
+  patient_name: string;
+  start_time: string;
+  duration: string;
+  end_time?: string;
+  profesional_name: string;
+  statut: string;
+  appointment_type: string;
 }

@@ -4,71 +4,71 @@
     "patient_name": "Robert Fox",
     "start_time": "2024-04-08T08:00:00",
     "duration": "01:00",
-    "profesional_name": "anais_vallee",
-    "statut": "Checked out",
-    "appointment_type": "Consultation"
+    "profesional_name": "Anais Vallee",
+    "statut": "Confirme",
+    "appointment_type": "Bilan de santé"
   },
   {
     "id": "2",
     "patient_name": "Cody Fisher",
     "start_time": "2024-04-08T09:00:00",
     "duration": "01:00",
-    "profesional_name": "anais_vallee",
-    "statut": "Checked in",
-    "appointment_type": "Suivi"
+    "profesional_name": "Anais Vallee",
+    "statut": "Confirme",
+    "appointment_type": "Examen de routine"
   },
   {
     "id": "3",
     "patient_name": "Annette Black",
     "start_time": "2024-04-08T09:30:00",
     "duration": "00:30",
-    "profesional_name": "anais_vallee",
-    "statut": "Checked in",
-    "appointment_type": "Urgence"
+    "profesional_name": "Anais Vallee",
+    "statut": "Annule",
+    "appointment_type": "Première consultation"
   },
   {
     "id": "4",
     "patient_name": "Brooklyn Simmons",
     "start_time": "2024-04-08T10:00:00",
     "duration": "00:30",
-    "profesional_name": "alain_houx",
-    "statut": "Confirmed",
-    "appointment_type": "Entretien"
+    "profesional_name": "Alain Houx",
+    "statut": "Confirme",
+    "appointment_type": "Préparation à une intervention"
   },
   {
     "id": "5",
     "patient_name": "Esther Howard",
     "start_time": "2024-04-08T10:30:00",
     "duration": "01:00",
-    "profesional_name": "bianca_jardin",
-    "statut": "Confirmed",
-    "appointment_type": "Bilan"
+    "profesional_name": "Bianca Jardin",
+    "statut": "Confirme",
+    "appointment_type": "Evaluation de traitement"
   },
   {
     "id": "6",
     "patient_name": "Jacob Jones",
     "start_time": "2024-04-08T09:00:00",
     "duration": "00:30",
-    "profesional_name": "bianca_jardin",
-    "statut": "Checked out",
-    "appointment_type": "Consultation"
+    "profesional_name": "Bianca Jardin",
+    "statut": "Confirme",
+    "appointment_type": "Bilan de santé"
   },
   {
     "id": "7",
     "patient_name": "Courtney Henry",
     "start_time": "2024-04-08T12:00:00",
     "duration": "01:00",
-    "profesional_name": "alain_houx",
-    "statut": "Confirmed",
-    "appointment_type": "Suivi"
+    "profesional_name": "Alain Houx",
+    "statut": "Confirme",
+    "appointment_type": "Examen de routine"
   },
   {
     "id": "8",
     "patient_name": "Darrell Steward",
     "start_time": "2024-04-08T13:00:00",
     "duration": "00:30",
-    "profesional_name": "bianca_jardin",
-    "statut": "Scheduled",
-    "appointment_type": "Entretien"
+    "profesional_name": "Bianca Jardin",
+    "statut": "Confirme",
+    "appointment_type": "Evaluation de traitement"
   }
 ]
