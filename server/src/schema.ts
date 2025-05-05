@@ -4,23 +4,19 @@ import { PatientResolver } from './resolvers/patient.resolver';
 import { AuthResolver } from './resolvers/auth.resolver';
 import { DepartementResolver } from './resolvers/departement.resolver';
 import { CityResolver } from './resolvers/city.resolver';
+import { getUserFromToken } from './utils/jwt.utils';
 
 export default async function createSchema() {
   return await buildSchema({
     resolvers: [AuthResolver, DepartementResolver, PatientResolver, CityResolver],
     authChecker: async ({ context }, roles) => {
-      if (roles.length === 0) {
-        return !!context.user;
-      }
+      const user = await getUserFromToken(context.req.headers.cookie);
 
-      if (!context.user) {
-        console.error(
-          'User not found. try to check if you use the AuthMiddleware above the resolver !',
-        );
-        return false;
-      }
+      if (roles.length === 0) return !!user;
 
-      return roles.includes(context.user.role);
+      if (!user) return false;
+
+      return roles.includes(user.role);
     },
   });
 }
