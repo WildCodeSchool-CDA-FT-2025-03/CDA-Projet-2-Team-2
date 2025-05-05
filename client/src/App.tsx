@@ -6,6 +6,8 @@ import HomePage from '@/pages/Home';
 import Login from '@/pages/Login';
 import PageNotFound from '@/pages/PageNotFound';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import Department from './pages/Department';
+
 import PatientFileSecretary from './pages/PatientFileSecretary';
 
 const router = createBrowserRouter([
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
           {
             path: '/',
             element: <HomePage />,
+          },
+          {
+            path: '/department',
+            element: <Department />,
           },
           {
             path: '/patient-secretary',
