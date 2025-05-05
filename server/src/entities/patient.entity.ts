@@ -10,7 +10,7 @@ export class Patient extends BaseEntity {
   id: number;
 
   @Field()
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Field()

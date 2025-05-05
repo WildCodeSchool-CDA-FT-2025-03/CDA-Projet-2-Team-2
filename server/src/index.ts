@@ -1,22 +1,16 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { buildSchema } from 'type-graphql';
 
+import createSchema from './schema';
 import { dataSource } from './database/client';
-import { AuthResolver } from './resolvers/auth.resolver';
 
 import 'dotenv/config';
 import 'reflect-metadata';
-import { DepartementResolver } from './resolvers/departement.resolver';
-import { PatientResolver } from './resolvers/patient.resolver';
-import { CityResolver } from './resolvers/city.resolver';
 
 async function startServer() {
   await dataSource.initialize();
 
-  const schema = await buildSchema({
-    resolvers: [AuthResolver, DepartementResolver, PatientResolver, CityResolver],
-  });
+  const schema = await createSchema();
 
   const server = new ApolloServer({
     schema,

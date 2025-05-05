@@ -6,8 +6,14 @@ services:
       context: ./client
       dockerfile: Dockerfile
     volumes:
-      - ./client:/app
+      - ./client:/app:delegated
       - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_HOST=localhost
+      - WATCHPACK_POLLING=true
+    ports:
+      - "5173:5173"
     depends_on:
       - server
 
@@ -53,6 +59,7 @@ services:
       - POSTGRES_DB=${DB_DATABASE}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d/
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
