@@ -36,7 +36,15 @@ const AgendaWithNavigator = () => {
         columns={resources.map(resource => ({
           name: resource.name,
           id: resource.id,
-          html: `<div class="flex items-center gap-1" style="height: 50px;"><img class="w-8 h-8" src="/doctoplan-logo.svg" /><span>${resource.name}</span></div>`,
+          html: `
+    <div class="flex items-center gap-3 p-2">
+      <img src="${resource.avatar}" alt="${resource.name}" class="w-8 h-8 rounded-full object-cover" />
+      <div>
+        <div class="text-sm font-semibold text-blue">${resource.name}</div>
+        <div class="text-xs text-gray-400">${resource.speciality}</div>
+      </div>
+    </div>
+  `,
         }))}
         events={events.map(event => ({
           id: event.id,
