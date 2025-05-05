@@ -35,7 +35,7 @@ const AgendaWithNavigator = () => {
   }, []);
 
   return (
-    <div className="flex gap-6 p-6">
+    <div className="flex flex-col md:flex-row gap-6 p-6">
       <DayPilotNavigator
         selectMode="Day"
         showMonths={1}
@@ -45,8 +45,6 @@ const AgendaWithNavigator = () => {
       <DayPilotCalendar
         viewType="Resources"
         startDate={startDate}
-        businessBeginsHour={9}
-        businessEndsHour={19}
         columns={resources.map(resource => ({
           name: resource.name,
           id: resource.id,

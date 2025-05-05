@@ -152,3 +152,7 @@
   border-radius: 50%;
   border: 1px solid #fc666a;
 }
+
+.calendar_default_event {
+  width: 80% !important;
+}
