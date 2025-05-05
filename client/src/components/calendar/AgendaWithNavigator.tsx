@@ -15,15 +15,18 @@ const AgendaWithNavigator = () => {
 
     const convertedAppointments: Appointment[] = calendarEventsData.map(
       (appointment: Appointment) => {
-        const start = new Date(appointment.start_time);
+        // Crée une date locale (évite les décalages horaires)
+        const localStart = new Date(appointment.start_time + 'Z'); // Ajoute 'Z' pour forcer UTC
+
         const [hours, minutes] = appointment.duration.split(':').map(Number);
-        const end = new Date(start.getTime() + hours * 60 * 60 * 1000 + minutes * 60 * 1000);
+        const localEnd = new Date(
+          localStart.getTime() + hours * 60 * 60 * 1000 + minutes * 60 * 1000,
+        );
 
         return {
           ...appointment,
-          start_time: start.toISOString(),
-          duration: appointment.duration,
-          end_time: end.toISOString(),
+          start_time: localStart.toISOString(),
+          end_time: localEnd.toISOString(),
         };
       },
     );
