@@ -42,6 +42,8 @@ const AgendaWithNavigator = () => {
       <DayPilotCalendar
         viewType="Resources"
         startDate={startDate}
+        businessBeginsHour={9}
+        businessEndsHour={19}
         columns={resources.map(resource => ({
           name: resource.name,
           id: resource.id,
@@ -60,7 +62,7 @@ const AgendaWithNavigator = () => {
           text: event.patient_name,
           start: new DayPilot.Date(event.start_time),
           end: new DayPilot.Date(event.end_time),
-          resource: event.profesional_name,
+          resource: event.doctor_id,
         }))}
       />
     </div>

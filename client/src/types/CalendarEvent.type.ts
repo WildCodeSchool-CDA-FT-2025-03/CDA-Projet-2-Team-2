@@ -4,7 +4,7 @@ export interface Appointment {
   start_time: string;
   duration: string;
   end_time?: string;
-  profesional_name: string;
   statut: string;
   appointment_type: string;
+  doctor_id: string;
 }
