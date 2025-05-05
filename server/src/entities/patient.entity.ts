@@ -39,7 +39,7 @@ export class Patient extends BaseEntity {
 
   @Field()
   @Column({ type: 'date' })
-  birth_date: Date;
+  birth_date: string;
 
   @Field()
   @Column()
