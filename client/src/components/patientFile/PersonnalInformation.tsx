@@ -109,7 +109,7 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
         />
         <InputForm
           title="Code postale"
-          name="lastname"
+          name="postal_code"
           placeholder="Code postale"
           handle={HandleInfoPersonnel}
           value={(savePatient && savePatient.city.postal_code) || ''}
