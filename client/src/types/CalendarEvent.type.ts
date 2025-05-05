@@ -7,4 +7,5 @@ export interface Appointment {
   statut: string;
   appointment_type: string;
   doctor_id: string;
+  barColor?: string;
 }

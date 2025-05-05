@@ -15,8 +15,8 @@ const AgendaWithNavigator = () => {
 
     const convertedAppointments: Appointment[] = calendarEventsData.map(
       (appointment: Appointment) => {
-        // Crée une date locale (évite les décalages horaires)
-        const localStart = new Date(appointment.start_time + 'Z'); // Ajoute 'Z' pour forcer UTC
+        // 💡Creates a local date (avoids time differences)
+        const localStart = new Date(appointment.start_time + 'Z'); // ⚠️Add 'Z' to force UTC
 
         const [hours, minutes] = appointment.duration.split(':').map(Number);
         const localEnd = new Date(
@@ -51,18 +51,24 @@ const AgendaWithNavigator = () => {
           name: resource.name,
           id: resource.id,
           html: `
-    <div class="flex items-center gap-3 p-2">
-      <img src="${resource.avatar}" alt="${resource.name}" class="w-8 h-8 rounded-full object-cover" />
-      <div>
-        <div class="text-sm font-semibold text-blue">${resource.name}</div>
-        <div class="text-xs text-gray-400">${resource.speciality}</div>
-      </div>
-    </div>
-  `,
+            <div class="flex items-center gap-3 p-2">
+              <img src="${resource.avatar}" alt="${resource.name}" class="w-8 h-8 rounded-full object-cover" />
+              <div>
+                <div class="text-sm font-semibold text-blue">${resource.name}</div>
+                <div class="text-xs text-gray-400">${resource.speciality}</div>
+              </div>
+            </div>
+          `,
         }))}
         events={appointments.map(event => ({
           id: event.id,
           text: event.patient_name,
+          html: `
+          <div style="background-color: #e2e8f0;">
+              <p class="text-xs font-semibold">${event.patient_name}</p>
+              <p class="text-xs text-gray-600">${event.appointment_type}</p>
+          </div>
+        `,
           start: new DayPilot.Date(event.start_time),
           end: new DayPilot.Date(event.end_time),
           resource: event.doctor_id,
