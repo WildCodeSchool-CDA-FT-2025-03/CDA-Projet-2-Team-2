@@ -20,13 +20,8 @@ export const generateToken = (user: TokenPayload): string => {
 };
 
 export const verifyToken = (token: string): { id: number; email: string; role: string } => {
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret_key');
-    return decoded as { id: number; email: string; role: string };
-  } catch (error) {
-    console.error(error);
-    throw new Error('Invalid token');
-  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret_key');
+  return decoded as { id: number; email: string; role: string };
 };
 
 export const parseCookie = (cookie: string): Record<string, string> =>
