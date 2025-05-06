@@ -11,6 +11,12 @@
   --color-blue-gray: #86a6c0;
   --color-accent: #fc666a;
   --color-accent-500: #e90b11;
+
+  /* Couleurs dynamiques basées sur le type de rendez-vous */
+  --followup-bar: #a8cbff;
+  --treatment-bar: #bcd7ff;
+  --healthcheck-bar: #b4ffdc;
+  --intervention-bar: #133f63;
 }
 
 @layer base {
@@ -70,17 +76,24 @@
     background-image: linear-gradient(-315deg, #b4ffdc 0%, #bcd7ff 67%, #a8cbff 80%);
   }
 
+  /* Calendar element*/
   .calendar_default_event {
-    @apply bg-blue text-white rounded px-2 py-1 text-sm;
+    @apply text-white rounded px-2 py-1 text-sm bg-[#e2e8f0];
+  }
+
+  .calendar_default_event_bar,
+  .calendar_default_event_bar_inner {
+    background-color: var(--color-blue) !important;
   }
 
   .calendar_default_main {
-    @apply rounded-2xl;
     font-family: 'Inter', sans-serif;
   }
 
-  .calendar_default_corner_inner {
-    @apply rounded-tl-2xl;
+  .navigator_default_title,
+  .navigator_default_dayheader,
+  .navigator_default_cell_text {
+    font-family: 'Inter', sans-serif;
   }
 
   .calendar_default_colheader,
@@ -88,4 +101,58 @@
   .calendar_default_cornerright {
     height: 50px !important;
   }
+}
+
+/******* CALENDAR ELEMENT WITHOUT TAILWIND **********/
+/* Column zebra striping*/
+.calendar_default_main td table tr td:nth-child(even) .calendar_default_cell_inner,
+.calendar_default_main
+  td
+  table
+  tr
+  td:nth-child(even)
+  .calendar_default_cell_business
+  .calendar_default_cell_inner {
+  background-color: #f8f9fa;
+}
+
+/* Column zebra striping*/
+.calendar_default_main td table tr td:nth-child(odd) .calendar_default_cell_inner,
+.calendar_default_main
+  td
+  table
+  tr
+  td:nth-child(odd)
+  .calendar_default_cell_business
+  .calendar_default_cell_inner {
+  background-color: #fffdfa;
+}
+
+/* Cells background */
+.calendar_default_event_inner {
+  background: #e2e8f0;
+}
+.calendar_default_corner_inner,
+.calendar_default_colheader_inner,
+.calendar_default_rowheader_inner,
+.navigator_default_title,
+.navigator_default_titleleft,
+.navigator_default_titleright,
+.navigator_default_dayheader,
+.navigator_default_daybox {
+  background: #fffdfa;
+}
+
+.navigator_default_select .navigator_default_cell_box {
+  background-color: #fc666a;
+}
+
+/* Specific cell border */
+.navigator_default_todaybox {
+  border-radius: 50%;
+  border: 1px solid #fc666a;
+}
+
+.calendar_default_event {
+  width: 80% !important;
 }

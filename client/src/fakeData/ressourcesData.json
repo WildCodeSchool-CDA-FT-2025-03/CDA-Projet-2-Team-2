@@ -1,18 +1,30 @@
 [
   {
-    "name": "Dr. Who",
+    "name": "Anais Vallee",
+    "speciality": "Ph. Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
     "id": "d1"
   },
   {
-    "name": "Dr. Pupu",
+    "name": "Alain Houx",
+    "speciality": "Interne Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
     "id": "d2"
   },
   {
-    "name": "Dr. Maboul",
+    "name": "Bianca Jardin",
+    "speciality": "Cadre de sante",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
     "id": "d3"
   },
   {
-    "name": "Dr. House",
+    "name": "Emilie Masser",
+    "speciality": "Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
     "id": "d4"
   }
 ]
