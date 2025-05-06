@@ -8,7 +8,7 @@ import PaginationControls from './PaginationControls';
 
 function AgendaWithNavigator() {
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
-  const [resources] = useState<Resource[]>(ressourcesData as Resource[]);
+  const [resources] = useState<Resource[]>(ressourcesData);
   const appointments = useAppointmentsData();
   const pageSize = useResponsiveAgendaPageSize();
   const [currentPage, setCurrentPage] = useState(0);
@@ -16,9 +16,16 @@ function AgendaWithNavigator() {
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
   return (
-    <div className="py-6 px-6 md:px-24">
+    <div
+      className="py-6 px-6 md:px-24"
+      role="region"
+      aria-label="Agenda de tous les professionnnels du service"
+    >
       {/* Pagination desktop */}
-      <div className="hidden lg:flex justify-end items-center gap-4 mb-4">
+      <div
+        className="hidden lg:flex justify-end items-center gap-4 mb-4"
+        aria-label="Pagination desktop"
+      >
         <PaginationControls
           currentPage={currentPage}
           onPageChange={setCurrentPage}
@@ -27,18 +34,20 @@ function AgendaWithNavigator() {
         />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-10 mt-6">
+      <section className="flex flex-col lg:flex-row gap-10 mt-6">
         {/* Calendar navigator */}
-        <DayPilotNavigator
-          selectMode="Day"
-          showMonths={1}
-          skipMonths={1}
-          locale="fr-fr"
-          onTimeRangeSelected={args => setStartDate(args.day)}
-        />
+        <aside aria-label="Navigateur de date">
+          <DayPilotNavigator
+            selectMode="Day"
+            showMonths={1}
+            skipMonths={1}
+            locale="fr-fr"
+            onTimeRangeSelected={args => setStartDate(args.day)}
+          />
+        </aside>
 
         {/* Pagination mobile */}
-        <div className="lg:hidden">
+        <div className="lg:hidden" aria-label="Pagination mobile">
           <PaginationControls
             currentPage={currentPage}
             onPageChange={setCurrentPage}
@@ -48,8 +57,8 @@ function AgendaWithNavigator() {
           />
         </div>
 
-        {/* Calendar */}
-        <div className="flex-1">
+        {/* Agenda */}
+        <article className="flex-1" aria-label="Agenda de tous les medecins et leurs rendez-vous">
           <DayPilotCalendar
             viewType="Resources"
             startDate={startDate}
@@ -82,8 +91,8 @@ function AgendaWithNavigator() {
               resource: event.doctor_id,
             }))}
           />
-        </div>
-      </div>
+        </article>
+      </section>
     </div>
   );
 }
