@@ -25,3 +25,27 @@ export const PATIENT_QUERY = gql`
     }
   }
 `;
+
+export const PATIENT_UPDATE_MUTATION = gql`
+  mutation Mutation($patientData: PatientInput!) {
+    updatePatient(patientData: $patientData) {
+      adress
+      birth_city
+      birth_date
+      contact_person
+      email
+      firstname
+      gender
+      id
+      lastname
+      phone_number
+      private_assurance
+      referring_physician
+      social_number
+      city {
+        city
+        postal_code
+      }
+    }
+  }
+`;
