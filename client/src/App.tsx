@@ -9,7 +9,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import Department from './pages/Department';
 
 import PatientFileSecretary from './pages/PatientFileSecretary';
-import CreateDepartment from './pages/CreateDepartment';
+import SecretaryDashboard from './pages/secretaryDashboard/SecretaryDashboard';
 
 const router = createBrowserRouter([
   {
@@ -40,11 +40,11 @@ const router = createBrowserRouter([
             element: <Department />,
           },
           {
-            path: '/create-department',
-            element: <CreateDepartment />,
+            path: '/secretary-dashboard',
+            element: <SecretaryDashboard />,
           },
           {
-            path: '/patient-secretary',
+            path: '/patient-secretary/:id',
             element: <PatientFileSecretary />,
           },
         ],

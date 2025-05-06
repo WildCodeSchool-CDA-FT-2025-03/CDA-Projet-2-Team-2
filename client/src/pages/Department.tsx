@@ -1,7 +1,9 @@
 import { useGetDepartementsQuery } from '@/types/graphql-generated';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import CreateDepartmentModal from '../components/CreateDepartmentModal';
 
 export default function Department() {
+  const [showModal, setShowModal] = useState(false);
   const { loading, error, data } = useGetDepartementsQuery();
   if (error) return <p>Error</p>;
   if (loading) return <p>Loading</p>;
@@ -11,11 +13,19 @@ export default function Department() {
         <div className="w-full align-center flex flex-col gap-4 h-full p-12">
           <div className="flex items-center mb-4">
             <h2 className="text-xl mr-5 m- font-semibold text-gray-700">Gestion des services</h2>
-            <Link to="/create-department" className="block">
-              <button className="bg-[#133F63] text-white px-4 py-2 rounded-md">
+            <>
+              <button
+                className="bg-[#133F63] text-white px-4 py-2 rounded-md"
+                onClick={() => setShowModal(true)}
+              >
                 Nouveau service
               </button>
-            </Link>
+              {showModal && (
+                <div className="fixed inset-0 z-50 flex  justify-center">
+                  <CreateDepartmentModal onClose={() => setShowModal(false)} />
+                </div>
+              )}
+            </>
           </div>
           <div className="bg-[rgba(255,253,250,0.5)]  items-center mb-4">
             <div className="bg-white m-4 w-2/5 relative border border-[rgba(255,253,250,0.5)] rounded-full">

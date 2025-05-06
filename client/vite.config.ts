@@ -9,6 +9,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@daypilot/daypilot-lite-react': path.resolve(
+        __dirname,
+        'node_modules/@daypilot/daypilot-lite-react',
+      ),
     },
   },
   server: {

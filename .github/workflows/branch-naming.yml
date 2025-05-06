@@ -11,11 +11,11 @@ jobs:
       - name: Check branch name
         run: |
           BRANCH_NAME="${{ github.head_ref }}"
-          PATTERN="^(feature|bugfix|hotfix|chore|experiment|dev)/[a-zA-Z0-9_-]+(/[0-9]+)?$|^dev$"
+          PATTERN="^(feature|bugfix|hotfix|chore|experiment|dev)/[a-zA-Z0-9_-]+(/[a-zA-Z0-9_-]+)?$|^dev$"
           
           if [[ ! $BRANCH_NAME =~ $PATTERN ]]; then
             echo "❌ Branch name '$BRANCH_NAME' does not follow the convention:"
-            echo "   <type>/<name>/<issue_ID> or <type>/<name> or dev"
+            echo "   <type>/<name>/<issue> or <type>/<name> or dev"
             echo "   where <type> is one of: feature, bugfix, hotfix, chore, experiment, dev"
             exit 1
           else

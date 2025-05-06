@@ -1,29 +1,31 @@
-import React from 'react'
+import { ChangeEvent } from 'react';
 
-type InputProps = {
-  label: string;
+type inputFormProps = {
+  title: string;
   name: string;
-  type: string;
+  placeholder?: string;
   value: string;
-  handle: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
+  type?: string;
+  handle: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
-export default function InputForm({label,name,type,value,handle} : InputProps) {
+function InputForm({ title, name, value, placeholder, disabled, type, handle }: inputFormProps) {
   return (
-    <>
-      <label htmlFor={name} className="block mt-2 text-sm/6 font-medium text-gray-900">
-        {label}
-      </label>
+    <section>
+      <label htmlFor={name}>{title}</label>
       <input
-        id={name}
+        type={type || 'text'}
         name={name}
-        type={type}
+        id={name}
         value={value}
+        placeholder={placeholder}
+        disabled={disabled}
         onChange={handle}
-        placeholder="Niveau"
-        required
-        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-grey-600 sm:text-sm/6"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 my-2"
       />
-    </>
+    </section>
   );
 }
+
+export default InputForm;

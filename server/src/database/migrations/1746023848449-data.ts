@@ -34,7 +34,7 @@ export class Data1746023848449 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `INSERT INTO patient (email, firstname, lastname, phone_number, social_number, private_assurance, gender, birth_date, note, "cityId")
+      `INSERT INTO patient (email, firstname, lastname, phone_number, social_number, private_assurance, gender, birth_date, birth_city, note, adress, referring_physician, contact_person, "cityId")
         SELECT
             m.email_patient,
             substr(m.nom_patient,1,POSITION(' ' IN m.nom_patient)),
@@ -44,6 +44,10 @@ export class Data1746023848449 implements MigrationInterface {
             '',
             m.sex_patient,
             cast(m.date_naissance_patient as date),
+            '',
+            '',
+            '',
+            '',
             '',
             max(c.id)
         FROM mytable m
