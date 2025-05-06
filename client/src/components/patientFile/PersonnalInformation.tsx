@@ -1,6 +1,12 @@
-import { useGetPatientByIdQuery, Patient } from '@/types/graphql-generated';
+import {
+  useGetPatientByIdQuery,
+  Patient,
+  useUpdatePatientMutation,
+} from '@/types/graphql-generated';
 import InputForm from '@/components/form/InputForm';
+import InputFormCP from '@/components/form/InputFormCP';
 import { useState, useEffect } from 'react';
+import SelectForm from '@/components/form/SelectForm';
 
 type inputPersonnal = {
   patientNum: number;
@@ -8,36 +14,81 @@ type inputPersonnal = {
 
 export default function PersonnalInformation({ patientNum }: inputPersonnal) {
   const [savePatient, setPersonnalInfo] = useState<Patient | null>(null);
-  const { loading, error, data } = useGetPatientByIdQuery({
+  const [msgUpdate, setMsgUpdate] = useState<string>('');
+  const GetPatientByIdQuery = useGetPatientByIdQuery({
     variables: { patientId: patientNum },
   });
+  const [UpdatePatientMutation] = useUpdatePatientMutation();
 
   useEffect(() => {
-    if (!data?.getPatientByID) return;
+    const patientByID = GetPatientByIdQuery.data?.getPatientByID;
+    if (!patientByID) return;
     const fetchUser = async () => {
       setPersonnalInfo({
-        ...data.getPatientByID,
+        ...patientByID,
         city: {
-          ...data.getPatientByID.city,
+          ...patientByID.city,
           patients: [],
         },
       });
     };
     fetchUser();
-  }, [data?.getPatientByID]);
+  }, [GetPatientByIdQuery.data?.getPatientByID]);
 
-  const HandleInfoPersonnel = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const HandleInfoPersonnel = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     if (savePatient) {
       setPersonnalInfo(() => ({ ...savePatient, [e.target.name]: e.target.value }));
     }
   };
 
-  const handleSubmitInfo = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const HandleCPVille = (cp: string, ville: string) => {
+    if (savePatient) {
+      setPersonnalInfo(() => ({
+        ...savePatient,
+        ['city']: {
+          ...savePatient.city,
+          postal_code: cp,
+          city: ville,
+        },
+      }));
+    }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+  const handleSubmitInfo = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setMsgUpdate('');
+    if (!savePatient) return;
+
+    await UpdatePatientMutation({
+      variables: {
+        patientData: {
+          id: savePatient.id,
+          firstname: savePatient.firstname,
+          lastname: savePatient.lastname,
+          phone_number: savePatient.phone_number,
+          social_number: savePatient.social_number,
+          private_assurance: savePatient.private_assurance,
+          adress: savePatient.adress,
+          referring_physician: savePatient.referring_physician,
+          contact_person: savePatient.contact_person,
+          birth_date: savePatient.birth_date,
+          birth_city: savePatient.birth_city,
+          gender: savePatient.gender,
+          note: savePatient.note,
+          email: savePatient.email || '',
+          postal_code: savePatient.city.postal_code,
+          city: savePatient.city.city,
+        },
+      },
+    });
+    GetPatientByIdQuery.refetch();
+    setMsgUpdate('Informations modifiées');
+  };
+
+  if (GetPatientByIdQuery.loading) return <p>Loading...</p>;
+  if (GetPatientByIdQuery.error) return <p>Error</p>;
 
   return (
     <>
@@ -86,15 +137,19 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           handle={HandleInfoPersonnel}
           value={(savePatient && savePatient.private_assurance) || ''}
         />
-        <InputForm
+        <SelectForm
           title="Genre"
           name="gender"
-          placeholder="Genre"
+          option={[
+            { key: 'M', value: 'Homme' },
+            { key: 'F', value: 'Femme' },
+          ]}
           handle={HandleInfoPersonnel}
           value={(savePatient && savePatient.gender) || ''}
         />
         <InputForm
           title="Date de naissance"
+          type="date"
           name="birth_date"
           placeholder="Date de naissance"
           handle={HandleInfoPersonnel}
@@ -107,20 +162,10 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           handle={HandleInfoPersonnel}
           value={(savePatient && savePatient.adress) || ''}
         />
-        <InputForm
-          title="Code postale"
-          name="postal_code"
-          placeholder="Code postale"
-          handle={HandleInfoPersonnel}
+        <InputFormCP
+          handle={HandleCPVille}
           value={(savePatient && savePatient.city.postal_code) || ''}
-        />
-        <InputForm
-          title="Ville"
-          name="city"
-          placeholder="Ville"
-          disabled={true}
-          handle={HandleInfoPersonnel}
-          value={(savePatient && savePatient.city.city) || ''}
+          valuecity={(savePatient && savePatient.city.city) || ''}
         />
         <InputForm
           title="Personne à contacter"
@@ -136,6 +181,10 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           handle={HandleInfoPersonnel}
           value={(savePatient && savePatient.referring_physician) || ''}
         />
+        <div className="text-accent-500 text-center">{msgUpdate}</div>
+        <button type="submit" className="cta block mx-auto">
+          Modifier
+        </button>
       </form>
     </>
   );
