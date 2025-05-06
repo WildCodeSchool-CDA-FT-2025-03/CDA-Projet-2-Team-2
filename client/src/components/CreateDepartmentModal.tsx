@@ -24,9 +24,10 @@ export default function CreateDepartmentModal({ onClose }: CreateDepartmentModal
   });
   const [createDepartement] = useCreateDepartementMutation();
 
-  const handleInputChange = (field: keyof CreateDepartmentType) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [field]: e.target.value });
-  };
+  const handleInputChange =
+    (field: keyof CreateDepartmentType) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({ ...formData, [field]: e.target.value });
+    };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

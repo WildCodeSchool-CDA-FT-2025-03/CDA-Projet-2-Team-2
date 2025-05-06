@@ -17,4 +17,4 @@ export const CREATE_DEPARTMENT = gql`
   mutation CreateDepartement($data: DepartementInput!) {
     createDepartement(data: $data)
   }
-`
+`;
