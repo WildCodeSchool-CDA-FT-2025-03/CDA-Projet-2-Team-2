@@ -44,7 +44,7 @@ const router = createBrowserRouter([
             element: <SecretaryDashboard />,
           },
           {
-            path: '/patient-secretary',
+            path: '/patient-secretary/:id',
             element: <PatientFileSecretary />,
           },
         ],

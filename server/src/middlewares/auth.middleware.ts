@@ -1,6 +1,6 @@
 import { MiddlewareFn } from 'type-graphql';
 import { User } from '../entities/user.entity';
-import { verifyToken } from '../utils/jwt.utils';
+import { getUserFromToken } from '../utils/jwt.utils';
 import { IncomingMessage, ServerResponse } from 'http';
 
 export const AuthMiddleware: MiddlewareFn<{
@@ -9,32 +9,16 @@ export const AuthMiddleware: MiddlewareFn<{
   user?: User;
 }> = async ({ context }, next) => {
   try {
-    const { req } = context;
-    const cookie = req.headers.cookie;
+    const cookie = context.req.headers.cookie;
 
-    if (cookie) {
-      const cookies = cookie.split(';').reduce(
-        (acc, current) => {
-          const [key, value] = current.trim().split('=');
-          acc[key] = value;
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
+    if (!cookie) {
+      return next();
+    }
 
-      const token = cookies['token'];
+    const user = await getUserFromToken(cookie);
 
-      if (token) {
-        const decoded = verifyToken(token);
-        const user = await User.findOne({
-          where: { id: decoded.id },
-          relations: ['departement'],
-        });
-
-        if (user) {
-          context.user = user;
-        }
-      }
+    if (user) {
+      context.user = user;
     }
 
     return next();
