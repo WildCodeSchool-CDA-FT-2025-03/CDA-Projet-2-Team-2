@@ -45,6 +45,7 @@ const AgendaWithNavigator = () => {
       <DayPilotCalendar
         viewType="Resources"
         startDate={startDate}
+        timeFormat="Clock24Hours"
         columns={resources.map(resource => ({
           name: resource.name,
           id: resource.id,
