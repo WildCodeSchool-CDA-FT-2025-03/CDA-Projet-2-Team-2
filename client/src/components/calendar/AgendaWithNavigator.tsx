@@ -55,7 +55,7 @@ const AgendaWithNavigator = () => {
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
   return (
-    <div className="p-6">
+    <div className="py-6 px-6 md:px-24">
       {/* Flèches de navigation - Positionnées au-dessus du calendrier en mode large (écran plus large) */}
       <div className="hidden lg:flex justify-end items-center gap-4 mb-4 lg:mb-0">
         <button
@@ -79,8 +79,8 @@ const AgendaWithNavigator = () => {
           ▶
         </button>
       </div>
-      <div className="flex flex-col lg:flex-row gap-6 mt-6">
-        <div className="lg:w-1/4">
+      <div className="flex flex-col lg:flex-row gap-10 mt-6">
+        <div>
           <DayPilotNavigator
             selectMode="Day"
             showMonths={1}
