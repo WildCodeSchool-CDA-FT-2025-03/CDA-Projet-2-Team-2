@@ -40,12 +40,14 @@ const AgendaWithNavigator = () => {
         selectMode="Day"
         showMonths={1}
         skipMonths={1}
+        locale="fr-fr"
         onTimeRangeSelected={args => setStartDate(args.day)}
       />
       <DayPilotCalendar
         viewType="Resources"
         startDate={startDate}
         timeFormat="Clock24Hours"
+        locale="fr-fr"
         columns={resources.map(resource => ({
           name: resource.name,
           id: resource.id,
