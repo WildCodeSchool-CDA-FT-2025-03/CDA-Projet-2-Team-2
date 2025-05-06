@@ -10,9 +10,24 @@ const AgendaWithNavigator = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 4;
+  const [pageSize, setPageSize] = useState(4); // Valeur par défaut
 
   useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 530) {
+        setPageSize(1);
+      } else if (window.innerWidth < 650) {
+        setPageSize(2);
+      } else if (window.innerWidth < 1200) {
+        setPageSize(3);
+      } else {
+        setPageSize(4);
+      }
+    };
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
     setResources(ressourcesData as Resource[]);
 
     const convertedAppointments: Appointment[] = calendarEventsData.map(
@@ -30,16 +45,19 @@ const AgendaWithNavigator = () => {
         };
       },
     );
-
     setAppointments(convertedAppointments);
-  }, []);
 
+    // Nettoyage de l'événement lors du démontage du composant
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); // [] pour n'exécuter cet effet qu'une seule fois au montage du composant
+
+  // Calcul des ressources visibles selon la pagination
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
   return (
     <div className="p-6">
-      {/* Flèches de navigation au-dessus de tout, alignées à droite */}
-      <div className="flex justify-end items-center gap-4 mb-4">
+      {/* Flèches de navigation - Positionnées au-dessus du calendrier en mode large (écran plus large) */}
+      <div className="hidden lg:flex justify-end items-center gap-4 mb-4 lg:mb-0">
         <button
           onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
           disabled={currentPage === 0}
@@ -61,11 +79,8 @@ const AgendaWithNavigator = () => {
           ▶
         </button>
       </div>
-
-      {/* Bloc aligné avec Navigator à gauche, Calendar à droite */}
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Navigator */}
-        <div>
+      <div className="flex flex-col lg:flex-row gap-6 mt-6">
+        <div className="lg:w-1/4">
           <DayPilotNavigator
             selectMode="Day"
             showMonths={1}
@@ -75,7 +90,29 @@ const AgendaWithNavigator = () => {
           />
         </div>
 
-        {/* Calendar */}
+        {/* Flèches de navigation - Positionnées entre Navigator et Calendar en mode colonne (mobile) */}
+        <div className="flex justify-between items-center gap-4 mb-4 lg:mb-0 lg:hidden">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
+            disabled={currentPage === 0}
+            className="text-blue rounded disabled:opacity-50 cursor-pointer"
+          >
+            ◀
+          </button>
+          <span>
+            {currentPage * pageSize + 1} à{' '}
+            {Math.min((currentPage + 1) * pageSize, resources.length)} sur {resources.length}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage(prev => ((prev + 1) * pageSize < resources.length ? prev + 1 : prev))
+            }
+            disabled={(currentPage + 1) * pageSize >= resources.length}
+            className="text-blue rounded disabled:opacity-50 cursor-pointer"
+          >
+            ▶
+          </button>
+        </div>
         <div className="flex-1">
           <DayPilotCalendar
             viewType="Resources"
