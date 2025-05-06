@@ -10,7 +10,7 @@ const AgendaWithNavigator = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(4); // Valeur par défaut
+  const [pageSize, setPageSize] = useState(4);
 
   useEffect(() => {
     const handleResize = () => {
@@ -66,7 +66,7 @@ const AgendaWithNavigator = () => {
           ◀
         </button>
         <span>
-          {currentPage * pageSize + 1} à {Math.min((currentPage + 1) * pageSize, resources.length)}{' '}
+          {currentPage * pageSize + 1} à {Math.min((currentPage + 1) * pageSize, resources.length)}
           sur {resources.length}
         </span>
         <button
