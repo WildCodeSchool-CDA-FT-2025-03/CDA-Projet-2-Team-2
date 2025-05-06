@@ -29,8 +29,7 @@ function PaginationControls({
         ◀
       </button>
       <span>
-        {currentPage * pageSize + 1} à {Math.min((currentPage + 1) * pageSize, totalItems)} sur
-        {totalItems}
+        {`${currentPage * pageSize + 1} à ${Math.min((currentPage + 1) * pageSize, totalItems)} sur ${totalItems}`}
       </span>
       <button
         onClick={handleNext}
