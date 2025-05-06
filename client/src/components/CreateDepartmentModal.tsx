@@ -9,9 +9,9 @@ type CreateDepartmentType = {
   level: string;
 };
 
-interface CreateDepartmentModalProps {
+type CreateDepartmentModalProps = {
   onClose: () => void;
-}
+};
 
 export default function CreateDepartmentModal({ onClose }: CreateDepartmentModalProps) {
   const [error, setError] = useState('');
