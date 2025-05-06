@@ -9,4 +9,11 @@ export class CityResolver {
       where: { id: cityId },
     });
   }
+
+  @Query(() => [City])
+  async getCityByCP(@Arg('postal_code') postal_code: string): Promise<City[] | null> {
+    return await City.find({
+      where: { postal_code: postal_code },
+    });
+  }
 }
