@@ -4,7 +4,7 @@ import {
   useUpdateDepartmentMutation,
 } from '@/types/graphql-generated';
 import { useEffect, useState } from 'react';
-import DepartmentForm from './form/DepartmentForm';
+import DepartmentForm from './DepartmentForm';
 
 type CreateDepartmentType = {
   label: string;

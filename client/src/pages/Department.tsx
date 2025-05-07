@@ -1,7 +1,7 @@
 import { useGetDepartementsQuery } from '@/types/graphql-generated';
 import { useState } from 'react';
-import CreateDepartmentModal from '../components/CreateDepartmentModal';
-import DepartmentStatusModal from '@/components/DepartmentStatusModal';
+import CreateDepartmentModal from '../components/department/CreateDepartmentModal';
+import DepartmentStatusModal from '@/components/department/DepartmentStatusModal';
 
 export default function Department() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -39,11 +39,11 @@ export default function Department() {
             </>
           </div>
           <div className="bg-bgBodyColor  items-center mb-4">
-            <div className="bg-white m-4 w-2/5 relative border border-bgBodyColor rounded-full">
+            <div className="bg-white m-4 w-2/5 relative border border-borderColor rounded-full">
               <input
                 type="text"
                 id="dep"
-                className="w-full px-10 py-3 border border-bgBodyColor rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-10 py-3 border border-borderColor rounded-full focus:outline-none focus:ring-1 focus:ring-borderColor"
                 placeholder="Chercher un service"
               />
               <img
@@ -55,7 +55,7 @@ export default function Department() {
             {data?.getDepartements.map(department => (
               <div
                 key={department.id}
-                className="flex px-3 py-3 m-4 bg-white border border-bgBodyColor rounded-sm justify-between px-4 py-2"
+                className="flex px-3 py-3 m-4 bg-white border border-borderColor rounded-sm justify-between px-4 py-2"
               >
                 <p>
                   {department.label} - Bat {department.building} - Aile {department.wing} -{' '}

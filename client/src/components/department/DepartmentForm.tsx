@@ -1,5 +1,5 @@
 import React from 'react';
-import InputForm from './InputForm';
+import InputForm from '../form/InputForm';
 
 type DepartmentFormProps = {
   onClose: () => void;

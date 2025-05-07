@@ -27,7 +27,7 @@ export class DepartementResolver {
       return true;
     } catch (error) {
       console.error(error);
-      throw new GraphQLError('Failed to create departement', {
+      throw new GraphQLError('Échec de la création de département', {
         extensions: {
           code: 'DEPARTEMENT_CREATION_FAILED',
           originalError: error.message,
@@ -40,7 +40,7 @@ export class DepartementResolver {
   async updateDepartment(@Arg('id') id: string, @Arg('data') data: DepartementInput) {
     const department = await Departement.findOneBy({ id: +id });
     if (!department) {
-      throw new GraphQLError('Departement not found', {
+      throw new GraphQLError('Service non trouvé', {
         extensions: {
           code: 'DEPARTEMENT_NOT_FOUND',
         },
