@@ -16,10 +16,11 @@ services:
     tmpfs:
       - /var/lib/postgresql/data
 
-  server-test:
+  db-init:
     build:
       context: ./server
       dockerfile: Dockerfile.test
+    command: npm run seed:test
     depends_on:
       postgres-test:
         condition: service_healthy
@@ -31,6 +32,27 @@ services:
       - DB_PASSWORD=postgres_test
       - DB_DATABASE=doctoplan_test
       - JWT_SECRET=test_secret_key
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  server-test:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.test
+    command: npm run test
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      - NODE_ENV=test
+      - DB_HOST=postgres-test
+      - DB_PORT=5432
+      - DB_USERNAME=postgres_test
+      - DB_PASSWORD=postgres_test
+      - DB_DATABASE=doctoplan_test
+      - JWT_SECRET=test_secret_key
+      - SKIP_DB_INIT=true
     volumes:
       - ./server:/app
       - /app/node_modules
