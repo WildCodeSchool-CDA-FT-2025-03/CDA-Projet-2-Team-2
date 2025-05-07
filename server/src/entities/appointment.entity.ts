@@ -12,6 +12,7 @@ import { ObjectType, Field, ID, Int } from 'type-graphql';
 import { User } from './user.entity';
 import { Patient } from './patient.entity';
 import { AppointmentType } from './appointment-type.entity';
+import { Departement } from './departement.entity';
 
 export enum AppointmentStatus {
   CONFIRMED = 'confirmed',
@@ -27,13 +28,13 @@ export class Appointment extends BaseEntity {
 
   @Field()
   @Column({ type: 'timestamp' })
-  start_time: string; // Date and start hour
+  start_time: Date; // Date and start hour
 
   @Field(() => Int)
   @Column()
   duration: number; // in minutes
 
-  @Field(() => AppointmentStatus)
+  @Field(() => String)
   @Column({
     type: 'enum',
     enum: AppointmentStatus,
@@ -68,4 +69,9 @@ export class Appointment extends BaseEntity {
   @Field()
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @Field(() => Departement)
+  @ManyToOne(() => Departement, { eager: true })
+  @JoinColumn({ name: 'departement_id' })
+  departement: Departement;
 }
