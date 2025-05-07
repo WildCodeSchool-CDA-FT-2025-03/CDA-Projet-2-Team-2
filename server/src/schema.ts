@@ -7,10 +7,18 @@ import { CityResolver } from './resolvers/city.resolver';
 import { LogResolver } from './resolvers/log.resolver';
 import { getUserFromToken } from './utils/jwt.utils';
 import { JSONScalar } from './scalar/json.scalar';
+import { UserResolver } from './resolvers/user.resolver';
 
 export default async function createSchema() {
   return await buildSchema({
-    resolvers: [AuthResolver, DepartementResolver, PatientResolver, CityResolver, LogResolver],
+    resolvers: [
+      AuthResolver,
+      DepartementResolver,
+      PatientResolver,
+      CityResolver,
+      LogResolver,
+      UserResolver,
+    ],
     authChecker: async ({ context }, roles) => {
       const user = await getUserFromToken(context.req.headers.cookie);
 
