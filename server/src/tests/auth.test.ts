@@ -35,6 +35,18 @@ const createUserMutation = gql`
   }
 `;
 
+const meQuery = gql`
+  query Me {
+    me {
+      id
+      email
+      firstname
+      lastname
+      role
+    }
+  }
+`;
+
 type LoginResponse = {
   login: {
     token: string;
@@ -283,5 +295,67 @@ describe('Auth', () => {
     expect(result.errors![0].message).toContain(
       "Access denied! You don't have permission for this action!",
     );
+  });
+
+  it('should return the authenticated user when a valid token is provided', async () => {
+    const result = await graphql({
+      schema,
+      source: print(meQuery),
+      contextValue: {
+        req: {
+          headers: {
+            cookie: `token=${adminToken}`,
+          },
+        },
+      },
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toBeDefined();
+
+    const data = result.data as { me: { id: number; email: string; role: string } };
+    expect(data.me).toBeDefined();
+    expect(data.me.email).toBe('test@test.com');
+    expect(data.me.role).toBe('admin');
+  });
+
+  it('should return null when no token is provided', async () => {
+    const result = await graphql({
+      schema,
+      source: print(meQuery),
+      contextValue: {
+        req: {
+          headers: {
+            cookie: '',
+          },
+        },
+      },
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toBeDefined();
+
+    const data = result.data as { me: null };
+    expect(data.me).toBeNull();
+  });
+
+  it('should return null when an invalid token is provided', async () => {
+    const result = await graphql({
+      schema,
+      source: print(meQuery),
+      contextValue: {
+        req: {
+          headers: {
+            cookie: 'token=invalid_token',
+          },
+        },
+      },
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toBeDefined();
+
+    const data = result.data as { me: null };
+    expect(data.me).toBeNull();
   });
 });
