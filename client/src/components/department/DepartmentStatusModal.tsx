@@ -25,12 +25,12 @@ export default function DepartmentStatusModal({ department, onClose }: Departmen
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center ">
-      <div className="bg-white p-4  border border-red-600 rounded-md">
+    <dialog open className="fixed inset-0 flex items-center justify-center">
+      <form method="dialog" className="bg-white p-4 border border-red-600 rounded-md">
         <h3 className="text-center mb-4">
           Etes-vous sur de vouloir changer le status de ce service : {department.label} ?
         </h3>
-        <div className="flex justify-center items-center p-2 mt-4">
+        <section className="flex justify-center items-center p-2 mt-4">
           <button
             onClick={onClose}
             type="button"
@@ -44,8 +44,8 @@ export default function DepartmentStatusModal({ department, onClose }: Departmen
           >
             OUI
           </button>
-        </div>
-      </div>
-    </div>
+        </section>
+      </form>
+    </dialog>
   );
 }
