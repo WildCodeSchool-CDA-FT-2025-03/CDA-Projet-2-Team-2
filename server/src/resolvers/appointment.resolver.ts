@@ -55,4 +55,24 @@ export class AppointmentResolver {
       order: { start_time: 'ASC' },
     });
   }
+
+  // 📌 Appointments by Doctor and Day
+  @Query(() => [Appointment])
+  async getAppointmentsByDoctorAndDate(
+    @Arg('doctorId') doctorId: number,
+    @Arg('date') date: string, // format YYYY-MM-DD
+  ): Promise<Appointment[]> {
+    const start = new Date(`${date}T00:00:00.000Z`);
+    const end = new Date(`${date}T23:59:59.999Z`);
+
+    return Appointment.find({
+      where: {
+        doctor: {
+          id: Equal(doctorId),
+        },
+        start_time: Between(start, end),
+      },
+      order: { start_time: 'ASC' },
+    });
+  }
 }
