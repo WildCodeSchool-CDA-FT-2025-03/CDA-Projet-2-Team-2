@@ -1,6 +1,9 @@
-import { useChangeDepartmentStatusMutation, useGetDepartementsQuery } from "@/types/graphql-generated";
+import {
+  useChangeDepartmentStatusMutation,
+  useGetDepartementsQuery,
+} from '@/types/graphql-generated';
 
-type ServiceStatusModalProps =  {
+type ServiceStatusModalProps = {
   onClose: () => void;
   department: {
     id: string;
@@ -8,18 +11,18 @@ type ServiceStatusModalProps =  {
     building: string;
     wing: string;
     level: string;
-  }
-}
+  };
+};
 
 export default function ServiceStatusModal({ department, onClose }: ServiceStatusModalProps) {
   const [updateStatus] = useChangeDepartmentStatusMutation();
-    const { refetch } = useGetDepartementsQuery();
-  
+  const { refetch } = useGetDepartementsQuery();
+
   const updateDepartmentStatus = async () => {
     await updateStatus({ variables: { changeDepartmentStatusId: department.id } });
-    refetch()
-    onClose()
-  }
+    refetch();
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center ">

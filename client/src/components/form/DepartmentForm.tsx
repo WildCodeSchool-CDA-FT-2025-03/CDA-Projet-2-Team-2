@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import InputForm from './InputForm';
 
 type DepartmentFormProps = {
@@ -23,7 +23,6 @@ export default function DepartmentForm({
   id,
   error,
 }: DepartmentFormProps) {
-
   return (
     <div className="container mx-auto p-4 gap-4 h-screen w-2/5">
       <div className="bg-white mx-auto p-4">
