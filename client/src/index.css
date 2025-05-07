@@ -11,12 +11,12 @@
   --color-blue-gray: #86a6c0;
   --color-accent: #fc666a;
   --color-accent-500: #e90b11;
-  --color-borderColor:#E2E8F0;
-  --color-bgModalColor:#fffdfa33;
-  --color-bgBodyColor:#fffdfa80;
-  --color-bgEdit:#FFA500;
-  --color-bgActiveStatus:#49AD7B;
-  --color-bgInActiveStatus:#FC666A;
+  --color-borderColor: #e2e8f0;
+  --color-bgModalColor: #fffdfa33;
+  --color-bgBodyColor: #fffdfa80;
+  --color-bgEdit: #ffa500;
+  --color-bgActiveStatus: #49ad7b;
+  --color-bgInActiveStatus: #fc666a;
   /* Couleurs dynamiques basées sur le type de rendez-vous */
   --followup-bar: #a8cbff;
   --treatment-bar: #bcd7ff;
