@@ -16,7 +16,8 @@
     "test": "jest",
     "migration:up": "typeorm-ts-node-commonjs migration:run --dataSource src/database/client.ts",
     "migration:down": "typeorm-ts-node-commonjs migration:revert --dataSource src/database/client.ts",
-    "migration:create": "typeorm-ts-node-commonjs migration:create src/database/migrations/data"
+    "migration:create": "typeorm-ts-node-commonjs migration:create src/database/migrations/data", 
+    "seed:test": "ts-node src/database/seedTest.ts"
   },
   "keywords": [],
   "author": "",
