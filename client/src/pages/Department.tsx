@@ -1,12 +1,17 @@
 import { useGetDepartementsQuery } from '@/types/graphql-generated';
 import { useState } from 'react';
 import CreateDepartmentModal from '../components/CreateDepartmentModal';
+import ServiceStatusModal from '@/components/ServiceStatusModal';
 
 export default function Department() {
-  const [showModal, setShowModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState<string | null>(null);
+  const [departmentId, setDepartmentId] = useState<string | null>(null);
   const { loading, error, data } = useGetDepartementsQuery();
+
   if (error) return <p>Error</p>;
   if (loading) return <p>Loading</p>;
+
   return (
     <>
       <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4 h-screen">
@@ -16,13 +21,19 @@ export default function Department() {
             <>
               <button
                 className="bg-[#133F63] text-white px-4 py-2 rounded-md"
-                onClick={() => setShowModal(true)}
+                onClick={() => setShowCreateModal(true)}
               >
                 Nouveau service
               </button>
-              {showModal && (
+              {showCreateModal && (
                 <div className="fixed inset-0 z-50 flex  justify-center">
-                  <CreateDepartmentModal onClose={() => setShowModal(false)} />
+                  <CreateDepartmentModal
+                    id={departmentId}
+                    onClose={() => {
+                      setShowCreateModal(false);
+                      setDepartmentId(null);
+                    }}
+                  />
                 </div>
               )}
             </>
@@ -59,13 +70,31 @@ export default function Department() {
                   {department.label} - Bat {department.building} - Aile {department.wing} -{' '}
                   {department.level}
                 </p>
-                <span
-                  className={`text-white px-5 py-1 rounded text-sm ${
-                    department.status === 'active' ? 'bg-[#49AD7B]' : 'bg-[#FC666A]'
-                  }`}
-                >
-                  {department.status}
-                </span>
+                <div>
+                  <button
+                    className={`text-white mr-3 px-5 py-1 rounded text-sm bg-[#FFA500]`}
+                    onClick={() => {
+                      setShowCreateModal(true);
+                      setDepartmentId(department.id);
+                    }}
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    className={`text-white px-5 py-1 rounded text-sm ${
+                      department.status === 'active' ? 'bg-[#49AD7B]' : 'bg-[#FC666A]'
+                    }`}
+                    onClick={() => setShowStatusModal(department.id)}
+                  >
+                    {department.status}
+                  </button>
+                </div>
+                {showStatusModal === department.id && (
+                  <ServiceStatusModal
+                    department={department}
+                    onClose={() => setShowStatusModal(null)}
+                  />
+                )}
               </div>
             ))}
           </div>
