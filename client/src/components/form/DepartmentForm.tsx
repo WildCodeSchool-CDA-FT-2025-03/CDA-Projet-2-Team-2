@@ -26,9 +26,7 @@ export default function DepartmentForm({
   return (
     <div className="container mx-auto p-4 gap-4 h-screen w-2/5">
       <div className="bg-white mx-auto p-4">
-        <h2 className="p-3 flex items-center">
-          {id ? 'Modifier le service' : 'Créer un nouveau service'}
-        </h2>
+        <h2 className="mb-3">{id ? 'Modifier le service' : 'Créer un nouveau service'}</h2>
         {error && (
           <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
             {error}
