@@ -20,13 +20,13 @@ export default function Department() {
             <h2 className="text-xl mr-5 m- font-semibold text-gray-700">Gestion des services</h2>
             <>
               <button
-                className="bg-[#133F63] text-white px-4 py-2 rounded-md"
+                className="bg-blue text-white px-4 py-2 rounded-md"
                 onClick={() => setShowCreateModal(true)}
               >
                 Nouveau service
               </button>
               {showCreateModal && (
-                <div className="fixed inset-0 z-50 flex  justify-center">
+                <div className="fixed inset-0 z-50 flex justify-center  items-center bg-bgModalColor backdrop-blur-xs">
                   <CreateDepartmentModal
                     id={departmentId}
                     onClose={() => {
@@ -38,33 +38,24 @@ export default function Department() {
               )}
             </>
           </div>
-          <div className="bg-[rgba(255,253,250,0.5)]  items-center mb-4">
-            <div className="bg-white m-4 w-2/5 relative border border-[rgba(255,253,250,0.5)] rounded-full">
+          <div className="bg-bgBodyColor  items-center mb-4">
+            <div className="bg-white m-4 w-2/5 relative border border-bgBodyColor rounded-full">
               <input
                 type="text"
                 id="dep"
-                className="w-full px-10 py-3 border border-[rgba(255,253,250,0.5)] rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-10 py-3 border border-bgBodyColor rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500"
                 placeholder="Chercher un service"
               />
-              <svg
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
+              <img
+                src="/public/search-icon.svg"
+                alt="search icon"
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+              />
             </div>
             {data?.getDepartements.map(department => (
               <div
                 key={department.id}
-                className="flex px-3 py-3 m-4 bg-white justify-between px-4 py-2"
+                className="flex px-3 py-3 m-4 bg-white border border-bgBodyColor rounded-sm justify-between px-4 py-2"
               >
                 <p>
                   {department.label} - Bat {department.building} - Aile {department.wing} -{' '}
@@ -72,7 +63,7 @@ export default function Department() {
                 </p>
                 <div>
                   <button
-                    className={`text-white mr-3 px-5 py-1 rounded text-sm bg-[#FFA500]`}
+                    className={`text-white mr-3 px-5 py-1 rounded text-sm bg-bgEdit`}
                     onClick={() => {
                       setShowCreateModal(true);
                       setDepartmentId(department.id);
@@ -82,7 +73,7 @@ export default function Department() {
                   </button>
                   <button
                     className={`text-white px-5 py-1 rounded text-sm ${
-                      department.status === 'active' ? 'bg-[#49AD7B]' : 'bg-[#FC666A]'
+                      department.status === 'active' ? 'bg-bgActiveStatus' : 'bg-bgInActiveStatus'
                     }`}
                     onClick={() => setShowStatusModal(department.id)}
                   >

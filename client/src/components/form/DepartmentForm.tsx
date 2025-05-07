@@ -24,8 +24,8 @@ export default function DepartmentForm({
   error,
 }: DepartmentFormProps) {
   return (
-    <div className="container mx-auto p-4 gap-4 h-screen w-2/5">
-      <div className="bg-white mx-auto p-4">
+    <section className="container mx-auto p-4 gap-4 h-screen w-2/5">
+      <article className="bg-white mx-auto p-4 border border-borderColor rounded-sm">
         <h2 className="mb-3">{id ? 'Modifier le service' : 'Créer un nouveau service'}</h2>
         {error && (
           <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
@@ -75,13 +75,13 @@ export default function DepartmentForm({
             </button>
             <button
               type="submit"
-              className="inline-flex items-center p-3 rounded-md bg-[#133F63] px-4 text-sm font-medium text-white shadow-sm hover:bg-[#133F63] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="inline-flex items-center p-3 rounded-md bg-blue px-4 text-sm font-medium text-white shadow-sm hover:bg-blue focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               {id ? 'Mettre à jour' : 'Enregistrer'}
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </article>
+    </section>
   );
 }
