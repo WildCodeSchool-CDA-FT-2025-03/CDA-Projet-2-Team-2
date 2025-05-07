@@ -1,7 +1,7 @@
 import { useGetDepartementsQuery } from '@/types/graphql-generated';
 import { useState } from 'react';
 import CreateDepartmentModal from '../components/CreateDepartmentModal';
-import ServiceStatusModal from '@/components/ServiceStatusModal';
+import DepartmentStatusModal from '@/components/DepartmentStatusModal';
 
 export default function Department() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -90,7 +90,7 @@ export default function Department() {
                   </button>
                 </div>
                 {showStatusModal === department.id && (
-                  <ServiceStatusModal
+                  <DepartmentStatusModal
                     department={department}
                     onClose={() => setShowStatusModal(null)}
                   />
