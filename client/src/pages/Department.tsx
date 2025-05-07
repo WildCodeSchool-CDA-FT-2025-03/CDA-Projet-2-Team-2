@@ -8,10 +8,14 @@ export default function Department() {
   const [showStatusModal, setShowStatusModal] = useState<string | null>(null);
   const [departmentId, setDepartmentId] = useState<string | null>(null);
   const { loading, error, data } = useGetDepartementsQuery();
+  const [searchTerm, setSearchTerm] = useState('');
 
   if (error) return <p>Error</p>;
   if (loading) return <p>Loading</p>;
 
+  const filteredDepartments = data?.getDepartements.filter(department =>
+    department.label.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
   return (
     <>
       <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4 h-screen">
@@ -45,6 +49,7 @@ export default function Department() {
                 id="dep"
                 className="w-full px-10 py-3 border border-borderColor rounded-full focus:outline-none focus:ring-1 focus:ring-borderColor"
                 placeholder="Chercher un service"
+                onChange={e => setSearchTerm(e.target.value)}
               />
               <img
                 src="/public/search-icon.svg"
@@ -52,7 +57,7 @@ export default function Department() {
                 className="absolute right-3 top-1/2 -translate-y-1/2"
               />
             </div>
-            {data?.getDepartements.map(department => (
+            {filteredDepartments?.map(department => (
               <div
                 key={department.id}
                 className="flex px-3 py-3 m-4 bg-white border border-borderColor rounded-sm justify-between px-4 py-2"
