@@ -1,5 +1,6 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
+import type { LogMetadata } from '../types/log.type';
 
 @ObjectType()
 @Entity('log')
@@ -12,9 +13,9 @@ export class Log extends BaseEntity {
   @Column({ length: 250 })
   titre: string;
 
-  @Field(() => String)
+  @Field(() => Object)
   @Column({ type: 'jsonb', nullable: true })
-  metadata: Record<string, string | number | boolean>;
+  metadata: LogMetadata;
 
   @Field()
   @Column({
