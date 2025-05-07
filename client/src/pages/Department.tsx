@@ -63,7 +63,7 @@ export default function Department() {
                 </p>
                 <div>
                   <button
-                    className={`text-white mr-3 px-5 py-1 rounded text-sm bg-bgEdit`}
+                    className={`text-white mr-3 px-5 py-2 rounded text-sm bg-bgEdit w-28`}
                     onClick={() => {
                       setShowCreateModal(true);
                       setDepartmentId(department.id);
@@ -72,7 +72,7 @@ export default function Department() {
                     Modifier
                   </button>
                   <button
-                    className={`text-white px-5 py-1 rounded text-sm ${
+                    className={`text-white px-5 py-2 rounded text-sm w-28 ${
                       department.status === 'active' ? 'bg-bgActiveStatus' : 'bg-bgInActiveStatus'
                     }`}
                     onClick={() => setShowStatusModal(department.id)}
