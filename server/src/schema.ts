@@ -6,6 +6,7 @@ import { DepartementResolver } from './resolvers/departement.resolver';
 import { CityResolver } from './resolvers/city.resolver';
 import { LogResolver } from './resolvers/log.resolver';
 import { getUserFromToken } from './utils/jwt.utils';
+import { AppointmentResolver } from './resolvers/appointment.resolver';
 import { JSONScalar } from './scalar/json.scalar';
 import { UserResolver } from './resolvers/user.resolver';
 
@@ -16,6 +17,7 @@ export default async function createSchema() {
       DepartementResolver,
       PatientResolver,
       CityResolver,
+      AppointmentResolver,
       LogResolver,
       UserResolver,
     ],
