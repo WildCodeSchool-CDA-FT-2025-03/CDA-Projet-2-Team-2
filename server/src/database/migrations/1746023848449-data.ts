@@ -100,9 +100,7 @@ export class Data1746023848449 implements MigrationInterface {
           patient_id,
           created_by,
           appointment_type_id,
-          departement_id,
-          "createdAt",
-          "updatedAt"
+          departement_id
         )
         SELECT
           CAST(m.date AS DATE) + INTERVAL '1 year' + CAST(m.rdv_début AS TIME),
