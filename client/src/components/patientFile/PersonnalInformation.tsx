@@ -14,7 +14,7 @@ type inputPersonnal = {
 
 export default function PersonnalInformation({ patientNum }: inputPersonnal) {
   const [savePatient, setPersonnalInfo] = useState<Patient | null>(null);
-  const [msgUpdate, setMsgUpdate] = useState<string>('');
+  const [msgUpdate, setMsgUpdate] = useState<string[]>([]);
   const GetPatientByIdQuery = useGetPatientByIdQuery({
     variables: { patientId: patientNum },
   });
@@ -58,10 +58,28 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
 
   const handleSubmitInfo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMsgUpdate('');
+    setMsgUpdate([]);
     if (!savePatient) return;
+    const errorMsg = [];
+    if (savePatient.social_number.match(/^[\d ]*$/) === null) {
+      errorMsg.push('Le numéro de sécurité social ne doit contenir que des chiffres');
+    }
+    if (savePatient.phone_number.match(/^[\d+ .]*$/) === null) {
+      errorMsg.push('Le numéro de téléphone ne doit contenir que des chiffres');
+    }
+    if (savePatient.city.postal_code.match(/^[\d]*$/) === null) {
+      errorMsg.push('Le code postal ne doit contenir que des chiffres');
+    }
+    if (savePatient.birth_date.match(/^[\d]{4}-[\d]{2}-[\d]{2}/) === null) {
+      errorMsg.push('La date de naissance doit être au format YYYY-MM-DD');
+    }
 
-    await UpdatePatientMutation({
+    if (errorMsg.length > 0) {
+      setMsgUpdate(errorMsg);
+      return;
+    }
+
+    const { data, errors } = await UpdatePatientMutation({
       variables: {
         patientData: {
           id: savePatient.id,
@@ -83,8 +101,13 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
         },
       },
     });
-    GetPatientByIdQuery.refetch();
-    setMsgUpdate('Informations modifiées');
+
+    if (data) {
+      setMsgUpdate(['Informations modifiées avec succès']);
+    }
+    if (errors) {
+      setMsgUpdate(['Erreur lors de la modification des informations']);
+    }
   };
 
   if (GetPatientByIdQuery.loading) return <p>Loading...</p>;
@@ -99,6 +122,7 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           name="lastname"
           placeholder="Nom"
           handle={HandleInfoPersonnel}
+          required={true}
           value={(savePatient && savePatient.lastname) || ''}
         />
         <InputForm
@@ -106,6 +130,7 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           name="firstname"
           placeholder="Prénom"
           handle={HandleInfoPersonnel}
+          required={true}
           value={(savePatient && savePatient.firstname) || ''}
         />
         <InputForm
@@ -113,6 +138,7 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           name="phone_number"
           placeholder="Téléphone"
           handle={HandleInfoPersonnel}
+          required={true}
           value={(savePatient && savePatient.phone_number) || ''}
         />
         <InputForm
@@ -128,6 +154,7 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           name="social_number"
           placeholder="Numéro de sécurité sociale"
           handle={HandleInfoPersonnel}
+          required={true}
           value={(savePatient && savePatient.social_number) || ''}
         />
         <InputForm
@@ -153,6 +180,7 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           name="birth_date"
           placeholder="Date de naissance"
           handle={HandleInfoPersonnel}
+          required={true}
           value={(savePatient && savePatient.birth_date) || ''}
         />
         <InputForm
@@ -160,6 +188,7 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           name="adress"
           placeholder="Adresse"
           handle={HandleInfoPersonnel}
+          required={true}
           value={(savePatient && savePatient.adress) || ''}
         />
         <InputFormCP
@@ -181,7 +210,17 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           handle={HandleInfoPersonnel}
           value={(savePatient && savePatient.referring_physician) || ''}
         />
-        <div className="text-accent-500 text-center">{msgUpdate}</div>
+        <p>*Champs obligatoires</p>
+        <div className="text-accent-500 text-center">
+          {
+            /* eslint-disable react/no-array-index-key */
+            msgUpdate.map((msg, index) => (
+              <p key={index} className="text-red-500">
+                {msg}
+              </p>
+            ))
+          }
+        </div>
         <button type="submit" className="cta block mx-auto">
           Modifier
         </button>
