@@ -9,6 +9,7 @@ import { getUserFromToken } from './utils/jwt.utils';
 export default async function createSchema() {
   return await buildSchema({
     resolvers: [AuthResolver, DepartementResolver, PatientResolver, CityResolver],
+    validate: true,
     authChecker: async ({ context }, roles) => {
       const user = await getUserFromToken(context.req.headers.cookie);
 
