@@ -21,6 +21,7 @@ export default async function createSchema() {
       LogResolver,
       UserResolver,
     ],
+    validate: true,
     authChecker: async ({ context }, roles) => {
       const user = await getUserFromToken(context.req.headers.cookie);
 
