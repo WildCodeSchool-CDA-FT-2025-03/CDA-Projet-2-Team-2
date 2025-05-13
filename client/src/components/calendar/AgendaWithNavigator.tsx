@@ -1,17 +1,22 @@
 import { useState } from 'react';
 import { DayPilot, DayPilotCalendar, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
-import ressourcesData from '@/fakeData/ressourcesData.json';
-import { Resource } from '@/types/resource.type';
-import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import useAppointmentsData from '@/hooks/useAppointmentsData';
+import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import PaginationControls from './PaginationControls';
+import useResources from '@/hooks/useResources';
 
-function AgendaWithNavigator() {
+export default function AgendaWithNavigator() {
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
-  const [resources] = useState<Resource[]>(ressourcesData);
+  const [currentPage, setCurrentPage] = useState(0);
+  const { resources, loading, error } = useResources('Cardiologie');
   const appointments = useAppointmentsData();
   const pageSize = useResponsiveAgendaPageSize();
-  const [currentPage, setCurrentPage] = useState(0);
+
+  if (loading) return <p className="p-4 text-center">Chargement...</p>;
+  if (error)
+    return (
+      <p className="p-4 text-center text-red-500">Erreur lors du chargement des ressources.</p>
+    );
 
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
@@ -19,7 +24,7 @@ function AgendaWithNavigator() {
     <div
       className="py-6 px-6 md:px-24"
       role="region"
-      aria-label="Agenda de tous les professionnnels du service"
+      aria-label="Agenda de tous les professionnels du service"
     >
       {/* Pagination desktop */}
       <div
@@ -58,7 +63,7 @@ function AgendaWithNavigator() {
         </div>
 
         {/* Agenda */}
-        <article className="flex-1" aria-label="Agenda de tous les medecins et leurs rendez-vous">
+        <article className="flex-1" aria-label="Agenda de tous les médecins et leurs rendez-vous">
           <DayPilotCalendar
             viewType="Resources"
             startDate={startDate}
@@ -96,5 +101,3 @@ function AgendaWithNavigator() {
     </div>
   );
 }
-
-export default AgendaWithNavigator;

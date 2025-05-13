@@ -13,6 +13,20 @@ export class UserResolver {
     return await User.find({ relations: ['departement'] });
   }
 
+  @Query(() => [User])
+  async getDoctorsByDepartement(@Arg('label') label: string): Promise<User[]> {
+    return await User.find({
+      relations: ['departement'],
+      where: {
+        role: UserRole.DOCTOR,
+        status: UserStatus.ACTIVE,
+        departement: {
+          label,
+        },
+      },
+    });
+  }
+
   @Mutation(() => User)
   @Authorized([UserRole.ADMIN])
   async createUser(@Arg('input') input: CreateUserInput): Promise<User> {
