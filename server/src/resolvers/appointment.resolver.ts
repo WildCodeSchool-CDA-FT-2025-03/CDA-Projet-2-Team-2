@@ -1,6 +1,6 @@
 import { Resolver, Query, Arg } from 'type-graphql';
 import { Appointment } from '../entities/appointment.entity';
-import { Between, Equal } from 'typeorm';
+import { Between, Equal, MoreThan, LessThan } from 'typeorm';
 
 @Resolver()
 export class AppointmentResolver {
@@ -34,6 +34,37 @@ export class AppointmentResolver {
         },
       },
       order: { start_time: 'ASC' },
+    });
+  }
+
+  // 📌 Appointments by Doctor
+  @Query(() => [Appointment])
+  async getNextAppointmentsByPatient(@Arg('patientId') patientId: number): Promise<Appointment[]> {
+    return Appointment.find({
+      where: {
+        patient: {
+          id: patientId,
+        },
+        start_time: MoreThan(new Date()),
+      },
+      order: { start_time: 'ASC' },
+      relations: ['doctor', 'doctor.departement'],
+    });
+  }
+
+  // 📌 Appointments by Doctor
+  @Query(() => [Appointment])
+  async getLastAppointmentsByPatient(@Arg('patientId') patientId: number): Promise<Appointment[]> {
+    return Appointment.find({
+      where: {
+        patient: {
+          id: patientId,
+        },
+        start_time: LessThan(new Date()),
+      },
+      order: { start_time: 'DESC' },
+      relations: ['doctor', 'doctor.departement'],
+      take: 5,
     });
   }
 
