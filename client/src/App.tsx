@@ -10,6 +10,7 @@ import Department from './pages/Department';
 
 import PatientFileSecretary from './pages/PatientFileSecretary';
 import SecretaryDashboard from './pages/secretaryDashboard/SecretaryDashboard';
+import User from './pages/User';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
           {
             path: '/department',
             element: <Department />,
+          },
+          {
+            path: '/users',
+            element: <User />,
           },
           {
             path: '/secretary-dashboard',
