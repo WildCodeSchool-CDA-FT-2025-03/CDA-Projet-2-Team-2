@@ -110,9 +110,7 @@ export class Data1746023848449 implements MigrationInterface {
           p.id,
           u.id,
           at.id,
-          d.id,
-          NOW(),
-          NOW()
+          d.id
         FROM mytable m
         INNER JOIN "user" u ON u.email = m.email_medecin
         INNER JOIN patient p ON p.social_number = m.social_number
