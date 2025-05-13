@@ -84,6 +84,12 @@ export class Data1746023848449 implements MigrationInterface {
         INNER JOIN "user" u ON u.firstname = substr(m.nom_medecin,1,POSITION(' ' IN m.nom_medecin)) AND u.lastname = substr(m.nom_medecin,POSITION(' ' IN m.nom_medecin))
         GROUP BY u.id,m."jours_ouvrés",heure_debut ,heure_fin;`,
     );
+
+    await queryRunner.query(`
+      INSERT INTO "appointement-type"(reason)
+      SELECT DISTINCT motif_consultation FROM mytable
+      WHERE motif_consultation IS NOT NULL AND motif_consultation <> '';
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
