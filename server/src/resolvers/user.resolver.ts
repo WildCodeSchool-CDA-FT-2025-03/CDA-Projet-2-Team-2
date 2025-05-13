@@ -13,31 +13,33 @@ export class UserResolver {
     return await User.find({ relations: ['departement'] });
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => User)
   @Authorized([UserRole.ADMIN])
-  async createUser(@Arg('data') data: CreateUserInput): Promise<boolean> {
-    const departement = await Departement.findOneBy({ id: data.departementId });
-    const userExist = await User.findOneBy({ email: data.email });
+  async createUser(@Arg('input') input: CreateUserInput): Promise<User> {
+    const departement = await Departement.findOneBy({ id: input.departementId });
+    const userExist = await User.findOneBy({ email: input.email });
 
     if (userExist) {
-      throw new GraphQLError("Échec de la création de l'utilisateur", {
+      throw new GraphQLError('User with this email already exists', {
         extensions: {
           code: 'USER_CREATION_FAILED',
-          originalError: "l'utilisateur existe déjà",
+          originalError: "L'utilisateur existe déjà",
         },
       });
     }
-    const hashedPassword = await argon2.hash(data.password);
+    const hashedPassword = await argon2.hash(input.password);
 
     const newUser = new User();
-    newUser.email = data.email;
+    newUser.email = input.email;
     newUser.password = hashedPassword;
-    newUser.firstname = data.firstname;
-    newUser.lastname = data.lastname;
-    newUser.role = data.role as UserRole;
-    newUser.status = data.status as UserStatus;
+    newUser.firstname = input.firstname;
+    newUser.lastname = input.lastname;
+    newUser.role = input.role as UserRole;
+    newUser.status = input.status as UserStatus;
     if (departement) {
       newUser.departement = departement;
+    } else {
+      throw new GraphQLError('Department not found');
     }
 
     await newUser.save();
@@ -46,6 +48,6 @@ export class UserResolver {
       email: newUser.email,
       role: newUser.role,
     });
-    return true;
+    return newUser;
   }
 }
