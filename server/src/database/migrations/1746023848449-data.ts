@@ -90,6 +90,37 @@ export class Data1746023848449 implements MigrationInterface {
       SELECT DISTINCT motif_consultation FROM mytable
       WHERE motif_consultation IS NOT NULL AND motif_consultation <> '';
     `);
+
+    await queryRunner.query(`
+      INSERT INTO appointment (
+          start_time,
+          duration,
+          status,
+          user_id,
+          patient_id,
+          created_by,
+          appointment_type_id,
+          departement_id,
+          "createdAt",
+          "updatedAt"
+        )
+        SELECT
+          CAST(m.date AS DATE) + INTERVAL '1 year' + CAST(m.rdv_début AS TIME),
+          m.durée,
+          'confirmed',
+          u.id,
+          p.id,
+          u.id,
+          at.id,
+          d.id,
+          NOW(),
+          NOW()
+        FROM mytable m
+        INNER JOIN "user" u ON u.email = m.email_medecin
+        INNER JOIN patient p ON p.social_number = m.social_number
+        INNER JOIN "appointement-type" at ON at.reason = m.motif_consultation
+        INNER JOIN departement d ON d.label = m.service;
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
