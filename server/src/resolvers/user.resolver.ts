@@ -16,7 +16,7 @@ export class UserResolver {
   @Mutation(() => User)
   @Authorized([UserRole.ADMIN])
   async createUser(@Arg('input') input: CreateUserInput): Promise<User> {
-    const departement = await Departement.findOneBy({ id: input.departementId });
+    const departement = await Departement.findOneBy({ id: +input.departementId });
     const userExist = await User.findOneBy({ email: input.email });
 
     if (userExist) {

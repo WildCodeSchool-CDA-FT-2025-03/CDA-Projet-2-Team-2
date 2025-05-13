@@ -1,13 +1,11 @@
-
 import { useEffect, useState } from 'react';
 import UserForm from './UserForm';
-
-type CreateDepartmentType = {
-  label: string;
-  building: string;
-  wing: string;
-  level: string;
-};
+import {
+  useGetAllUsersQuery,
+  CreateUserInput,
+  useCreateUserMutation,
+} from '@/types/graphql-generated';
+import { ApolloError } from '@apollo/client';
 
 type CreateUserModalProps = {
   id?: string | null;
@@ -15,30 +13,41 @@ type CreateUserModalProps = {
 };
 
 export default function CreateUserModal({ id, onClose }: CreateUserModalProps) {
+  const { data, refetch } = useGetAllUsersQuery();
   const [error, setError] = useState('');
-  const [formData, setFormData] = useState<CreateDepartmentType>({
-    label: '',
-    building: '',
-    wing: '',
-    level: ''
+  const [createUser] = useCreateUserMutation();
+
+  const [formData, setFormData] = useState<CreateUserInput>({
+    lastname: '',
+    firstname: '',
+    email: '',
+    password: '',
+    role: '',
+    status: '',
+    departementId: 0,
   });
-  const data = [].
 
   useEffect(() => {
     if (id) {
-      const user = data?.find(user => user.id === id);
+      const user = data?.getAllUsers?.find(user => user.id === id);
       if (user) {
         setFormData({
-          label: user.label,
-          building: user.building,
-          wing: user.wing,
-          level: user.level,
+          lastname: user.lastname,
+          firstname: user.firstname,
+          email: user.email,
+          password: '',
+          role: user.role,
+          status: user.status,
+          departementId: Number(user.departement?.id),
         });
       }
     }
   }, [id, data]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
+    field: string,
+  ) => {
     setFormData({ ...formData, [field]: e.target.value });
   };
 
@@ -46,7 +55,7 @@ export default function CreateUserModal({ id, onClose }: CreateUserModalProps) {
     e.preventDefault();
     setError('');
 
-    if (Object.values(formData).some(value => value.trim() === '')) {
+    if (Object.values(formData).some(value => typeof value === 'string' && value.trim() === '')) {
       setError('Tous les champs doivent être remplis.');
       return;
     }
@@ -55,15 +64,20 @@ export default function CreateUserModal({ id, onClose }: CreateUserModalProps) {
       if (id) {
         // updateUser
       } else {
-        // createUser
+        formData.departementId = +formData.departementId;
+        console.log(formData);
+        await createUser({ variables: { input: formData } });
       }
-      // await refetch();
+      await refetch();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : `Une erreur inattendue s'est produite.`);
+      setError(
+        err instanceof ApolloError
+          ? String(err.graphQLErrors[0].extensions?.originalError)
+          : `Une erreur inattendue s'est produite.`,
+      );
     }
   };
-
   return (
     <UserForm
       handleSubmit={handleSubmit}

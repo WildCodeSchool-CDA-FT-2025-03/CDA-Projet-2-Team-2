@@ -1,18 +1,18 @@
 import React from 'react';
 import InputForm from '../form/InputForm';
+import SelectForm from '../form/SelectForm';
+import { CreateUserInput, useGetDepartementsQuery } from '@/types/graphql-generated';
 
-type DepartmentFormProps = {
+type UserFormProps = {
   onClose: () => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>, field: string) => void;
+  handleInputChange: (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
+    field: string,
+  ) => void;
   id: string | null;
   error: string;
-  formData: {
-    label: string;
-    building: string;
-    wing: string;
-    level: string;
-  };
+  formData: CreateUserInput;
 };
 
 export default function UserForm({
@@ -22,11 +22,24 @@ export default function UserForm({
   formData,
   id,
   error,
-}: DepartmentFormProps) {
+}: UserFormProps) {
+  const { data } = useGetDepartementsQuery();
+  const userRole = [
+    { key: 'admin', value: 'Admin' },
+    { key: 'doctor', value: 'Doctor' },
+    { key: 'agent', value: 'Agent' },
+    { key: 'secretary', value: 'Secretary' },
+  ];
+  const userStatus = [
+    { key: 'active', value: 'Active' },
+    { key: 'inactive', value: 'Inactive' },
+    { key: 'pending', value: 'Pending' },
+  ];
+
   return (
     <section className="container mx-auto p-4 gap-4 h-screen w-2/5">
       <article className="bg-white mx-auto p-4 border border-borderColor rounded-sm">
-        <h2 className="mb-3">{id ? 'Modifier le service' : 'Créer un nouveau service'}</h2>
+        <h2 className="mb-3">{id ? 'Modifier un utilisateur' : 'Créer un nouvel utilisateur'}</h2>
         {error && (
           <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
             {error}
@@ -34,36 +47,62 @@ export default function UserForm({
         )}
         <form onSubmit={handleSubmit}>
           <InputForm
-            title="Denomination"
-            name="label"
+            title="Nom"
+            name="lastname"
             type="text"
-            value={formData.label}
-            placeholder="Denomination"
-            handle={e => handleInputChange(e, 'label')}
+            value={formData.lastname}
+            placeholder="Nom"
+            handle={e => handleInputChange(e, 'lastname')}
           />
           <InputForm
-            title="Batiment"
-            name="building"
+            title="Prénom"
+            name="firstname"
             type="text"
-            value={formData.building}
-            placeholder="Batiment"
-            handle={e => handleInputChange(e, 'building')}
+            value={formData.firstname}
+            placeholder="Prénom"
+            handle={e => handleInputChange(e, 'firstname')}
           />
           <InputForm
-            title="Aile"
-            name="wing"
-            type="text"
-            value={formData.wing}
-            placeholder="Aile"
-            handle={e => handleInputChange(e, 'wing')}
+            title="Email"
+            name="Email"
+            type="email"
+            value={formData.email}
+            placeholder="Email"
+            handle={e => handleInputChange(e, 'email')}
           />
           <InputForm
-            title="Niveau"
-            name="level"
-            type="text"
-            value={formData.level}
-            placeholder="Niveau"
-            handle={e => handleInputChange(e, 'level')}
+            title="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            placeholder="Password"
+            handle={e => handleInputChange(e, 'password')}
+          />
+          <SelectForm
+            title="Service"
+            name="departementId"
+            option={
+              data?.getDepartements?.map(department => ({
+                key: department.id,
+                value: department.label,
+              })) || []
+            }
+            value={formData.departementId?.toString()}
+            handle={e => handleInputChange(e, 'departementId')}
+          />
+          <SelectForm
+            title="Role"
+            name="role"
+            option={userRole}
+            value={formData.role ?? ''}
+            handle={e => handleInputChange(e, 'role')}
+          />
+          <SelectForm
+            title="Status"
+            name="status"
+            option={userStatus}
+            value={formData.status ?? ''}
+            handle={e => handleInputChange(e, 'status')}
           />
           <div className="flex justify-end p-2 mt-4">
             <button
