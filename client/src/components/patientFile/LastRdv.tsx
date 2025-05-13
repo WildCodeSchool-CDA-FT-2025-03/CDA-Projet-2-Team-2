@@ -1,18 +1,7 @@
 import ModuleList from '../ModuleList';
 import inputPersonnal from '@/types/numPatient.type';
 import { useGetLastAppointmentsByPatientQuery } from '@/types/graphql-generated';
-
-type Rdv = {
-  id: string;
-  doctor: {
-    departement: {
-      label: string;
-    };
-    firstname: string;
-    lastname: string;
-  };
-  start_time: string;
-};
+import { Rdv } from '@/types/appointement.type';
 
 let dataLastRdv: Rdv[] = [];
 
