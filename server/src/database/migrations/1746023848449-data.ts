@@ -124,6 +124,12 @@ export class Data1746023848449 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DELETE  FROM departement;`);
+    await queryRunner.query(`DELETE FROM appointment;`);
+    await queryRunner.query(`DELETE FROM planning;`);
+    await queryRunner.query(`DELETE FROM patient;`);
+    await queryRunner.query(`DELETE FROM "user";`);
+    await queryRunner.query(`DELETE FROM "appointement-type";`);
+    await queryRunner.query(`DELETE FROM departement;`);
+    await queryRunner.query(`DELETE FROM city;`);
   }
 }
