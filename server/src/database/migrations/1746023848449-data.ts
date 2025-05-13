@@ -84,9 +84,48 @@ export class Data1746023848449 implements MigrationInterface {
         INNER JOIN "user" u ON u.firstname = substr(m.nom_medecin,1,POSITION(' ' IN m.nom_medecin)) AND u.lastname = substr(m.nom_medecin,POSITION(' ' IN m.nom_medecin))
         GROUP BY u.id,m."jours_ouvrés",heure_debut ,heure_fin;`,
     );
+
+    await queryRunner.query(`
+      INSERT INTO "appointement-type"(reason)
+      SELECT DISTINCT motif_consultation FROM mytable
+      WHERE motif_consultation IS NOT NULL AND motif_consultation <> '';
+    `);
+
+    await queryRunner.query(`
+      INSERT INTO appointment (
+          start_time,
+          duration,
+          status,
+          user_id,
+          patient_id,
+          created_by,
+          appointment_type_id,
+          departement_id
+        )
+        SELECT
+          CAST(m.date AS DATE) + INTERVAL '1 year' + CAST(m.rdv_début AS TIME),
+          m.durée,
+          'confirmed',
+          u.id,
+          p.id,
+          u.id,
+          at.id,
+          d.id
+        FROM mytable m
+        INNER JOIN "user" u ON u.email = m.email_medecin
+        INNER JOIN patient p ON p.social_number = m.social_number
+        INNER JOIN "appointement-type" at ON at.reason = m.motif_consultation
+        INNER JOIN departement d ON d.label = m.service;
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DELETE  FROM departement;`);
+    await queryRunner.query(`DELETE FROM appointment;`);
+    await queryRunner.query(`DELETE FROM planning;`);
+    await queryRunner.query(`DELETE FROM patient;`);
+    await queryRunner.query(`DELETE FROM "user";`);
+    await queryRunner.query(`DELETE FROM "appointement-type";`);
+    await queryRunner.query(`DELETE FROM departement;`);
+    await queryRunner.query(`DELETE FROM city;`);
   }
 }
