@@ -65,7 +65,6 @@ export default function CreateUserModal({ id, onClose }: CreateUserModalProps) {
         // updateUser
       } else {
         formData.departementId = +formData.departementId;
-        console.log(formData);
         await createUser({ variables: { input: formData } });
       }
       await refetch();
