@@ -161,3 +161,7 @@
 .calendar_default_event {
   width: 80% !important;
 }
+
+button {
+  cursor: pointer;
+}
