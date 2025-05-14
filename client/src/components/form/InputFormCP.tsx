@@ -12,6 +12,7 @@ function InputFormCP({ handle, value, valuecity }: inputFormProps) {
     resultList.classList.toggle('hidden');
     const input = e.currentTarget as HTMLInputElement;
     const newInput = document.getElementById('new_postal_code') as HTMLInputElement;
+    newInput.focus();
     if (input && newInput) {
       newInput.value = input.value;
     }

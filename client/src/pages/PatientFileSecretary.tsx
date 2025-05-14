@@ -1,7 +1,7 @@
 import AdminDocs from './patientFile/AdminDocs';
-import FollowBy from './patientFile/FollowBy';
-import LastRdv from './patientFile/LastRdv';
-import NextRdv from './patientFile/NextRdv';
+import FollowBy from '../components/patientFile/FollowBy';
+import LastRdv from '../components/patientFile/LastRdv';
+import NextRdv from '../components/patientFile/NextRdv';
 import PersonnalInformation from '../components/patientFile/PersonnalInformation';
 import { useParams } from 'react-router-dom';
 
@@ -22,13 +22,13 @@ export default function PatientFileSecretary() {
 
       {/* Colonne 2 */}
       <section className="flex flex-col gap-6 flex-1 min-w-[500px] max-w-[700px]">
-        <NextRdv />
+        <NextRdv patientNum={parseInt(id)} />
         <AdminDocs />
       </section>
 
       {/* Colonne 3 */}
       <section className="flex flex-col gap-6 flex-1 min-w-[400px] max-w-[700px]">
-        <LastRdv />
+        <LastRdv patientNum={parseInt(id)} />
         <FollowBy />
       </section>
     </div>

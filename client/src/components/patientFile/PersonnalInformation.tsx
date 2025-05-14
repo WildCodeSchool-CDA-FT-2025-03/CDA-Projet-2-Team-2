@@ -7,10 +7,7 @@ import InputForm from '@/components/form/InputForm';
 import InputFormCP from '@/components/form/InputFormCP';
 import { useState, useEffect } from 'react';
 import SelectForm from '@/components/form/SelectForm';
-
-type inputPersonnal = {
-  patientNum: number;
-};
+import inputPersonnal from '@/types/numPatient.type';
 
 export default function PersonnalInformation({ patientNum }: inputPersonnal) {
   const [savePatient, setPersonnalInfo] = useState<Patient | null>(null);
