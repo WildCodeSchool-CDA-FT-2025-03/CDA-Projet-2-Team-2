@@ -20,11 +20,11 @@ export default function Pagination({
 
   return (
     <div className="flex items-center justify-between px-6 py-4 border-t border-borderColor">
-      <div className="text-sm text-gray-600">
+      <section className="text-sm text-gray-600">
         {startItem}-{endItem} sur {totalItems} logs
-      </div>
+      </section>
 
-      <div className="flex items-center gap-2">
+      <section className="flex items-center gap-2">
         <button
           onClick={() => onPageChange(0)}
           disabled={currentPage === 0}
@@ -60,7 +60,7 @@ export default function Pagination({
         >
           <ChevronsRight size={16} />
         </button>
-      </div>
+      </section>
     </div>
   );
 }

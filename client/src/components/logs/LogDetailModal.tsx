@@ -18,25 +18,27 @@ export default function LogDetailModal({ logId, isOpen, onClose }: LogDetailModa
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden">
-        <div className="p-6 border-b border-borderColor flex items-center justify-between">
+        <header className="p-6 border-b border-borderColor flex items-center justify-between">
           <h2 className="text-xl font-semibold">Détails du log</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl">
             <X size={24} />
           </button>
-        </div>
+        </header>
 
         {loading && (
-          <div className="p-8 text-center">
+          <section className="p-8 text-center">
             <div className="w-8 h-8 border-t-2 border-blue rounded-full animate-spin mx-auto"></div>
-          </div>
+          </section>
         )}
 
         {error && (
-          <div className="p-8 text-center text-red-600">Erreur lors du chargement du log</div>
+          <section className="p-8 text-center text-red-600">
+            Erreur lors du chargement du log
+          </section>
         )}
 
         {data?.getLogById && (
-          <div className="p-6 overflow-y-auto">
+          <section className="p-6 overflow-y-auto">
             <div className="space-y-4">
               <div>
                 <label htmlFor="titre" className="block text-sm font-medium text-gray-600 mb-1">
@@ -67,7 +69,7 @@ export default function LogDetailModal({ logId, isOpen, onClose }: LogDetailModa
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         )}
       </div>
     </div>
