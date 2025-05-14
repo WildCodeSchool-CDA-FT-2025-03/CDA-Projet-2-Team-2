@@ -11,6 +11,7 @@ import Department from './pages/Department';
 import PatientFileSecretary from './pages/PatientFileSecretary';
 import SecretaryDashboard from './pages/secretaryDashboard/SecretaryDashboard';
 import User from './pages/User';
+import Logs from './pages/Logs';
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
           {
             path: '/patient-secretary/:id',
             element: <PatientFileSecretary />,
+          },
+          {
+            path: '/admin/logs',
+            element: <Logs />,
           },
         ],
       },
