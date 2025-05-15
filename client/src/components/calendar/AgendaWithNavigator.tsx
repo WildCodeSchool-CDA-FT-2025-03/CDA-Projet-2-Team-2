@@ -8,28 +8,15 @@ import useResources from '@/hooks/useResources';
 export default function AgendaWithNavigator() {
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [currentPage, setCurrentPage] = useState(0);
-  const { resources, loading, error } = useResources('Cardiologie');
+  const { resources } = useResources('Cardiologie');
   const pageSize = useResponsiveAgendaPageSize();
 
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   const doctorIds = useMemo(() => visibleResources.map(r => Number(r.id)), [visibleResources]);
   const selectedDate = useMemo(() => startDate.toDate(), [startDate]);
 
-  // ✅ Appelle des rdv multi-médecins à la date sélectionnée
-  const {
-    appointments,
-    loading: loadingAppointments,
-    error: errorAppointments,
-  } = useAppointmentsData(doctorIds, selectedDate);
-
-  // 🛑 Gestion des états
-  if (loading) return <p className="p-4 text-center">Chargement des ressources...</p>;
-  if (error)
-    return (
-      <p className="p-4 text-center text-red-500">Erreur lors du chargement des ressources.</p>
-    );
-  if (loadingAppointments) return <p>Chargement des rendez-vous...</p>;
-  if (errorAppointments) return <p>Erreur lors du chargement des rendez-vous.</p>;
+  // 📞 Call for multi-doctor appointments on the selected date
+  const { appointments } = useAppointmentsData(doctorIds, selectedDate);
 
   return (
     <div
@@ -58,6 +45,7 @@ export default function AgendaWithNavigator() {
             showMonths={1}
             skipMonths={1}
             locale="fr-fr"
+            selectionDay={startDate}
             onTimeRangeSelected={args => setStartDate(args.day)}
           />
         </aside>

@@ -1,17 +1,19 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ApolloError } from '@apollo/client';
 import { useGetAppointmentsByDoctorAndDateLazyQuery } from '@/types/graphql-generated';
 import { Appointment as AppointmentType } from '@/types/CalendarEvent.type';
 
 export default function useAppointmentsDataMultiDoctor(doctorIds: number[], date: Date) {
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<ApolloError | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   const [fetchAppointments] = useGetAppointmentsByDoctorAndDateLazyQuery();
 
-  // ✅ Dépendances stables pour useEffect
+  // ✅ Stable dependencies for useEffect
   const doctorKey = useMemo(() => doctorIds.join(','), [doctorIds]);
+  // 📖 Arrays are references: two arrays [1,2,3] and [1,2,3] are equal in content, but not in reference.
+  // So React (or a library like React Query) doesn't consider them equal unless they are transformed into a primitive string, such as with .join().
   const formattedDate = useMemo(() => date.toISOString().slice(0, 10), [date]);
+  // 📖 We receive an object Date that we transform in ISO format "2025-05-15T14:30:00.000Z", then, we cut it in order to have "2025-05-15" in order to send a compatible date with our db
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -48,10 +50,12 @@ export default function useAppointmentsDataMultiDoctor(doctorIds: number[], date
         setAppointments(all);
         setError(null);
       } catch (err) {
-        setError(err as ApolloError);
+        if (err instanceof Error) {
+          setError(err);
+        } else {
+          setError(new Error('An unknown error has occurred'));
+        }
         setAppointments([]);
-      } finally {
-        setLoading(false);
       }
     };
 
