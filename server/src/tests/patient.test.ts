@@ -62,7 +62,7 @@ describe('PatientResolver', () => {
       email: 'stephane.gosselin@monemail.fr',
       firstname: 'Stéphane',
       gender: 'M',
-      id: 2,
+      id: 1,
       lastname: 'Gosselin',
       note: '',
       phone_number: '0404040404',
