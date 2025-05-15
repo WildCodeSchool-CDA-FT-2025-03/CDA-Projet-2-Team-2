@@ -22,7 +22,7 @@ const PATIENT_UPDATE_MUTATION = gql`
       lastname
       phone_number
       private_assurance
-      reefrring_physician
+      referring_physician
       social_number
       city {
         city
