@@ -40,6 +40,19 @@ async function seedDatabase() {
 
     await adminUser.save();
 
+    const hashedSecPassword = await argon2.hash(process.env.SECRETARY_PASSWORD || 'secretary123');
+
+    const secretaryUser = new User();
+    secretaryUser.email = 'secretary@doctoplan.com';
+    secretaryUser.password = hashedSecPassword;
+    secretaryUser.role = UserRole.SECRETARY;
+    secretaryUser.firstname = 'secretary';
+    secretaryUser.lastname = 'User';
+    secretaryUser.departement = newDepartement;
+    secretaryUser.status = UserStatus.ACTIVE;
+
+    await secretaryUser.save();
+
     console.info('✅ Admin user created successfully');
   } catch (error) {
     console.error('❌ Error seeding database:', error);
