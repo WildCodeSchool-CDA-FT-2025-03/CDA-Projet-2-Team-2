@@ -19,12 +19,12 @@ export class PatientInput {
   lastname: string;
 
   @Field()
-  @Matches(/[\d+ .]*/)
+  @Matches(/^[\d+ .]*$/, { message: 'Numéro de téléphone ne doit contenir que des chiffres' })
   @Length(1, 25)
   phone_number: string;
 
   @Field()
-  @Matches(/[\d ]*/)
+  @Matches(/^[\d ]*$/, { message: 'Numéro de sécurité social ne doit contenir que des chiffres' })
   social_number: string;
 
   @Field({ nullable: true })
@@ -32,11 +32,13 @@ export class PatientInput {
   private_assurance: string;
 
   @Field()
-  @Matches(/^[M|F]$/)
+  @Matches(/^[M|F]$/, { message: 'Le genre doit être M ou F' })
   gender: string;
 
   @Field()
-  @Matches(/[\d]{4}-[\d]{2}-[\d]{2}/)
+  @Matches(/^[\d]{4}-[\d]{2}-[\d]{2}$/, {
+    message: 'La date doit être au format YYYY-MM-DD',
+  })
   birth_date: string;
 
   @Field({ nullable: true })

@@ -1,11 +1,13 @@
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
 import { Patient } from '../entities/patient.entity';
 import { PatientInput } from '../types/patient.type';
 import { City } from '../entities/city.entity';
+import { UserRole } from '../entities/user.entity';
 
 @Resolver()
 export class PatientResolver {
   @Query(() => Patient)
+  @Authorized([UserRole.SECRETARY, UserRole.DOCTOR])
   async getPatientByID(@Arg('patientId') patientId: number): Promise<Patient | null> {
     const patient = await Patient.findOne({
       where: { id: patientId },
@@ -19,6 +21,7 @@ export class PatientResolver {
   }
 
   @Mutation(() => Patient)
+  @Authorized([UserRole.SECRETARY, UserRole.DOCTOR])
   async updatePatient(@Arg('patientData') patientData: PatientInput): Promise<Patient | null> {
     const patient = await Patient.findOne({
       where: { id: patientData.id },
