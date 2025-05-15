@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DayPilot, DayPilotCalendar, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
@@ -9,16 +9,27 @@ export default function AgendaWithNavigator() {
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [currentPage, setCurrentPage] = useState(0);
   const { resources, loading, error } = useResources('Cardiologie');
-  const appointments = useAppointmentsData();
   const pageSize = useResponsiveAgendaPageSize();
 
-  if (loading) return <p className="p-4 text-center">Chargement...</p>;
+  const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  const doctorIds = useMemo(() => visibleResources.map(r => Number(r.id)), [visibleResources]);
+  const selectedDate = useMemo(() => startDate.toDate(), [startDate]);
+
+  // ✅ Appelle des rdv multi-médecins à la date sélectionnée
+  const {
+    appointments,
+    loading: loadingAppointments,
+    error: errorAppointments,
+  } = useAppointmentsData(doctorIds, selectedDate);
+
+  // 🛑 Gestion des états
+  if (loading) return <p className="p-4 text-center">Chargement des ressources...</p>;
   if (error)
     return (
       <p className="p-4 text-center text-red-500">Erreur lors du chargement des ressources.</p>
     );
-
-  const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  if (loadingAppointments) return <p>Chargement des rendez-vous...</p>;
+  if (errorAppointments) return <p>Erreur lors du chargement des rendez-vous.</p>;
 
   return (
     <div
