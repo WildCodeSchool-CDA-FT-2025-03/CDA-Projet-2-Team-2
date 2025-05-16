@@ -46,6 +46,18 @@ export class User extends BaseEntity {
   @Column()
   lastname: string;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  tel: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  gender: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  profession: string;
+
   @Field(() => Departement)
   @ManyToOne(() => Departement, (departement) => departement.user)
   departement: Departement;
@@ -61,6 +73,10 @@ export class User extends BaseEntity {
   @Field(() => [Planning], { nullable: true })
   @OneToMany(() => Planning, (planning) => planning.user)
   plannings: Planning[];
+
+  @Field({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
+  activationDate?: Date;
 
   @Field()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

@@ -36,6 +36,9 @@ async function seedDatabase() {
     adminUser.firstname = 'Admin';
     adminUser.lastname = 'User';
     adminUser.departement = newDepartement;
+    adminUser.profession = 'Administrateur';
+    adminUser.gender = 'M';
+    adminUser.tel = '0606060606';
     adminUser.status = UserStatus.ACTIVE;
 
     await adminUser.save();
