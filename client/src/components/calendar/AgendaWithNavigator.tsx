@@ -73,7 +73,7 @@ export default function AgendaWithNavigator() {
               id: resource.id,
               html: `
                 <div class="flex items-center gap-3 p-2">
-                  <img src="${resource.avatar}" alt="${resource.name}" class="w-8 h-8 rounded-full object-cover" />
+                  <img src="${resource.avatar}" alt="${resource.name}" class="w-8 h-8 object-cover" />
                   <div>
                     <div class="text-sm font-semibold text-blue">${resource.name}</div>
                     <div class="text-xs text-gray-400">${resource.speciality}</div>
