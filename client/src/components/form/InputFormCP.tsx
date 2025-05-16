@@ -20,7 +20,7 @@ function InputFormCP({ handle, value, valuecity }: inputFormProps) {
 
   return (
     <>
-      <section>
+      <section className="relative">
         <label htmlFor="postal_code">Code postale</label>
         <input
           type="text"
@@ -32,7 +32,7 @@ function InputFormCP({ handle, value, valuecity }: inputFormProps) {
           onClick={clickInput}
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 my-2"
         />
-        <SearchBarCP cpdefault={value} handle={handle} />
+        {value && <SearchBarCP cpdefault={value} handle={handle} />}
       </section>
       <section>
         <label htmlFor="city">Ville</label>
@@ -40,7 +40,7 @@ function InputFormCP({ handle, value, valuecity }: inputFormProps) {
           type="text"
           name="city"
           id="city"
-          value={valuecity}
+          defaultValue={valuecity}
           placeholder="Ville"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 my-2"
         />
