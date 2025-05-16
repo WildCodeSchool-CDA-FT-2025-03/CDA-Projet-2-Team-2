@@ -18,13 +18,13 @@ export class CreateUserInput {
   @Field({ nullable: true })
   tel: string;
 
-  @Field()
+  @Field({ nullable: true })
   gender: string;
 
   @Field({ nullable: true })
   activationDate?: string;
 
-  @Field()
+  @Field({ nullable: true })
   profession: string;
 
   @Field()
