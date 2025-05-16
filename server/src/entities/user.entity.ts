@@ -50,8 +50,8 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   tel: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column()
   gender: string;
 
   @Field({ nullable: true })

@@ -22,7 +22,6 @@ export class CreateUserInput {
   gender: string;
 
   @Field({ nullable: true })
-  @Field({ nullable: true })
   activationDate?: string;
 
   @Field()
