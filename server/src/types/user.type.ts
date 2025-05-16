@@ -15,6 +15,18 @@ export class CreateUserInput {
   @Field()
   lastname: string;
 
+  @Field({ nullable: true })
+  tel: string;
+
+  @Field({ nullable: true })
+  gender: string;
+
+  @Field({ nullable: true })
+  activationDate?: string;
+
+  @Field({ nullable: true })
+  profession: string;
+
   @Field()
   departementId: number;
 
