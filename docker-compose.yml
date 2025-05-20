@@ -15,7 +15,7 @@ services:
     ports:
       - "5173:5173"
     depends_on:
-      - server
+      - codegen
 
   server:
     build:
