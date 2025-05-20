@@ -5,6 +5,7 @@ import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import PaginationControls from './PaginationControls';
 import useResources from '@/hooks/useResources';
 import DepartmentSelect from '@/components/form/DepartmentSelect';
+import SearchBar from '@/components/form/SearchBar';
 
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = 'Cardiologie'; // Later, replace it by 'session.user.department.label'
@@ -22,6 +23,8 @@ export default function AgendaWithNavigator() {
 
   const { appointments } = useAppointmentsData(doctorIds, selectedDate);
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   return (
     <div
       className="py-6 px-6 md:px-24"
@@ -35,6 +38,12 @@ export default function AgendaWithNavigator() {
           setSelectedDepartment(newLabel);
           setCurrentPage(0);
         }}
+      />
+
+      <SearchBar
+        value={searchQuery}
+        onChange={setSearchQuery}
+        placeholder="Rechercher un médecin ou un patient..."
       />
 
       {/* Pagination desktop */}
