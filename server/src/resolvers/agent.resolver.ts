@@ -6,7 +6,7 @@ import { Between } from 'typeorm';
 @Resolver()
 export class AgentResolver {
   @Query(() => [Appointment])
-  @Authorized([UserRole.AGENT, UserRole.ADMIN])
+  @Authorized([UserRole.AGENT])
   async getUpcomingAppointmentsByPatientAndDepartment(
     @Arg('socialNumber', { nullable: true }) socialNumber?: string,
     @Arg('departmentId', { nullable: true }) departmentId?: number,
