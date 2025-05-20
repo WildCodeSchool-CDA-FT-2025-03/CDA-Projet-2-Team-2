@@ -8,15 +8,15 @@ import SelectForm from '@/components/form/SelectForm';
 import { useGetDepartementsQuery } from '@/types/graphql-generated';
 
 export default function AgendaWithNavigator() {
+  const DEFAULT_DEPARTMENT = 'Cardiologie'; // Later, replace it by 'session.user.department.label'
+
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [currentPage, setCurrentPage] = useState(0);
-  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [selectedDepartment, setSelectedDepartment] = useState(DEFAULT_DEPARTMENT);
 
-  // ✅ Hook généré pour récupérer les départements
   const { data: departmentData, loading: loadingDepartments } = useGetDepartementsQuery();
 
-  // ✅ Récupérer les ressources liées au département sélectionné
-  const { resources } = useResources(selectedDepartment || 'Cardiologie');
+  const { resources } = useResources(selectedDepartment);
 
   const pageSize = useResponsiveAgendaPageSize();
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
