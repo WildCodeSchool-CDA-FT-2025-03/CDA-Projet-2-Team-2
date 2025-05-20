@@ -7,6 +7,7 @@ type SelectFormProps = {
     value: string;
   }[];
   handle: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  required?: boolean;
 };
 
 /**
@@ -14,7 +15,7 @@ type SelectFormProps = {
  * value : valeur courante
  * handle : hook a appeler sur l'evenement
  */
-function SelectForm({ name, value, title, option, handle }: SelectFormProps) {
+function SelectForm({ name, value, title, option, handle, required }: SelectFormProps) {
   return (
     <label>
       {title}
@@ -23,9 +24,8 @@ function SelectForm({ name, value, title, option, handle }: SelectFormProps) {
         name={name}
         value={value}
         onChange={handle}
-        required
+        required={required}
       >
-        <option value="">Choix</option>
         {option.map(opt => (
           <option key={opt.key} value={opt.key}>
             {opt.value}
