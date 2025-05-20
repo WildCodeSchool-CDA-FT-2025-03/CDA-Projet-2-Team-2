@@ -7,8 +7,9 @@ import { CityResolver } from './resolvers/city.resolver';
 import { LogResolver } from './resolvers/log.resolver';
 import { getUserFromToken } from './utils/jwt.utils';
 import { AppointmentResolver } from './resolvers/appointment.resolver';
-import { JSONScalar } from './scalar/json.scalar';
 import { UserResolver } from './resolvers/user.resolver';
+import { AgentResolver } from './resolvers/agent.resolver';
+import { JSONScalar } from './scalar/json.scalar';
 
 export default async function createSchema() {
   return await buildSchema({
@@ -20,6 +21,7 @@ export default async function createSchema() {
       AppointmentResolver,
       LogResolver,
       UserResolver,
+      AgentResolver,
     ],
     validate: true,
     authChecker: async ({ context }, roles) => {
