@@ -4,18 +4,25 @@ import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import PaginationControls from './PaginationControls';
 import useResources from '@/hooks/useResources';
+import SelectForm from '@/components/form/SelectForm';
+import { useGetDepartementsQuery } from '@/types/graphql-generated';
 
 export default function AgendaWithNavigator() {
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [currentPage, setCurrentPage] = useState(0);
-  const { resources } = useResources('Cardiologie');
-  const pageSize = useResponsiveAgendaPageSize();
+  const [selectedDepartment, setSelectedDepartment] = useState('');
 
+  // ✅ Hook généré pour récupérer les départements
+  const { data: departmentData, loading: loadingDepartments } = useGetDepartementsQuery();
+
+  // ✅ Récupérer les ressources liées au département sélectionné
+  const { resources } = useResources(selectedDepartment || 'Cardiologie');
+
+  const pageSize = useResponsiveAgendaPageSize();
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   const doctorIds = useMemo(() => visibleResources.map(r => Number(r.id)), [visibleResources]);
   const selectedDate = useMemo(() => startDate.toDate(), [startDate]);
 
-  // 📞 Call for multi-doctor appointments on the selected date
   const { appointments } = useAppointmentsData(doctorIds, selectedDate);
 
   return (
@@ -24,6 +31,25 @@ export default function AgendaWithNavigator() {
       role="region"
       aria-label="Agenda de tous les professionnels du service"
     >
+      {/* 🎯 Department selection */}
+      {!loadingDepartments && departmentData?.getDepartements && (
+        <div className="mb-4 max-w-xs">
+          <SelectForm
+            name="department"
+            value={selectedDepartment}
+            title="Département"
+            option={departmentData.getDepartements.map(dep => ({
+              key: dep.label,
+              value: dep.label,
+            }))}
+            handle={e => {
+              setSelectedDepartment(e.target.value);
+              setCurrentPage(0); // Réinitialiser la pagination
+            }}
+          />
+        </div>
+      )}
+
       {/* Pagination desktop */}
       <div
         className="hidden lg:flex justify-end items-center gap-4 mb-4"
