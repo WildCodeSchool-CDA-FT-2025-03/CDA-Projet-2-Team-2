@@ -1,4 +1,4 @@
-import { sendEmail } from '../transporter';
+import { sendEmail } from "../transporter";
 
 export const sendSimpleTestEmail = async (to: string): Promise<void> => {
   const htmlContent = `
@@ -95,7 +95,7 @@ export const sendSimpleTestEmail = async (to: string): Promise<void> => {
 
   await sendEmail({
     to,
-    subject: '📧 Test de configuration email - DoctoPlan',
+    subject: "📧 Test de configuration email - DoctoPlan",
     text: textContent,
     html: htmlContent,
   });

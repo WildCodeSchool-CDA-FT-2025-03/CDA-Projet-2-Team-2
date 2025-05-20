@@ -1,6 +1,8 @@
 import argon2 from 'argon2';
 import { Departement, DepartementStatus } from '../entities/departement.entity';
 import { User, UserRole } from '../entities/user.entity';
+import { Patient } from '../entities/patient.entity';
+import { City } from '../entities/city.entity';
 
 export async function seedTestDatabase() {
   await User.delete({});
@@ -40,6 +42,29 @@ export async function seedTestDatabase() {
     firstname: 'Agent',
     lastname: 'Test',
     role: UserRole.AGENT,
+    departement: departement,
+  }).save();
+
+  const newcity = await City.create({
+    postal_code: '69009',
+    city: 'LYON',
+  }).save();
+
+  await Patient.create({
+    adress: 'tesdt',
+    birth_city: '',
+    birth_date: '1944-04-29',
+    contact_person: '',
+    email: 'stephane.gosselin@monemail.fr',
+    firstname: 'Stéphane',
+    gender: 'M',
+    lastname: 'Gosselin',
+    note: '',
+    phone_number: '0404040404',
+    private_assurance: '',
+    referring_physician: '',
+    social_number: '111111111111111',
+    city: newcity,
   }).save();
 }
 
