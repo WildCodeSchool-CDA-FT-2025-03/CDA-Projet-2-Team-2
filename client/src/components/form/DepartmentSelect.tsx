@@ -21,7 +21,7 @@ export default function DepartmentSelect({ value, onChange }: DepartmentSelectPr
       <SelectForm
         name="department"
         value={value}
-        title="Département"
+        title="Service"
         option={options}
         handle={e => {
           onChange(e.target.value);
