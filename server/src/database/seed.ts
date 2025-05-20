@@ -4,6 +4,7 @@ import { User, UserRole, UserStatus } from '../entities/user.entity';
 import 'dotenv/config';
 import 'reflect-metadata';
 import { Departement } from '../entities/departement.entity';
+import { seedDoctors } from './seed-fakeDoctors';
 
 async function seedDatabase() {
   console.info('🌱 Starting database seeding...');
@@ -55,6 +56,12 @@ async function seedDatabase() {
     secretaryUser.status = UserStatus.ACTIVE;
 
     await secretaryUser.save();
+    try {
+      await seedDoctors();
+      console.info('✅ Doctors seeded successfully');
+    } catch (error) {
+      console.error('❌ Failed to seed doctors:', error);
+    }
 
     console.info('✅ Admin user created successfully');
   } catch (error) {
