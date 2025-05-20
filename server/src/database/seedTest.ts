@@ -33,6 +33,14 @@ export async function seedTestDatabase() {
     departement: departement,
     role: UserRole.DOCTOR,
   }).save();
+
+  await User.create({
+    email: 'agent@test.com',
+    password: hash,
+    firstname: 'Agent',
+    lastname: 'Test',
+    role: UserRole.AGENT,
+  }).save();
 }
 
 if (require.main === module) {
