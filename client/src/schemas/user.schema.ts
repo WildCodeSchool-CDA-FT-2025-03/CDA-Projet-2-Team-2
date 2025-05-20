@@ -41,3 +41,19 @@ export const CREATE_USER = gql`
     }
   }
 `;
+
+export const GET_DOCTORS_BY_DEPARTEMENT = gql`
+  query GetDoctorsByDepartement($label: String!) {
+    getDoctorsByDepartement(label: $label) {
+      id
+      email
+      role
+      firstname
+      lastname
+      status
+      departement {
+        label
+      }
+    }
+  }
+`;

@@ -1,25 +1,28 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DayPilot, DayPilotCalendar, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
-import ressourcesData from '@/fakeData/ressourcesData.json';
-import { Resource } from '@/types/resource.type';
-import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import useAppointmentsData from '@/hooks/useAppointmentsData';
+import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import PaginationControls from './PaginationControls';
+import useResources from '@/hooks/useResources';
 
-function AgendaWithNavigator() {
+export default function AgendaWithNavigator() {
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
-  const [resources] = useState<Resource[]>(ressourcesData);
-  const appointments = useAppointmentsData();
-  const pageSize = useResponsiveAgendaPageSize();
   const [currentPage, setCurrentPage] = useState(0);
+  const { resources } = useResources('Cardiologie');
+  const pageSize = useResponsiveAgendaPageSize();
 
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  const doctorIds = useMemo(() => visibleResources.map(r => Number(r.id)), [visibleResources]);
+  const selectedDate = useMemo(() => startDate.toDate(), [startDate]);
+
+  // 📞 Call for multi-doctor appointments on the selected date
+  const { appointments } = useAppointmentsData(doctorIds, selectedDate);
 
   return (
     <div
       className="py-6 px-6 md:px-24"
       role="region"
-      aria-label="Agenda de tous les professionnnels du service"
+      aria-label="Agenda de tous les professionnels du service"
     >
       {/* Pagination desktop */}
       <div
@@ -42,6 +45,7 @@ function AgendaWithNavigator() {
             showMonths={1}
             skipMonths={1}
             locale="fr-fr"
+            selectionDay={startDate}
             onTimeRangeSelected={args => setStartDate(args.day)}
           />
         </aside>
@@ -58,7 +62,7 @@ function AgendaWithNavigator() {
         </div>
 
         {/* Agenda */}
-        <article className="flex-1" aria-label="Agenda de tous les medecins et leurs rendez-vous">
+        <article className="flex-1" aria-label="Agenda de tous les médecins et leurs rendez-vous">
           <DayPilotCalendar
             viewType="Resources"
             startDate={startDate}
@@ -69,7 +73,7 @@ function AgendaWithNavigator() {
               id: resource.id,
               html: `
                 <div class="flex items-center gap-3 p-2">
-                  <img src="${resource.avatar}" alt="${resource.name}" class="w-8 h-8 rounded-full object-cover" />
+                  <img src="${resource.avatar}" alt="${resource.name}" class="w-8 h-8 object-cover" />
                   <div>
                     <div class="text-sm font-semibold text-blue">${resource.name}</div>
                     <div class="text-xs text-gray-400">${resource.speciality}</div>
@@ -96,5 +100,3 @@ function AgendaWithNavigator() {
     </div>
   );
 }
-
-export default AgendaWithNavigator;

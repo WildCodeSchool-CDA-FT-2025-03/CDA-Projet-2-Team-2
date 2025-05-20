@@ -59,7 +59,7 @@ export class User extends BaseEntity {
   profession: string;
 
   @Field(() => Departement)
-  @ManyToOne(() => Departement, (departement) => departement.user)
+  @ManyToOne(() => Departement, (departement: Departement) => departement.user)
   departement: Departement;
 
   @Field(() => String)
