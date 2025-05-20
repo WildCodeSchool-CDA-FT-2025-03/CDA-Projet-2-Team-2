@@ -13,57 +13,64 @@ async function seedDatabase() {
     await dataSource.initialize();
     console.info('📊 Database connection initialized');
 
+    // ✅ Execute migrations befor seed in order to have all the department to create new doctor user
+    await dataSource.runMigrations();
+    console.info('📦 Migrations executed successfully');
+
     const existingAdmin = await User.findOne({
       where: { email: 'admin@doctoplan.com' },
     });
 
-    if (existingAdmin) {
+    if (!existingAdmin) {
+      console.info('👤 Admin user not found, creating...');
+
+      const newDepartement = new Departement();
+      newDepartement.label = 'Administration';
+      newDepartement.building = 'A';
+      newDepartement.wing = 'droite';
+      newDepartement.level = 'RDC';
+      await newDepartement.save();
+
+      const hashedPassword = await argon2.hash(process.env.ADMIN_PASSWORD || 'admin123');
+
+      const adminUser = new User();
+      adminUser.email = 'admin@doctoplan.com';
+      adminUser.password = hashedPassword;
+      adminUser.role = UserRole.ADMIN;
+      adminUser.firstname = 'Admin';
+      adminUser.lastname = 'User';
+      adminUser.departement = newDepartement;
+      adminUser.profession = 'Administrateur';
+      adminUser.gender = 'M';
+      adminUser.tel = '0606060606';
+      adminUser.status = UserStatus.ACTIVE;
+
+      await adminUser.save();
+
+      const hashedSecPassword = await argon2.hash(process.env.SECRETARY_PASSWORD || 'secretary123');
+
+      const secretaryUser = new User();
+      secretaryUser.email = 'secretary@doctoplan.com';
+      secretaryUser.password = hashedSecPassword;
+      secretaryUser.role = UserRole.SECRETARY;
+      secretaryUser.firstname = 'secretary';
+      secretaryUser.lastname = 'User';
+      secretaryUser.departement = newDepartement;
+      secretaryUser.status = UserStatus.ACTIVE;
+
+      await secretaryUser.save();
+
+      console.info('✅ Admin and secretary users created successfully');
+    } else {
       console.info('👤 Admin user already exists, skipping creation');
-      return;
     }
-    const newDepartement = new Departement();
-    newDepartement.label = 'Administration';
-    newDepartement.building = 'A';
-    newDepartement.wing = 'droite';
-    newDepartement.level = 'RDC';
-    await newDepartement.save();
 
-    const hashedPassword = await argon2.hash(process.env.ADMIN_PASSWORD || 'admin123');
-
-    const adminUser = new User();
-    adminUser.email = 'admin@doctoplan.com';
-    adminUser.password = hashedPassword;
-    adminUser.role = UserRole.ADMIN;
-    adminUser.firstname = 'Admin';
-    adminUser.lastname = 'User';
-    adminUser.departement = newDepartement;
-    adminUser.profession = 'Administrateur';
-    adminUser.gender = 'M';
-    adminUser.tel = '0606060606';
-    adminUser.status = UserStatus.ACTIVE;
-
-    await adminUser.save();
-
-    const hashedSecPassword = await argon2.hash(process.env.SECRETARY_PASSWORD || 'secretary123');
-
-    const secretaryUser = new User();
-    secretaryUser.email = 'secretary@doctoplan.com';
-    secretaryUser.password = hashedSecPassword;
-    secretaryUser.role = UserRole.SECRETARY;
-    secretaryUser.firstname = 'secretary';
-    secretaryUser.lastname = 'User';
-    secretaryUser.departement = newDepartement;
-    secretaryUser.status = UserStatus.ACTIVE;
-
-    await secretaryUser.save();
     try {
       await seedDoctors();
       console.info('✅ Doctors seeded successfully');
     } catch (error) {
       console.error('❌ Failed to seed doctors:', error);
     }
-
-    console.info('✅ Admin user created successfully');
   } catch (error) {
     console.error('❌ Error seeding database:', error);
   } finally {

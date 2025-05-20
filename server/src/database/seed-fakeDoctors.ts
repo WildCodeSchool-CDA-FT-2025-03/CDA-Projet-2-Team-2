@@ -51,7 +51,7 @@ export async function seedDoctors() {
 
       try {
         await user.save();
-        console.info(`✅ Doctor created : ${firstname} ${lastname} (${email})`);
+        console.info(`✅ Doctors created`);
       } catch (err) {
         console.warn(`⚠️ Error doctor creation (${email}):`, err.message);
       }
