@@ -9,6 +9,7 @@ import { getUserFromToken } from './utils/jwt.utils';
 import { AppointmentResolver } from './resolvers/appointment.resolver';
 import { JSONScalar } from './scalar/json.scalar';
 import { UserResolver } from './resolvers/user.resolver';
+import { PlanningResolver } from './resolvers/planning.resolver';
 
 export default async function createSchema() {
   return await buildSchema({
@@ -20,6 +21,7 @@ export default async function createSchema() {
       AppointmentResolver,
       LogResolver,
       UserResolver,
+      PlanningResolver,
     ],
     validate: true,
     authChecker: async ({ context }, roles) => {
