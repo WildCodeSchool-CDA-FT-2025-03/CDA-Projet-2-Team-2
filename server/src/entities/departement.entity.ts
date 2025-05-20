@@ -40,7 +40,7 @@ export class Departement extends BaseEntity {
   status: DepartementStatus;
 
   @Field(() => [User])
-  @OneToMany(() => User, (user) => user.departement)
+  @OneToMany(() => User, (user: User) => user.departement)
   user: User[];
 
   @Field()
