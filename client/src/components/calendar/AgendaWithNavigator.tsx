@@ -23,8 +23,6 @@ export default function AgendaWithNavigator() {
 
   const { appointments } = useAppointmentsData(doctorIds, selectedDate);
 
-  const [searchQuery, setSearchQuery] = useState('');
-
   return (
     <div
       className="py-6 px-6 md:px-24"
@@ -40,11 +38,7 @@ export default function AgendaWithNavigator() {
         }}
       />
 
-      <SearchBar
-        value={searchQuery}
-        onChange={setSearchQuery}
-        placeholder="Rechercher un médecin ou un patient..."
-      />
+      <SearchBar />
 
       {/* Pagination desktop */}
       <div
