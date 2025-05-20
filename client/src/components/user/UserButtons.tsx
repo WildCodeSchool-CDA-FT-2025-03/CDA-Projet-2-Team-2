@@ -1,10 +1,10 @@
 type UserButtonProps = {
   id: string | null;
-  isDisable: boolean
-}
+  isDisable: boolean;
+};
 import { useNavigate } from 'react-router-dom';
 
-export default function UserButtons({id, isDisable} : UserButtonProps) {
+export default function UserButtons({ id, isDisable }: UserButtonProps) {
   const navigate = useNavigate();
   return (
     <div className="flex justify-end p-2 mt-4">

@@ -124,9 +124,9 @@ export default function CreateUser({ id }: CreateUserModalProps) {
 
     try {
       if (!id) {
-         const createdUser = await createUser({
-            variables: { input: { ...formData, departementId: +formData.departementId } },
-          });
+        const createdUser = await createUser({
+          variables: { input: { ...formData, departementId: +formData.departementId } },
+        });
 
         if (isDoctor && createdUser.data) {
           // createPlanning
@@ -187,9 +187,7 @@ export default function CreateUser({ id }: CreateUserModalProps) {
               id={id ?? null}
               formData={{
                 ...formData,
-                activationDate: formData.activationDate
-                  ? formData.activationDate.toString()
-                  : null,
+                activationDate: formData.activationDate ? formData.activationDate.toString() : null,
               }}
             />
             <UserProfessionalForm
@@ -197,9 +195,7 @@ export default function CreateUser({ id }: CreateUserModalProps) {
               id={id ?? null}
               formData={{
                 ...formData,
-                activationDate: formData.activationDate
-                  ? formData.activationDate.toString()
-                  : null,
+                activationDate: formData.activationDate ? formData.activationDate.toString() : null,
               }}
             />
           </article>

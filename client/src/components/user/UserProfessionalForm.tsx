@@ -12,10 +12,7 @@ type UserFormProps = {
   formData: CreateUserInput;
 };
 
-export default function UserProfessionalForm({
-  handleInputChange,
-  formData,
-}: UserFormProps) {
+export default function UserProfessionalForm({ handleInputChange, formData }: UserFormProps) {
   const { data } = useGetDepartementsQuery();
   const userRole = [
     { key: 'admin', value: 'Admin' },

@@ -1,6 +1,6 @@
-import { Planning } from "@/pages/CreateUser";
-import UserButtons from "./UserButtons";
-import { useState } from "react";
+import { Planning } from '@/pages/CreateUser';
+import UserButtons from './UserButtons';
+import { useState } from 'react';
 
 const days = [
   { fr: 'Lundi', en: 'Monday' },
@@ -16,10 +16,14 @@ type UserPlanningProps = {
   setUserPlanning: (planning: Planning | ((prev: Planning) => Planning)) => void;
   error: string;
   setError: (error: string) => void;
-}
+};
 
-
-export default function UserPlanning({ userPlanning, setUserPlanning, error, setError }: UserPlanningProps) {
+export default function UserPlanning({
+  userPlanning,
+  setUserPlanning,
+  error,
+  setError,
+}: UserPlanningProps) {
   const [isDisable, setIsDisable] = useState(false);
 
   const handleChange = (day: string, field: 'start' | 'end', value: string) => {
@@ -31,10 +35,15 @@ export default function UserPlanning({ userPlanning, setUserPlanning, error, set
         field === 'end' ? value : prev[day].end,
       ];
       const [startMinutes, endMinutes] = [startTime, endTime].map(time =>
-        time ? parseInt(time.split('h')[0]) * 60 + parseInt(time.split('h')[1]) : null
+        time ? parseInt(time.split('h')[0]) * 60 + parseInt(time.split('h')[1]) : null,
       );
 
-      if (startMinutes !== null && endMinutes !== null && startMinutes >= endMinutes && value !== '') {
+      if (
+        startMinutes !== null &&
+        endMinutes !== null &&
+        startMinutes >= endMinutes &&
+        value !== ''
+      ) {
         setError("L'heure de fin doit être supérieure à l'heure de début.");
         return prev;
       }
@@ -55,7 +64,10 @@ export default function UserPlanning({ userPlanning, setUserPlanning, error, set
       )}
       <article className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {days.map(day => (
-          <div key={day.en} className="flex items-center justify-between  bg-blue-50 p-4 rounded-lg">
+          <div
+            key={day.en}
+            className="flex items-center justify-between  bg-blue-50 p-4 rounded-lg"
+          >
             <p className="font-semibold mb-2">{day.fr}</p>
             <div className="flex flex-col items-start gap-2">
               <span>Début</span>
@@ -101,4 +113,4 @@ export default function UserPlanning({ userPlanning, setUserPlanning, error, set
       <UserButtons id={null} isDisable={isDisable} />
     </section>
   );
-};
+}

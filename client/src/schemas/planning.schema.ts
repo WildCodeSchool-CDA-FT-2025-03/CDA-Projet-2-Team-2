@@ -21,4 +21,4 @@ export const CREATE_PLANNING = gql`
       sunday_end
     }
   }
-`
+`;

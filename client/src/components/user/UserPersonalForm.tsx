@@ -9,10 +9,7 @@ type UserFormProps = {
   formData: CreateUserInput;
 };
 
-export default function UserPersonalForm({
-  handleInputChange,
-  formData,
-}: UserFormProps) {
+export default function UserPersonalForm({ handleInputChange, formData }: UserFormProps) {
   const userGender = [
     { key: 'M', value: 'Homme' },
     { key: 'F', value: 'Femme' },
