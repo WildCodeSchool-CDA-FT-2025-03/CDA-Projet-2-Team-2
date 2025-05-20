@@ -4,8 +4,7 @@ import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import PaginationControls from './PaginationControls';
 import useResources from '@/hooks/useResources';
-import SelectForm from '@/components/form/SelectForm';
-import { useGetDepartementsQuery } from '@/types/graphql-generated';
+import DepartmentSelect from '@/components/form/DepartmentSelect';
 
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = 'Cardiologie'; // Later, replace it by 'session.user.department.label'
@@ -13,8 +12,6 @@ export default function AgendaWithNavigator() {
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState(DEFAULT_DEPARTMENT);
-
-  const { data: departmentData, loading: loadingDepartments } = useGetDepartementsQuery();
 
   const { resources } = useResources(selectedDepartment);
 
@@ -32,23 +29,13 @@ export default function AgendaWithNavigator() {
       aria-label="Agenda de tous les professionnels du service"
     >
       {/* 🎯 Department selection */}
-      {!loadingDepartments && departmentData?.getDepartements && (
-        <div className="mb-4 max-w-xs">
-          <SelectForm
-            name="department"
-            value={selectedDepartment}
-            title="Département"
-            option={departmentData.getDepartements.map(dep => ({
-              key: dep.label,
-              value: dep.label,
-            }))}
-            handle={e => {
-              setSelectedDepartment(e.target.value);
-              setCurrentPage(0); // Réinitialiser la pagination
-            }}
-          />
-        </div>
-      )}
+      <DepartmentSelect
+        value={selectedDepartment}
+        onChange={newLabel => {
+          setSelectedDepartment(newLabel);
+          setCurrentPage(0);
+        }}
+      />
 
       {/* Pagination desktop */}
       <div
