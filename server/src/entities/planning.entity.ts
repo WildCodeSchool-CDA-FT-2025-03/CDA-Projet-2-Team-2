@@ -9,13 +9,13 @@ export class Planning extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => Date)
+  @Field()
   @Column({ type: 'date' })
-  start: Date;
+  start: string;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'date', nullable: true })
-  end: Date;
+  end: string;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'time', nullable: true })
