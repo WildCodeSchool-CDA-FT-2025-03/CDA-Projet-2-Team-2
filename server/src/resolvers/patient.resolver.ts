@@ -31,7 +31,7 @@ export class PatientResolver {
         { social_number: ILike(`%${query}%`) },
       ],
       relations: ['city'],
-      take: 20, // Limiter les résultats pour éviter les surcharges
+      take: 20,
     });
   }
 

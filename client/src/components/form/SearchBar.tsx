@@ -14,7 +14,7 @@ export default function SearchBar() {
     error: errorPatients,
   } = useSearchPatientsQuery({
     variables: { query },
-    skip: !shouldSearch, // options passées à un hook Apollo,  N’exécute pas la requête si !shouldSearch === true, a la place d'un appel conditionnel avec  : {data:[]}
+    skip: !shouldSearch, // 🔖 option SKIP passed to an Apollo hook, does not execute the query if !shouldSearch === true, instead of a conditional call with: {data:[]}
   });
 
   const patients = patientData?.searchPatients ?? [];
