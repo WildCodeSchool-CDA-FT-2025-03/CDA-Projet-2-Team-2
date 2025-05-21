@@ -29,17 +29,23 @@ export default function AgendaWithNavigator() {
       role="region"
       aria-label="Agenda de tous les professionnels du service"
     >
-      {/* 🎯 Department selection */}
-      <DepartmentSelect
-        value={selectedDepartment}
-        onChange={newLabel => {
-          setSelectedDepartment(newLabel);
-          setCurrentPage(0);
-        }}
-      />
-
-      <SearchBar />
-
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
+        <div className="flex justify-center lg:justify-start w-full">
+          {/* 🎯 Department selection */}
+          <DepartmentSelect
+            value={selectedDepartment}
+            onChange={newLabel => {
+              setSelectedDepartment(newLabel);
+              setCurrentPage(0);
+            }}
+          />
+        </div>
+        <div className="flex justify-center lg:justify-end w-full">
+          <div className="w-full max-w-xs">
+            <SearchBar />
+          </div>
+        </div>
+      </div>
       {/* Pagination desktop */}
       <div
         className="hidden lg:flex justify-end items-center gap-4 mb-4"
@@ -55,7 +61,7 @@ export default function AgendaWithNavigator() {
 
       <section className="flex flex-col lg:flex-row gap-10 mt-6">
         {/* Calendar navigator */}
-        <aside aria-label="Navigateur de date">
+        <aside aria-label="Navigateur de date" className="flex justify-center lg:justify-start">
           <DayPilotNavigator
             selectMode="Day"
             showMonths={1}
