@@ -3,6 +3,7 @@ import { Patient } from '../entities/patient.entity';
 import { PatientInput } from '../types/patient.type';
 import { City } from '../entities/city.entity';
 import { UserRole } from '../entities/user.entity';
+import { ILike } from 'typeorm';
 
 @Resolver()
 export class PatientResolver {
@@ -18,6 +19,20 @@ export class PatientResolver {
       throw new Error('Patient inconnu');
     }
     return patient;
+  }
+
+  @Query(() => [Patient])
+  @Authorized([UserRole.SECRETARY, UserRole.DOCTOR])
+  async searchPatients(@Arg('query') query: string): Promise<Patient[]> {
+    return Patient.find({
+      where: [
+        { firstname: ILike(`%${query}%`) },
+        { lastname: ILike(`%${query}%`) },
+        { social_number: ILike(`%${query}%`) },
+      ],
+      relations: ['city'],
+      take: 20,
+    });
   }
 
   @Mutation(() => Patient)
