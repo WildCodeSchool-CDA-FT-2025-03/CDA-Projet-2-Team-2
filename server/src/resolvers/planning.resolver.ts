@@ -1,9 +1,10 @@
-import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { User, UserRole } from '../entities/user.entity';
 import { GraphQLError } from 'graphql';
 import log from '../utils/log';
 import { Planning } from '../entities/planning.entity';
 import { CreatePlanningInput } from '../types/planning.type';
+import { AuthMiddleware } from '../middlewares/auth.middleware';
 
 @Resolver()
 export class PlanningResolver {
@@ -23,7 +24,9 @@ export class PlanningResolver {
 
   @Mutation(() => Planning)
   @Authorized([UserRole.ADMIN])
+  @UseMiddleware(AuthMiddleware)
   async createDoctorPlanning(
+    @Ctx() context: { user: User },
     @Arg('input') input: CreatePlanningInput,
     @Arg('id') id: string,
   ): Promise<Planning> {
@@ -55,7 +58,6 @@ export class PlanningResolver {
           newPlanning[endKey] = formattedEnd;
         }
       });
-
       newPlanning.start = input.start ?? new Date().toISOString();
       newPlanning.user = user;
       await newPlanning.save();
@@ -63,6 +65,7 @@ export class PlanningResolver {
         PlanningId: newPlanning.id,
         userId: newPlanning.user.id,
         role: newPlanning.user.role,
+        createdBy: context.user.id,
       });
       return newPlanning;
     } catch (error) {

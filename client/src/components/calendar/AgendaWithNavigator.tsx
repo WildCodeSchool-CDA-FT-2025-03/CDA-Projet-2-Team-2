@@ -4,18 +4,22 @@ import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import PaginationControls from './PaginationControls';
 import useResources from '@/hooks/useResources';
+import DepartmentSelect from '@/components/form/DepartmentSelect';
 
 export default function AgendaWithNavigator() {
+  const DEFAULT_DEPARTMENT = 'Cardiologie'; // Later, replace it by 'session.user.department.label'
+
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [currentPage, setCurrentPage] = useState(0);
-  const { resources } = useResources('Cardiologie');
-  const pageSize = useResponsiveAgendaPageSize();
+  const [selectedDepartment, setSelectedDepartment] = useState(DEFAULT_DEPARTMENT);
 
+  const { resources } = useResources(selectedDepartment);
+
+  const pageSize = useResponsiveAgendaPageSize();
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   const doctorIds = useMemo(() => visibleResources.map(r => Number(r.id)), [visibleResources]);
   const selectedDate = useMemo(() => startDate.toDate(), [startDate]);
 
-  // 📞 Call for multi-doctor appointments on the selected date
   const { appointments } = useAppointmentsData(doctorIds, selectedDate);
 
   return (
@@ -24,6 +28,15 @@ export default function AgendaWithNavigator() {
       role="region"
       aria-label="Agenda de tous les professionnels du service"
     >
+      {/* 🎯 Department selection */}
+      <DepartmentSelect
+        value={selectedDepartment}
+        onChange={newLabel => {
+          setSelectedDepartment(newLabel);
+          setCurrentPage(0);
+        }}
+      />
+
       {/* Pagination desktop */}
       <div
         className="hidden lg:flex justify-end items-center gap-4 mb-4"
