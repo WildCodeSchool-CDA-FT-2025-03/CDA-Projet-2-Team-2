@@ -7,13 +7,14 @@ export default function SearchBar() {
 
   const shouldSearch = query.length >= 2;
 
+  // REQUEST RESULT GESTION AND DECOMPOSITION
   const {
     data: patientData,
     loading: loadingPatients,
     error: errorPatients,
   } = useSearchPatientsQuery({
     variables: { query },
-    skip: !shouldSearch,
+    skip: !shouldSearch, // options passées à un hook Apollo,  N’exécute pas la requête si !shouldSearch === true, a la place d'un appel conditionnel avec  : {data:[]}
   });
 
   const patients = patientData?.searchPatients ?? [];
@@ -22,13 +23,18 @@ export default function SearchBar() {
   const error = errorPatients;
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full max-w-xs ml-auto">
       <input
         type="text"
         value={query}
         onChange={e => setQuery(e.target.value)}
         placeholder="Rechercher un patient ou un médecin..."
-        className="w-full border border-gray-300 p-2 rounded"
+        className="w-full rounded-full border border-borderColor bg-white pl-4 pr-10 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <img
+        src="/search-icon.svg"
+        alt="Rechercher"
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 pointer-events-none"
       />
 
       {shouldSearch && (
