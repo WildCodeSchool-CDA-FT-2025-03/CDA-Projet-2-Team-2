@@ -1,10 +1,11 @@
-import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { User, UserRole, UserStatus } from '../entities/user.entity';
 import { CreateUserInput } from '../types/user.type';
 import { GraphQLError } from 'graphql';
 import { Departement } from '../entities/departement.entity';
 import log from '../utils/log';
 import argon2 from 'argon2';
+import { AuthMiddleware } from '../middlewares/auth.middleware';
 
 @Resolver()
 export class UserResolver {
@@ -29,7 +30,11 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorized([UserRole.ADMIN])
-  async createUser(@Arg('input') input: CreateUserInput): Promise<User> {
+  @UseMiddleware(AuthMiddleware)
+  async createUser(
+    @Ctx() context: { user: User },
+    @Arg('input') input: CreateUserInput,
+  ): Promise<User> {
     const departement = await Departement.findOneBy({ id: +input.departementId });
     if (!departement) {
       throw new GraphQLError('Department not found');
@@ -68,6 +73,7 @@ export class UserResolver {
         userId: newUser.id,
         email: newUser.email,
         role: newUser.role,
+        createdBy: context.user.id,
       });
       return newUser;
     } catch (error) {
