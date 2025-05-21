@@ -29,7 +29,7 @@ export default function AgendaWithNavigator() {
       role="region"
       aria-label="Agenda de tous les professionnels du service"
     >
-      <section className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
+      <section className="flex flex-col md:flex-row lg:justify-between md:items-center gap-4 mb-6">
         <div className="flex justify-center lg:justify-start w-full">
           {/* 🎯 Department selection */}
           <DepartmentSelect
@@ -40,7 +40,7 @@ export default function AgendaWithNavigator() {
             }}
           />
         </div>
-        <div className="flex justify-center lg:justify-end w-full">
+        <div className="flex justify-center md:justify-end w-full">
           <div className="w-full max-w-xs">
             <SearchBar />
           </div>
