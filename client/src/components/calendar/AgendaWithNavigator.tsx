@@ -29,7 +29,7 @@ export default function AgendaWithNavigator() {
       role="region"
       aria-label="Agenda de tous les professionnels du service"
     >
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
+      <section className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
         <div className="flex justify-center lg:justify-start w-full">
           {/* 🎯 Department selection */}
           <DepartmentSelect
@@ -45,10 +45,11 @@ export default function AgendaWithNavigator() {
             <SearchBar />
           </div>
         </div>
-      </div>
+      </section>
       {/* Pagination desktop */}
-      <div
+      <section
         className="hidden lg:flex justify-end items-center gap-4 mb-4"
+        role="navigation"
         aria-label="Pagination desktop"
       >
         <PaginationControls
@@ -57,7 +58,7 @@ export default function AgendaWithNavigator() {
           pageSize={pageSize}
           totalItems={resources.length}
         />
-      </div>
+      </section>
 
       <section className="flex flex-col lg:flex-row gap-10 mt-6">
         {/* Calendar navigator */}
@@ -73,7 +74,7 @@ export default function AgendaWithNavigator() {
         </aside>
 
         {/* Pagination mobile */}
-        <div className="lg:hidden" aria-label="Pagination mobile">
+        <section className="lg:hidden" role="navigation" aria-label="Pagination mobile">
           <PaginationControls
             currentPage={currentPage}
             onPageChange={setCurrentPage}
@@ -81,7 +82,7 @@ export default function AgendaWithNavigator() {
             totalItems={resources.length}
             className="mb-4"
           />
-        </div>
+        </section>
 
         {/* Agenda */}
         <article className="flex-1" aria-label="Agenda de tous les médecins et leurs rendez-vous">
