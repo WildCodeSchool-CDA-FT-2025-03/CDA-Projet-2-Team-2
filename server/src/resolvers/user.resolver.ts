@@ -5,6 +5,7 @@ import { GraphQLError } from 'graphql';
 import { Departement } from '../entities/departement.entity';
 import log from '../utils/log';
 import argon2 from 'argon2';
+import { ILike } from 'typeorm';
 
 @Resolver()
 export class UserResolver {
@@ -24,6 +25,19 @@ export class UserResolver {
           label,
         },
       },
+    });
+  }
+
+  @Query(() => [User])
+  @Authorized([UserRole.SECRETARY])
+  async searchDoctors(@Arg('query') query: string): Promise<User[]> {
+    return User.find({
+      where: [
+        { role: UserRole.DOCTOR, status: UserStatus.ACTIVE, firstname: ILike(`%${query}%`) },
+        { role: UserRole.DOCTOR, status: UserStatus.ACTIVE, lastname: ILike(`%${query}%`) },
+      ],
+      relations: ['departement'],
+      take: 10,
     });
   }
 
