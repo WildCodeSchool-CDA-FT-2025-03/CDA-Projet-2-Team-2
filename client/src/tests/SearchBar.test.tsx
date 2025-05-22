@@ -1,29 +1,20 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'; // Testing library/react pour simuler les interactions utilisateur dans les tests.
-import { MockedProvider } from '@apollo/client/testing';
+import { screen, fireEvent, waitFor } from '@testing-library/react'; // Testing library/react pour simuler les interactions utilisateur dans les tests.
 import SearchBar from '../components/form/SearchBar';
 import { SearchPatientsDocument } from '@/types/graphql-generated';
 import { describe, expect, it } from 'vitest';
-import { AuthContext } from '@/contexts/auth.context';
-import { MemoryRouter } from 'react-router-dom';
 import { createMockUser } from './utils/createMockUser';
+import { renderWithProviders } from './utils/renderWithProviders';
 
 describe('SearchBar', () => {
-  // ****** MOCK APOLLO******/
-  //  ce que la requête GraphQL doit "renvoyer". Simulation de la requete.
-  // Apollo Client a besoin de connaître quelle requête GraphQL (query + variables) on veut simuler, et quelle réponse il doit renvoyer.
-  // Le tableau mock doit donc respecter ce format
   const mocks = [
     {
       request: {
-        // request : C’est l’objet représentant la requête Apollo simulée. Le mot request indique à Apollo Client "quand tu vois une requête qui correspond à ça, utilise le résultat ci-dessous".
-        query: SearchPatientsDocument, // query → le document GraphQL généré (SearchPatientsDocument), donc  de la même requête du hook genere dans graphql-generated
-        variables: { query: 'jo' }, // ce que ton hook envoie comme paramètres ({ query: 'jo' } dans ce cas)
+        query: SearchPatientsDocument,
+        variables: { query: 'jo' },
       },
       result: {
-        //  ce que le serveur devrait "répondre". Simulation de la reponse
         data: {
           searchPatients: [
-            // La cle doit correspondre du coup au nom de la requete graphQl, idem pour ses champs
             {
               id: '1',
               firstname: 'John',
@@ -42,40 +33,15 @@ describe('SearchBar', () => {
   });
 
   it("affiche les patients lorsqu'on tape une recherche valide", async () => {
-    // ****** MOCKEDPROVIDER******/
-    // On affiche le composant dans un environnement Apollo simulé (MockedProvider) => C’est une version spéciale d’ApolloProvider utilisée seulement dans les tests.
-    // sert à : simuler le comportement du serveur GraphQL, intercepter les requêtes faites par ton composant, et retourner les données que tu as préparées dans mocks.
-    render(
-      // afficher le composant dans un environnement de test
-      <MockedProvider mocks={mocks} addTypename={false}>
-        {/* Apollo utilise __typename pour savoir à quel type d’objet il a affaire, on en a pas donc mettre a false */}
-        <AuthContext.Provider
-          value={{
-            user: mockUser,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-            login: async () => {},
-          }}
-        >
-          <MemoryRouter>
-            <SearchBar />
-          </MemoryRouter>
-        </AuthContext.Provider>
-      </MockedProvider>,
-    );
+    renderWithProviders(<SearchBar />, {
+      mocks,
+      user: mockUser,
+    });
     screen.debug();
-    // On récupère l’élément input
-    // Sélectionne l’input
     const input = await screen.findByRole('textbox');
-
-    // Simule que l'utilisateur tape "jo" avec fireEvent de la testing library/react pour déclencher des événements DOM
     fireEvent.change(input, { target: { value: 'jo' } });
-    screen.debug();
-    // Attend que "Chargement..." s'affiche
     expect(screen.getByText(/chargement/i)).toBeInTheDocument();
 
-    // Attend que les données s'affichent
     await waitFor(() => {
       expect(screen.getByText(/John Doe/)).toBeInTheDocument();
       expect(screen.getByText(/1234567890/)).toBeInTheDocument();
