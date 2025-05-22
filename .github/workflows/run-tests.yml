@@ -2,6 +2,7 @@ name: Run Tests
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
     branches: [main, dev]
   push:
     branches: [main, dev]
@@ -19,3 +20,17 @@ jobs:
 
       - name: Run server tests with Docker Compose
         run: docker compose -f docker-compose.test.yml up --no-attach db-init --exit-code-from server-test
+    
+  test-client: 
+    name: Run integration test on client
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install Dependance
+        run: npm install
+
+      - name: Run test on components
+        run: npm run test-component
+  
