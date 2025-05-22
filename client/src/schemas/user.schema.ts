@@ -31,3 +31,15 @@ export const GET_DOCTORS_BY_DEPARTEMENT = gql`
     }
   }
 `;
+
+export const SEARCH_DOCTORS = gql`
+  query SearchDoctors($query: String!) {
+    searchDoctors(query: $query) {
+      id
+      firstname
+      lastname
+      profession
+      departement
+    }
+  }
+`;
