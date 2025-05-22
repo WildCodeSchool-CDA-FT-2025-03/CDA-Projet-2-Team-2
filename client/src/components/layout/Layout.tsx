@@ -13,7 +13,7 @@ export default function Layout() {
       {/* to display personalized messages */}
       <ToastContainer
         position="top-center"
-        autoClose={6000}
+        autoClose={5000}
         hideProgressBar={true}
         newestOnTop={false}
         closeOnClick={false}
