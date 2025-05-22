@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 
+	"logs-server/internal/config"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -19,6 +21,8 @@ func main() {
 		log.Println("PORT is not set, using default port 3333")
 		port = "3333"
 	}
+
+	config.InitDatabase()
 
 	server := gin.Default()
 	server.GET("/", func(c *gin.Context) {
