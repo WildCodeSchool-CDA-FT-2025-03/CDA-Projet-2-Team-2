@@ -3,6 +3,8 @@ package config
 import (
 	"log"
 
+	"logs-server/internal/models"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -15,6 +17,7 @@ func InitDatabase() {
 		log.Fatal("Error connecting to database")
 	}
 	DB = db
+	db.AutoMigrate(&models.Log{})
 }
 
 func GetDB() *gorm.DB {
