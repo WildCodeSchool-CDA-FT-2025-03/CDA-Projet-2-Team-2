@@ -1,28 +1,32 @@
-import express from "express";
-import "dotenv/config";
-import cors from "cors";
-import { transporter } from "./utils/transporter";
-import { sendSimpleTestEmail } from "./utils/mails/test.mail";
+import express from 'express';
+import 'dotenv/config';
+import cors from 'cors';
+import { transporter } from './utils/transporter';
+import router from './router';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.get("/mail", (req, res) => {
-  res.send("Api mail: Hello World!");
+app.use(router);
+
+app.get('/mail', (req, res) => {
+  console.log('Je suis sur le server mail');
+  res.send('Welcome to the server (email management).');
 });
 
 const port = process.env.SERVER_PORT;
 
+// 📋 checking that the SMTP server is working properly
 transporter.verify((error, success) => {
   if (error) {
     console.error(error);
   } else {
-    console.info("Server is ready to take our messages: ", success);
+    console.info('📫 Server is ready to take our messages: ', `${success == true ? '✅' : '❌'} `);
   }
 });
 
 app.listen(port, () => {
-  console.log(`Server to manage emails is running on http://localhost:${port}`);
+  console.log(`🖥️  Server to manage emails is running on http://localhost:${port}`);
 });

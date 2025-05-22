@@ -5,12 +5,48 @@ import { GraphQLError } from 'graphql';
 import { Departement } from '../entities/departement.entity';
 import log from '../utils/log';
 import argon2 from 'argon2';
+import jwt from 'jsonwebtoken';
 
 @Resolver()
 export class UserResolver {
   @Query(() => [User])
   async getAllUsers() {
     return await User.find({ relations: ['departement'] });
+  }
+
+  // 📋 checks if the email exists and requests sending of the reset email
+  @Mutation(() => Boolean)
+  async sendResetPassword(@Arg('email') email: string): Promise<boolean> {
+    try {
+      const userExist = await User.findOneBy({ email });
+
+      if (userExist) {
+        try {
+          // 🔗 creating the jwt token and password reset url
+          const resetToken = jwt.sign({ email }, `${process.env.JWT_SECRET}`);
+          // 🔥 le lien url ne peut pas être testé maintenant.
+          // Cela sera fait lors du process de réinitialisation du pwd (une prochaine PR)
+          const url = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+          // ☎️ call the server_send_mail (/mail on Express)
+          const response = await fetch(`${process.env.SERVER_SEND_MAIL}/mail/login/init`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, url }),
+          });
+          if (response.ok) {
+            return true;
+          }
+        } catch (error) {
+          return error;
+        }
+      }
+      return false;
+    } catch (error) {
+      return error;
+    }
   }
 
   @Query(() => [User])

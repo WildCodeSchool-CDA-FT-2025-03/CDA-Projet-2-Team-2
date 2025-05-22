@@ -31,3 +31,9 @@ export const GET_DOCTORS_BY_DEPARTEMENT = gql`
     }
   }
 `;
+
+export const GET_USER_BY_MAIL = gql`
+  mutation SendResetPassword($email: String!) {
+    sendResetPassword(email: $email)
+  }
+`;
