@@ -19,7 +19,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Run server tests with Docker Compose
-        run: docker compose -f docker-compose.test.yml up --no-attach db-init --exit-code-from server-test
+        run: 
+          echo -e "\033[1;34m🛠️  Starting server tests...\033[0m"
+          docker compose -f docker-compose.test.yml up --no-attach db-init --exit-code-from server-test
+          echo -e "\033[1;32m✅ Server tests completed.\033[0m"
     
   test-client: 
     name: Run integration test on client
@@ -28,9 +31,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Install Dependance
-        run: npm install
+      - name: Install Dependancies
+        run: 
+          echo -e "\033[1;34m📦 Installing npm dependencies...\033[0m"
+          npm install
+          echo -e "\033[1;32m✅ Dependencies installed.\033[0m"
 
       - name: Run test on components
-        run: npm run test-component
+        run: 
+          echo -e "\033[1;34m🧪 Running component tests...\033[0m"
+          npm run test-component
+          echo -e "\033[1;32m✅ Component tests passed!\033[0m"
   
