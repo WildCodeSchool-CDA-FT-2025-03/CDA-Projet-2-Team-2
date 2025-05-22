@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import Header from './Header';
+import Header from '../components/layout/Header';
 import { expect, it } from 'vitest';
 
 it('le header affiche le logo DoctoPlan', () => {

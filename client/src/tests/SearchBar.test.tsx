@@ -1,10 +1,11 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'; // Testing library/react pour simuler les interactions utilisateur dans les tests.
 import { MockedProvider } from '@apollo/client/testing';
-import SearchBar from './SearchBar';
+import SearchBar from '../components/form/SearchBar';
 import { SearchPatientsDocument } from '@/types/graphql-generated';
 import { describe, expect, it } from 'vitest';
 import { AuthContext } from '@/contexts/auth.context';
 import { MemoryRouter } from 'react-router-dom';
+import { createMockUser } from './utils/createMockUser';
 
 describe('SearchBar', () => {
   // ****** MOCK APOLLO******/
@@ -35,30 +36,10 @@ describe('SearchBar', () => {
     },
   ];
 
-  const mockUser = {
-    id: '1',
-    email: 'test@example.com',
-    firstname: 'Test',
-    lastname: 'User',
+  const mockUser = createMockUser({
     role: 'SECRETARY',
-    // __typename: 'User',
-    createdAt: '2024-01-01T00:00:00.000Z',
-    updatedAt: '2024-01-02T00:00:00.000Z',
     status: 'ACTIVE',
-    departement: {
-      id: 'dep-1',
-      name: 'Département Test',
-      label: 'Test Département',
-      level: '1',
-      building: 'Bâtiment A',
-      createdAt: '2023-01-01T00:00:00.000Z',
-      updatedAt: '2023-06-01T00:00:00.000Z',
-      status: 'ACTIVE', //  enum ?
-      // __typename: 'Departement',
-      user: [],
-      wing: 'wing-123',
-    },
-  };
+  });
 
   it("affiche les patients lorsqu'on tape une recherche valide", async () => {
     // ****** MOCKEDPROVIDER******/
