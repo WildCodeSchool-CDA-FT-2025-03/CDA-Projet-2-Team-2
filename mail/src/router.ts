@@ -3,7 +3,7 @@ import sendMailResetPassword from './routes/sendMailResetPassword.route';
 
 const router = express.Router();
 
-// routes
+// 🧭 routing
 router.use('/', sendMailResetPassword);
 
 export default router;

@@ -24,11 +24,3 @@ export class CreateUserInput {
   @Field(() => String, { nullable: true })
   status?: UserStatus;
 }
-
-// Faut-il garder ???
-
-@InputType()
-export class GetUserByMailInput {
-  @Field()
-  email: string;
-}

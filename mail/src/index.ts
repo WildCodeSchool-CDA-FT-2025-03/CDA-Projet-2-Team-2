@@ -12,8 +12,7 @@ app.use(express.json());
 app.use(router);
 
 app.get('/mail', (req, res) => {
-  console.log('Je suis sur le server mail');
-  res.send('Welcome to the server (email management).');
+  res.send('Welcome to the server (email sending management).');
 });
 
 const port = process.env.SERVER_PORT;
