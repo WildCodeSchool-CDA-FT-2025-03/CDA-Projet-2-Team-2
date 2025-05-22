@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"logs-server/internal/config"
+	"logs-server/internal/handlers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -25,8 +26,6 @@ func main() {
 	config.InitDatabase()
 
 	server := gin.Default()
-	server.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "Hello, World!!"})
-	})
+	server.GET("/", handlers.GetLogs)
 	server.Run(":" + port)
 }
