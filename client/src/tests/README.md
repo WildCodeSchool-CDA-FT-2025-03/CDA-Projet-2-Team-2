@@ -51,13 +51,13 @@ renderWithProviders(<Component />, {
 });
 ```
 
+### ✅ `mocks réutilisables`
 
-### ✅ `mocks réutilisables` 
+### ▶️ EXEMPLE : 'createMockUser.tsx'
 
-### ▶️ EXEMPLE :  'createMockUser.tsx'
 Fabrique un utilisateur typé (User) avec des valeurs par défaut réalistes. Permet de tester facilement tous les rôles (DOCTOR, ADMIN, SECRETARY) et statuts (ACTIVE, INACTIVE) sans répéter toute la structure.
 
-- Dans ton test, tu peux faire un import: 
+- Dans ton test, tu peux faire un import:
 
 ```ts
 import { createMockUser } from './utils/createMockUser';
@@ -79,9 +79,10 @@ const user = createMockUser({
 ```
 
 ### ▶️ EXEMPLE : 'createMockDepartement.tsx'
+
 Génère un objet Departement typé conforme à GraphQL. Il est utilisé automatiquement dans createMockUser, mais tu peux aussi l’utiliser seul pour des cas spécifiques.
 
-- Dans ton test, tu peux faire un import: 
+- Dans ton test, tu peux faire un import:
 
 ```ts
 import { createMockDepartement } from './utils/createMockDepartement';
@@ -104,11 +105,3 @@ const user = createMockUser({
   departement: dep,
 });
 ```
-
-
-
-
-
-
-
-
