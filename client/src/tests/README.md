@@ -16,9 +16,9 @@ Ce dossier contient des **tests d’intégration**, qui valident l’interaction
 
 ## 📚 Ressources utiles
 
-- [Testing Library Docs](https://testing-library.com/docs/)
+- [Testing Library Docs - React](https://testing-library.com/docs/react-testing-library/intro/)
 - [Apollo MockedProvider](https://www.apollographql.com/docs/react/development-testing/testing/#mockedprovider)
-- [React Router Testing](https://reactrouter.com/en/main/start/tutorial#testing)
+- [React Router Testing](https://reactrouter.com/6.28.0/router-components/memory-router)
 - [Vitest Docs](https://vitest.dev/)
 
 ---
