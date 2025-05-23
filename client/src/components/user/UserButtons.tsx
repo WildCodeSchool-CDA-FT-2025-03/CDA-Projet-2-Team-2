@@ -2,19 +2,17 @@ type UserButtonProps = {
   id: string | null;
   isDisable: boolean;
 };
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function UserButtons({ id, isDisable }: UserButtonProps) {
-  const navigate = useNavigate();
   return (
     <div className="flex justify-end p-2 mt-4">
-      <button
-        onClick={() => navigate('/users')}
-        type="button"
+      <Link
+        to={'/users'}
         className="inline-flex items-center mr-2 p-3 rounded-md bg-white border border-red-600 px-4 text-sm font-medium text-red-600 shadow-sm hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
       >
         Annuler
-      </button>
+      </Link>
       <button
         type="submit"
         disabled={isDisable}

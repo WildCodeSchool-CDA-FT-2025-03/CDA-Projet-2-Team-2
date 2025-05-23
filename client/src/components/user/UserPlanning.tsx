@@ -67,7 +67,7 @@ export default function UserPlanning({
       const startMin = getMinutes(updatedDay.start);
       const endMin = getMinutes(updatedDay.end);
 
-      if (startMin!== null && endMin !== null && startMin >= endMin) {
+      if (startMin !== null && endMin !== null && startMin >= endMin) {
         setError("L'heure de fin doit être supérieure à l'heure de début.");
         setIsDisable(true);
         return prev;

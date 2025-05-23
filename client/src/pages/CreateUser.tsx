@@ -106,7 +106,6 @@ export default function CreateUser({ id }: CreateUserModalProps) {
       setIsDoctor(value === 'doctor');
     }
     const updatedFormData = { ...formData, [name]: value };
-    console.log(updatedFormData);
     setFormData(updatedFormData);
   };
 
@@ -123,7 +122,6 @@ export default function CreateUser({ id }: CreateUserModalProps) {
     if (error) {
       setIsDisable(true);
     }
-    console.log(formData);
     try {
       if (!id) {
         const createdUser = await createUser({
