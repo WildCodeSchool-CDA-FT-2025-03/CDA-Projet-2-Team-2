@@ -1,14 +1,11 @@
 package models
 
-import (
-	"time"
-)
+import "gorm.io/gorm"
 
 type Log struct {
-	ID       string    `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-	Titre    string    `gorm:"size:250"`
-	Metadata JSON      `gorm:"type:jsonb;nullable"`
-	CreateAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;column:create_at"`
+	gorm.Model
+	Titre    string `gorm:"size:250"`
+	Metadata JSON   `gorm:"type:jsonb;nullable"`
 }
 
 type JSON map[string]interface{}

@@ -5,7 +5,6 @@ import (
 	"logs-server/internal/config"
 	"logs-server/internal/models"
 	"logs-server/internal/proto"
-	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -58,10 +57,8 @@ func (s *LogServer) GetLogs(ctx context.Context, req *proto.EmptyRequest) (*prot
 		}
 
 		protoLogs = append(protoLogs, &proto.LogEntry{
-			Id:       log.ID,
 			Titre:    log.Titre,
 			Metadata: metadata,
-			CreateAt: log.CreateAt.Format(time.RFC3339),
 		})
 	}
 
