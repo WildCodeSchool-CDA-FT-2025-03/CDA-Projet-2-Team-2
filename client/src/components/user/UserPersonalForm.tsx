@@ -25,6 +25,7 @@ export default function UserPersonalForm({ handleInputChange, formData }: UserFo
         value={formData.lastname}
         placeholder="Nom"
         handle={handleInputChange}
+        required={true}
       />
       <InputForm
         title="Prénom"
@@ -33,13 +34,15 @@ export default function UserPersonalForm({ handleInputChange, formData }: UserFo
         value={formData.firstname}
         placeholder="Prénom"
         handle={handleInputChange}
+        required={true}
       />
       <SelectForm
         title="Genre"
         name="gender"
-        option={userGender}
+        option={[{ key: '', value: 'Sélectionner' }, ...userGender]}
         value={formData.gender ?? ''}
         handle={handleInputChange}
+        required={true}
       />
       <InputForm
         title="Téléphone"
@@ -56,6 +59,7 @@ export default function UserPersonalForm({ handleInputChange, formData }: UserFo
         value={formData.email}
         placeholder="Email"
         handle={handleInputChange}
+        required={true}
       />
       <InputForm
         title="Password"
@@ -64,6 +68,7 @@ export default function UserPersonalForm({ handleInputChange, formData }: UserFo
         value={formData.password}
         placeholder="Password"
         handle={handleInputChange}
+        required={true}
       />
     </section>
   );

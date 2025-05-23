@@ -32,24 +32,27 @@ export default function UserProfessionalForm({ handleInputChange, formData }: Us
       <SelectForm
         title="Profession"
         name="profession"
-        option={
-          data?.getDepartements?.map(department => ({
+        option={[
+          { key: '', value: 'Sélectionner une profession' },
+          ...(data?.getDepartements?.map(department => ({
             key: department.id,
             value: department.label,
-          })) || []
-        }
+          })) || []),
+        ]}
         value={formData.profession ?? ''}
         handle={e => handleInputChange(e, 'profession')}
       />
       <SelectForm
         title="Service"
         name="departementId"
-        option={
-          data?.getDepartements?.map(department => ({
+        required={true}
+        option={[
+          { key: '', value: 'Sélectionner un service' },
+          ...(data?.getDepartements?.map(department => ({
             key: department.id,
             value: department.label,
-          })) || []
-        }
+          })) || []),
+        ]}
         value={formData.departementId?.toString()}
         handle={e => handleInputChange(e, 'departementId')}
       />
@@ -57,7 +60,7 @@ export default function UserProfessionalForm({ handleInputChange, formData }: Us
         title="Status"
         name="status"
         option={userStatus}
-        value={formData.status ?? ''}
+        value={formData.status ?? 'active'}
         handle={e => handleInputChange(e, 'status')}
       />
       <InputForm
@@ -71,7 +74,7 @@ export default function UserProfessionalForm({ handleInputChange, formData }: Us
       <SelectForm
         title="Role"
         name="role"
-        option={userRole}
+        option={[{ key: '', value: 'Sélectionner un role' }, ...userRole]}
         value={formData.role ?? ''}
         handle={e => handleInputChange(e, 'role')}
       />

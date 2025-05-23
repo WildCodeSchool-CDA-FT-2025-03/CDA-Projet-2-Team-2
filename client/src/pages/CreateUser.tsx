@@ -43,7 +43,7 @@ const initialFormData: FormDataType = {
   email: '',
   password: '',
   role: '',
-  status: '',
+  status: 'active',
   activationDate: null,
   departementId: 0,
   gender: '',
@@ -72,7 +72,7 @@ export default function CreateUser({ id }: CreateUserModalProps) {
   const [createPlanning] = useCreateDoctorPlanningMutation();
   const [error, setError] = useState('');
   const [isDoctor, setIsDoctor] = useState(false);
-  const [isDisable] = useState(false);
+  const [isDisable, setIsDisable] = useState(false);
   const [formData, setFormData] = useState<FormDataType>(initialFormData);
   const [userPlanning, setUserPlanning] = useState<Planning>(initialPlanning);
   const navigate = useNavigate();
@@ -86,7 +86,7 @@ export default function CreateUser({ id }: CreateUserModalProps) {
           email: user.email,
           password: '',
           role: user.role,
-          status: user.status,
+          status: user.status || 'active',
           departementId: Number(user.departement?.id),
           activationDate: user.activationDate || null,
           gender: user.gender || '',
@@ -98,22 +98,21 @@ export default function CreateUser({ id }: CreateUserModalProps) {
   }, [id, data, formData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setError('');
+    setIsDisable(false);
     const { name, value } = e.target;
 
     if (name === 'role') {
       setIsDoctor(value === 'doctor');
     }
     const updatedFormData = { ...formData, [name]: value };
+    console.log(updatedFormData);
     setFormData(updatedFormData);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
-    if (Object.values(formData).some(value => typeof value === 'string' && value.trim() === '')) {
-      setError('Tous les champs doivent être remplis.');
-      return;
-    }
     if (
       isDoctor &&
       !Object.values(userPlanning).some(day => (day.start !== '' && day.end !== '') || day.off)
@@ -121,7 +120,10 @@ export default function CreateUser({ id }: CreateUserModalProps) {
       setError('Au moins un jour doit être rempli.');
       return;
     }
-
+    if (error) {
+      setIsDisable(true);
+    }
+    console.log(formData);
     try {
       if (!id) {
         const createdUser = await createUser({
@@ -129,7 +131,6 @@ export default function CreateUser({ id }: CreateUserModalProps) {
         });
 
         if (isDoctor && createdUser.data) {
-          // createPlanning
           const planningInput = Object.keys(userPlanning).reduce(
             (acc, day) => {
               const dayLower = day.toLowerCase();
@@ -207,6 +208,8 @@ export default function CreateUser({ id }: CreateUserModalProps) {
             setUserPlanning={setUserPlanning}
             error={error}
             setError={setError}
+            isDisable={isDisable}
+            setIsDisable={setIsDisable}
           />
         )}
       </form>

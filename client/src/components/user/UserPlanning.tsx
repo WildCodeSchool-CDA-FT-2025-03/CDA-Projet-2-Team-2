@@ -1,6 +1,6 @@
 import { Planning } from '@/pages/CreateUser';
 import UserButtons from './UserButtons';
-import { useState } from 'react';
+import { useMemo } from 'react';
 
 const days = [
   { fr: 'Lundi', en: 'Monday' },
@@ -11,11 +11,14 @@ const days = [
   { fr: 'Samedi', en: 'Saturday' },
   { fr: 'Dimanche', en: 'Sunday' },
 ];
+
 type UserPlanningProps = {
   userPlanning: Planning;
   setUserPlanning: (planning: Planning | ((prev: Planning) => Planning)) => void;
   error: string;
+  isDisable: boolean;
   setError: (error: string) => void;
+  setIsDisable: (isDisable: boolean) => void;
 };
 
 export default function UserPlanning({
@@ -23,35 +26,70 @@ export default function UserPlanning({
   setUserPlanning,
   error,
   setError,
+  isDisable,
+  setIsDisable,
 }: UserPlanningProps) {
-  const [isDisable, setIsDisable] = useState(false);
+  const timeOptions = useMemo(() => {
+    return Array.from({ length: 48 }, (_, i) => {
+      const hours = Math.floor(i / 2);
+      const minutes = i % 2 === 0 ? '00' : '30';
+      return `${hours}h${minutes}`;
+    });
+  }, []);
+
+  const getMinutes = (time: string | null) => {
+    if (!time) return null;
+    const [h, m] = time.split('h');
+    return parseInt(h) * 60 + parseInt(m);
+  };
+
+  const calculateTotalWeeklyMinutes = (planning: Planning): number => {
+    return Object.values(planning).reduce((total, { start, end }) => {
+      const startMin = getMinutes(start);
+      const endMin = getMinutes(end);
+      if (startMin !== null && endMin !== null && endMin > startMin) {
+        return total + (endMin - startMin);
+      }
+      return total;
+    }, 0);
+  };
 
   const handleChange = (day: string, field: 'start' | 'end', value: string) => {
     setIsDisable(false);
     setError('');
-    setUserPlanning((prev: Planning) => {
-      const [startTime, endTime] = [
-        field === 'start' ? value : prev[day].start,
-        field === 'end' ? value : prev[day].end,
-      ];
-      const [startMinutes, endMinutes] = [startTime, endTime].map(time =>
-        time ? parseInt(time.split('h')[0]) * 60 + parseInt(time.split('h')[1]) : null,
-      );
 
-      if (
-        startMinutes !== null &&
-        endMinutes !== null &&
-        startMinutes >= endMinutes &&
-        value !== ''
-      ) {
+    setUserPlanning(prev => {
+      const updatedDay = {
+        ...prev[day],
+        [field]: value,
+      };
+
+      const startMin = getMinutes(updatedDay.start);
+      const endMin = getMinutes(updatedDay.end);
+
+      if (startMin!== null && endMin !== null && startMin >= endMin) {
         setError("L'heure de fin doit être supérieure à l'heure de début.");
+        setIsDisable(true);
         return prev;
       }
 
-      return {
+      if ((startMin !== null && endMin === null) || (endMin !== null && startMin === null)) {
+        setError('Les deux horaires doivent être remplis.');
+        setIsDisable(true);
+      }
+
+      const updatedPlanning = {
         ...prev,
-        [day]: { ...prev[day], [field]: value },
+        [day]: updatedDay,
       };
+
+      const totalHours = calculateTotalWeeklyMinutes(updatedPlanning) / 60;
+      if (totalHours > 48) {
+        setError('Le total hebdomadaire dépasse 48 heures.');
+        setIsDisable(true);
+      }
+
+      return updatedPlanning;
     });
   };
   return (
@@ -63,25 +101,18 @@ export default function UserPlanning({
         </div>
       )}
       <article className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {days.map(day => (
-          <div
-            key={day.en}
-            className="flex items-center justify-between  bg-blue-50 p-4 rounded-lg"
-          >
-            <p className="font-semibold mb-2">{day.fr}</p>
+        {days.map(({ fr, en }) => (
+          <div key={en} className="flex items-center justify-between bg-blue-50 p-4 rounded-lg">
+            <p className="font-semibold mb-2">{fr}</p>
             <div className="flex flex-col items-start gap-2">
               <span>Début</span>
               <select
-                value={userPlanning[day.en].start}
-                onChange={e => handleChange(day.en, 'start', e.target.value)}
+                value={userPlanning[en].start}
+                onChange={e => handleChange(en, 'start', e.target.value)}
                 className="border border-gray-300 rounded p-1"
               >
                 <option value="">-</option>
-                {Array.from({ length: 48 }, (_, i) => {
-                  const hours = Math.floor(i / 2);
-                  const minutes = i % 2 === 0 ? '00' : '30';
-                  return `${hours}h${minutes}`;
-                }).map(time => (
+                {timeOptions.map(time => (
                   <option key={time} value={time}>
                     {time}
                   </option>
@@ -91,16 +122,12 @@ export default function UserPlanning({
             <div className="flex flex-col items-start gap-2">
               <span>Fin</span>
               <select
-                value={userPlanning[day.en].end}
-                onChange={e => handleChange(day.en, 'end', e.target.value)}
+                value={userPlanning[en].end}
+                onChange={e => handleChange(en, 'end', e.target.value)}
                 className="border border-gray-300 rounded p-1"
               >
                 <option value="">-</option>
-                {Array.from({ length: 48 }, (_, i) => {
-                  const hours = Math.floor(i / 2);
-                  const minutes = i % 2 === 0 ? '00' : '30';
-                  return `${hours}h${minutes}`;
-                }).map(time => (
+                {timeOptions.map(time => (
                   <option key={time} value={time}>
                     {time}
                   </option>
