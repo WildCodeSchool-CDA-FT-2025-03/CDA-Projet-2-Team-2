@@ -5,7 +5,7 @@ import { Patient } from './patient.entity';
 import { DocType } from './doc-type.entity';
 
 @ObjectType()
-@Entity()
+@Entity('patient_doc')
 export class PatientDoc extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
@@ -18,6 +18,10 @@ export class PatientDoc extends BaseEntity {
   @Field(() => String)
   @Column()
   url: string;
+
+  @Field(() => String)
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: string;
 
   @Field(() => Patient)
   @ManyToOne(() => Patient, (patient) => patient.patient_docs)

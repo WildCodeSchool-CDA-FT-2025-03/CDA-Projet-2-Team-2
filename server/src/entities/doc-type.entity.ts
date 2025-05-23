@@ -8,7 +8,7 @@ export enum DocumentType {
 }
 
 @ObjectType()
-@Entity()
+@Entity('doc_type')
 export class DocType extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
@@ -27,6 +27,6 @@ export class DocType extends BaseEntity {
   type: DocumentType;
 
   @Field(() => [PatientDoc])
-  @OneToMany(() => PatientDoc, (patient_doc) => patient_doc.docType, { onDelete: 'CASCADE' })
+  @OneToMany(() => PatientDoc, (patient_doc) => patient_doc.docType)
   patient_docs_type: PatientDoc[];
 }

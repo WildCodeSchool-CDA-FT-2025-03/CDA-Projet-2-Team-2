@@ -73,6 +73,6 @@ export class Patient extends BaseEntity {
   city: City;
 
   @Field(() => [PatientDoc])
-  @OneToMany(() => PatientDoc, (patient_doc) => patient_doc.patient, { onDelete: 'CASCADE' })
+  @OneToMany(() => PatientDoc, (patient_docs) => patient_docs.patient)
   patient_docs: PatientDoc[];
 }
