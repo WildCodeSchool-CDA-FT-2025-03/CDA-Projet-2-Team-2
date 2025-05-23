@@ -19,10 +19,11 @@ services:
 
   server:
     build:
-      context: ./server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./server/Dockerfile
     volumes:
       - ./server:/app
+      - ./proto:/app/proto
       - /app/node_modules
     depends_on:
       postgres:
