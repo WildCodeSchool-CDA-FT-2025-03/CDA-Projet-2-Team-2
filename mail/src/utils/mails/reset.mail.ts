@@ -1,6 +1,6 @@
-import { sendEmail } from "../transporter";
+import { sendEmail } from '../transporter';
 
-export const sendSimpleTestEmail = async (to: string): Promise<void> => {
+export const resetPassword = async (to: string, url: string): Promise<void> => {
   const htmlContent = `
       <!DOCTYPE html>
       <html lang="fr">
@@ -29,15 +29,21 @@ export const sendSimpleTestEmail = async (to: string): Promise<void> => {
             padding: 20px;
             border-radius: 0 0 8px 8px;
           }
+          .mdp {
+            display:flex;
+          }            
           .button {
+            margin: 10px auto;
             background-color: #133f63;
             color: white;
             padding: 10px 20px;
             text-decoration: none;
             border-radius: 5px;
-            display: inline-block;
-            margin: 10px 0;
           }
+          a, a:visited, a:link {
+          color: white;
+          }
+
           .footer {
             text-align: center;
             margin-top: 20px;
@@ -49,53 +55,50 @@ export const sendSimpleTestEmail = async (to: string): Promise<void> => {
       <body>
         <div class="header">
           <h1>DoctoPlan</h1>
-          <p>Mail de test</p>
+          <p>Mail de ré-initialisation de mot de passe</p>
         </div>
         
         <div class="content">
           <h2>Bonjour !</h2>
-          <p>Ceci est un mail de test pour vérifier la configuration du serveur email.</p>
-          <p>Si vous recevez ce message, cela signifie que :</p>
-          <ul>
-            <li>✅ Le serveur SMTP est correctement configuré</li>
-            <li>✅ Les identifiants d'authentification sont valides</li>
-            <li>✅ L'envoi d'emails fonctionne correctement</li>
-          </ul>
-          
-          <a href="#" class="button">Bouton de test</a>
+          <p>Vous avez demandé la réinitialisation de votre mot de passe.</p>
+          <p>Cliquez sur le lien ci-dessous pour définir un nouveau mot de passe :</p>
+
+          <div class="mdp">
+          <a href="${url}"class="button">Cliquez ici pour réinitialiser le mot de passe</a>
+          </div>
+          <p>ou copiez collez le lien ci-dessous dans le votre navigateur</p>
+
+          <a href="${url}">${url}</a>
+
           
           <p>Cordialement,<br>L'équipe DoctoPlan</p>
         </div>
         
         <div class="footer">
-          <p>Ceci est un email automatique généré à des fins de test.</p>
+          <p>📢 Ce mail est généré automatiquement. Merci de ne pas répondre.</p>
         </div>
       </body>
       </html>
     `;
 
   const textContent = `
-      DOCTOPLAN - Mail de test
+      DOCTOPLAN - Mail de ré-initialisation de mot de passe
       
       Bonjour !
       
-      Ceci est un mail de test pour vérifier la configuration du serveur email.
+      Vous avez demandé la réinitialisation de votre mot de passe
       
-      Si vous recevez ce message, cela signifie que :
-      - Le serveur SMTP est correctement configuré
-      - Les identifiants d'authentification sont valides
-      - L'envoi d'emails fonctionne correctement
       
       Cordialement,
       L'équipe DoctoPlan
       
       ---
-      Ceci est un email automatique généré à des fins de test.
+      Ce mail est généré automatiquement. Merci de ne pas répondre.
     `;
 
   await sendEmail({
     to,
-    subject: "📧 Test de configuration email - DoctoPlan",
+    subject: '📧 Réinitialisation de mot de passe utilisateur - DoctoPlan',
     text: textContent,
     html: htmlContent,
   });

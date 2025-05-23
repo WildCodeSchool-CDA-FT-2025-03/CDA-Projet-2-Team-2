@@ -75,8 +75,8 @@ export class User extends BaseEntity {
   plannings: Planning[];
 
   @Field({ nullable: true })
-  @Column({ type: 'timestamp', nullable: true })
-  activationDate?: Date;
+  @Column({ type: 'date', nullable: true })
+  activationDate: string;
 
   @Field()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

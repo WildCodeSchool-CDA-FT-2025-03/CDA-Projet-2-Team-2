@@ -47,7 +47,6 @@ export async function seedDoctors() {
       user.profession = 'Médecin';
       user.gender = Math.random() > 0.5 ? 'Homme' : 'Femme';
       user.tel = `06${Math.floor(10000000 + Math.random() * 89999999)}`;
-      user.activationDate = new Date();
 
       try {
         await user.save();

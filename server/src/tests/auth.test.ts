@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, jest, afterEach } from '@jest/globals';
+import { describe, it, expect, beforeAll, jest, afterEach, afterAll } from '@jest/globals';
 import { graphql, GraphQLSchema, print } from 'graphql';
 import { gql } from 'graphql-tag';
 
@@ -10,7 +10,6 @@ import { generateToken } from '../utils/jwt.utils';
 const loginMutation = gql`
   mutation Mutation($input: LoginInput!) {
     login(input: $input) {
-      token
       user {
         email
       }
@@ -49,7 +48,6 @@ const meQuery = gql`
 
 type LoginResponse = {
   login: {
-    token: string;
     user: {
       email: string;
     };
@@ -78,6 +76,8 @@ describe('Auth', () => {
   let doctorToken: string;
 
   beforeAll(async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+
     schema = await createSchema();
 
     const departement = await Departement.findOne({ where: { label: 'Test' } });
@@ -98,6 +98,10 @@ describe('Auth', () => {
 
   afterEach(async () => {
     await User.delete({ email: 'newuser@test.com' });
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
   });
 
   it('should be able to login', async () => {
@@ -123,7 +127,6 @@ describe('Auth', () => {
     const data = result.data as unknown as LoginResponse;
 
     expect(data.login).toBeDefined();
-    expect(data.login.token).toBeDefined();
     expect(data.login.user).toBeDefined();
   });
 

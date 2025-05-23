@@ -12,9 +12,6 @@ export class LoginInput {
 
 @ObjectType()
 export class AuthResponse {
-  @Field()
-  token: string;
-
   @Field(() => User)
   user: User;
 }
