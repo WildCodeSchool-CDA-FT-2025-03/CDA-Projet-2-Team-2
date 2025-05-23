@@ -1,8 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchPatientsQuery, useSearchDoctorsQuery } from '@/types/graphql-generated';
 import { Link } from 'react-router-dom';
 
 export default function SearchBar() {
+  const [isOpen, setIsOpen] = useState(false); // searchBar state gestion
+  const clickOutsideRef = useRef<HTMLDivElement>(null);
+  const handleClickOutside = (event: MouseEvent) => {
+    if (clickOutsideRef.current && !clickOutsideRef.current.contains(event.target as Node)) {
+      setIsOpen(false);
+    }
+  };
+
   const [query, setQuery] = useState('');
 
   const shouldSearch = query.length >= 2;
@@ -32,12 +40,22 @@ export default function SearchBar() {
   const loading = loadingPatients || loadingDoctors;
   const error = errorPatients || errorDoctors;
 
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative w-full max-w-xs ml-auto">
+    <div ref={clickOutsideRef} className="relative w-full max-w-xs ml-auto">
       <input
         type="text"
         value={query}
-        onChange={e => setQuery(e.target.value)}
+        onChange={e => {
+          setQuery(e.target.value);
+          setIsOpen(true);
+        }}
         placeholder="Rechercher un patient ou un médecin..."
         className="w-full rounded-full border border-borderColor bg-white pl-4 pr-10 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
@@ -47,7 +65,7 @@ export default function SearchBar() {
         className="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 pointer-events-none"
       />
 
-      {shouldSearch && (
+      {shouldSearch && isOpen && (
         <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow max-h-80 overflow-y-auto">
           {loading && <p className="p-2 text-sm text-gray-500">Chargement...</p>}
           {error && <p className="p-2 text-sm text-red-500">Erreur lors de la recherche.</p>}
@@ -80,7 +98,7 @@ export default function SearchBar() {
                     👨‍⚕️ {doctor.firstname} {doctor.lastname}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {doctor.profession}, {doctor.departement.label}
+                    {doctor.profession} {doctor.departement.label}
                   </p>
                 </Link>
               </li>
