@@ -39,7 +39,10 @@ export const SEARCH_DOCTORS = gql`
       firstname
       lastname
       profession
-      departement
+      departement {
+        id
+        label
+      }
     }
   }
 `;
