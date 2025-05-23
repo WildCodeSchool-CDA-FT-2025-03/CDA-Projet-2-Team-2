@@ -27,6 +27,7 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           ...patientByID.city,
           patients: [],
         },
+        patient_docs: [],
       });
     };
     fetchUser();
