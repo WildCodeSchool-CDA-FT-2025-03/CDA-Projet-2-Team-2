@@ -36,6 +36,15 @@ export async function seedTestDatabase() {
     role: UserRole.DOCTOR,
   }).save();
 
+  await User.create({
+    email: 'agent@test.com',
+    password: hash,
+    firstname: 'Agent',
+    lastname: 'Test',
+    role: UserRole.AGENT,
+    departement: departement,
+  }).save();
+
   const newcity = await City.create({
     postal_code: '69009',
     city: 'LYON',

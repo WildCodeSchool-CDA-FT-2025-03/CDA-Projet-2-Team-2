@@ -4,18 +4,23 @@ import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import PaginationControls from './PaginationControls';
 import useResources from '@/hooks/useResources';
+import DepartmentSelect from '@/components/form/DepartmentSelect';
+import SearchBar from '@/components/form/SearchBar';
 
 export default function AgendaWithNavigator() {
+  const DEFAULT_DEPARTMENT = 'Cardiologie'; // Later, replace it by 'session.user.department.label'
+
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [currentPage, setCurrentPage] = useState(0);
-  const { resources } = useResources('Cardiologie');
-  const pageSize = useResponsiveAgendaPageSize();
+  const [selectedDepartment, setSelectedDepartment] = useState(DEFAULT_DEPARTMENT);
 
+  const { resources } = useResources(selectedDepartment);
+
+  const pageSize = useResponsiveAgendaPageSize();
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   const doctorIds = useMemo(() => visibleResources.map(r => Number(r.id)), [visibleResources]);
   const selectedDate = useMemo(() => startDate.toDate(), [startDate]);
 
-  // 📞 Call for multi-doctor appointments on the selected date
   const { appointments } = useAppointmentsData(doctorIds, selectedDate);
 
   return (
@@ -24,9 +29,27 @@ export default function AgendaWithNavigator() {
       role="region"
       aria-label="Agenda de tous les professionnels du service"
     >
+      <section className="flex flex-col md:flex-row lg:justify-between md:items-center gap-4 mb-6">
+        <div className="flex justify-center lg:justify-start w-full">
+          {/* 🎯 Department selection */}
+          <DepartmentSelect
+            value={selectedDepartment}
+            onChange={newLabel => {
+              setSelectedDepartment(newLabel);
+              setCurrentPage(0);
+            }}
+          />
+        </div>
+        <div className="flex justify-center md:justify-end w-full">
+          <div className="w-full max-w-xs">
+            <SearchBar />
+          </div>
+        </div>
+      </section>
       {/* Pagination desktop */}
-      <div
+      <section
         className="hidden lg:flex justify-end items-center gap-4 mb-4"
+        role="navigation"
         aria-label="Pagination desktop"
       >
         <PaginationControls
@@ -35,11 +58,11 @@ export default function AgendaWithNavigator() {
           pageSize={pageSize}
           totalItems={resources.length}
         />
-      </div>
+      </section>
 
       <section className="flex flex-col lg:flex-row gap-10 mt-6">
         {/* Calendar navigator */}
-        <aside aria-label="Navigateur de date">
+        <aside aria-label="Navigateur de date" className="flex justify-center lg:justify-start">
           <DayPilotNavigator
             selectMode="Day"
             showMonths={1}
@@ -51,7 +74,7 @@ export default function AgendaWithNavigator() {
         </aside>
 
         {/* Pagination mobile */}
-        <div className="lg:hidden" aria-label="Pagination mobile">
+        <section className="lg:hidden" role="navigation" aria-label="Pagination mobile">
           <PaginationControls
             currentPage={currentPage}
             onPageChange={setCurrentPage}
@@ -59,7 +82,7 @@ export default function AgendaWithNavigator() {
             totalItems={resources.length}
             className="mb-4"
           />
-        </div>
+        </section>
 
         {/* Agenda */}
         <article className="flex-1" aria-label="Agenda de tous les médecins et leurs rendez-vous">

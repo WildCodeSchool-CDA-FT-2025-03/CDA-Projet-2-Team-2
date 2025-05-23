@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
 import { AuthProvider } from '@/contexts/auth.context';
 import Layout from '@/components/layout/Layout';
 import HomePage from '@/pages/Home';
@@ -10,8 +9,10 @@ import Department from './pages/Department';
 
 import PatientFileSecretary from './pages/PatientFileSecretary';
 import SecretaryDashboard from './pages/secretaryDashboard/SecretaryDashboard';
+import ForgotPassword from './pages/ForgotPassword';
 import User from './pages/User';
 import Logs from './pages/Logs';
+import CreateUser from './pages/CreateUser';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <Login />,
+      },
+      {
+        path: '/forgot-password',
+        element: <ForgotPassword />,
       },
       {
         path: '*',
@@ -44,6 +49,10 @@ const router = createBrowserRouter([
           {
             path: '/users',
             element: <User />,
+          },
+          {
+            path: '/create-user',
+            element: <CreateUser />,
           },
           {
             path: '/secretary-dashboard',

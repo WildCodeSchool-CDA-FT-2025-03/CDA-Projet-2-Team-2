@@ -37,7 +37,7 @@ export class AuthResolver {
       `token=${token}; HttpOnly; Secure; Max-Age=${1 * 24 * 60 * 60 * 1000}`,
     );
 
-    return { token, user };
+    return { user };
   }
 
   @Query(() => User, { nullable: true })

@@ -26,6 +26,17 @@ export const PATIENT_QUERY = gql`
   }
 `;
 
+export const SEARCH_PATIENTS = gql`
+  query SearchPatients($query: String!) {
+    searchPatients(query: $query) {
+      id
+      firstname
+      lastname
+      social_number
+    }
+  }
+`;
+
 export const PATIENT_UPDATE_MUTATION = gql`
   mutation UpdatePatient($patientData: PatientInput!) {
     updatePatient(patientData: $patientData) {
