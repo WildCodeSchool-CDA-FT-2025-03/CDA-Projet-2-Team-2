@@ -51,6 +51,14 @@ services:
       postgres:
         condition: service_healthy
 
+  upload:
+    build:
+      context: ./upload
+      dockerfile: Dockerfile
+    volumes:
+      - ./upload:/app
+      - /app/node_modules
+
   seed:
     build:
       context: ./server
