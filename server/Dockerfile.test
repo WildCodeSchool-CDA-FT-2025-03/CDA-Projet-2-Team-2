@@ -2,10 +2,10 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-COPY jest.config.ts ./
-COPY jest.setup.ts ./
-COPY tsconfig.json ./
+COPY server/package*.json ./
+COPY server/jest.config.ts ./
+COPY server/jest.setup.ts ./
+COPY server/tsconfig.json ./
 
 RUN npm install
 
