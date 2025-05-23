@@ -19,8 +19,8 @@ services:
 
   server:
     build:
-      context: .
-      dockerfile: ./server/Dockerfile
+      context: ./server
+      dockerfile: Dockerfile
     volumes:
       - ./server:/app
       - ./proto:/app/proto
