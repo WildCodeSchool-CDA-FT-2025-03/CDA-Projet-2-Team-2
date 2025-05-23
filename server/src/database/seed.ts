@@ -67,7 +67,6 @@ async function seedDatabase() {
 
     try {
       await seedDoctors();
-      console.info('✅ Doctors seeded successfully');
     } catch (error) {
       console.error('❌ Failed to seed doctors:', error);
     }
