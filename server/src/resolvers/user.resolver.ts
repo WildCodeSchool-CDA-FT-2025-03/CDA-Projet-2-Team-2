@@ -37,7 +37,7 @@ export class UserResolver {
         { role: UserRole.DOCTOR, status: UserStatus.ACTIVE, lastname: ILike(`%${query}%`) },
       ],
       relations: ['departement'],
-      take: 10,
+      take: 5,
     });
   }
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchPatientsQuery } from '@/types/graphql-generated';
+import { useSearchPatientsQuery, useSearchDoctorsQuery } from '@/types/graphql-generated';
 import { Link } from 'react-router-dom';
 
 export default function SearchBar() {
@@ -17,10 +17,20 @@ export default function SearchBar() {
     skip: !shouldSearch, // 🔖 option SKIP passed to an Apollo hook, does not execute the query if !shouldSearch === true, instead of a conditional call with: {data:[]}
   });
 
-  const patients = patientData?.searchPatients ?? [];
+  const {
+    data: doctorData,
+    loading: loadingDoctors,
+    error: errorDoctors,
+  } = useSearchDoctorsQuery({
+    variables: { query },
+    skip: !shouldSearch,
+  });
 
-  const loading = loadingPatients;
-  const error = errorPatients;
+  const patients = patientData?.searchPatients ?? [];
+  const doctors = doctorData?.searchDoctors ?? [];
+
+  const loading = loadingPatients || loadingDoctors;
+  const error = errorPatients || errorDoctors;
 
   return (
     <div className="relative w-full max-w-xs ml-auto">
@@ -53,10 +63,25 @@ export default function SearchBar() {
                   to={`/patient-secretary/${patient.id}`}
                   className="block p-2 border-b last:border-b-0 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <div className="font-semibold">
+                  <p className="font-semibold">
                     🧑 {patient.firstname} {patient.lastname}
-                  </div>
-                  <div className="text-sm text-gray-500">N° sécu : {patient.social_number}</div>
+                  </p>
+                  <p className="text-sm text-gray-500">N° sécu : {patient.social_number}</p>
+                </Link>
+              </li>
+            ))}
+            {doctors.map(doctor => (
+              <li key={`doctor-${doctor.id}`}>
+                <Link
+                  to="/secretary-dashboard"
+                  className="block p-2 border-b last:border-b-0 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <p className="font-semibold">
+                    👨‍⚕️ {doctor.firstname} {doctor.lastname}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {doctor.profession}, {doctor.departement.label}
+                  </p>
                 </Link>
               </li>
             ))}
