@@ -63,6 +63,14 @@ services:
       - GRPC_PORT=50051
       - PORT=3333
 
+  upload:
+    build:
+      context: ./upload
+      dockerfile: Dockerfile
+    volumes:
+      - ./upload:/app
+      - /app/node_modules
+
   seed:
     build:
       context: ./server
