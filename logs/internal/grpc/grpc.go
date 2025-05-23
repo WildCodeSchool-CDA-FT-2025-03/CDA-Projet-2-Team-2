@@ -2,12 +2,14 @@ package config
 
 import (
 	"context"
+	"encoding/json"
 	"logs-server/internal/config"
 	"logs-server/internal/models"
 	"logs-server/internal/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"gorm.io/datatypes"
 )
 
 type LogServer struct {
@@ -17,14 +19,22 @@ type LogServer struct {
 func (s *LogServer) CreateLog(ctx context.Context, req *proto.LogRequest) (*proto.LogResponse, error) {
 	db := config.GetDB()
 
-	metadata := make(models.JSON)
+	metadata := make(map[string]interface{})
 	for k, v := range req.Metadata {
 		metadata[k] = v
 	}
 
+	metadataJSON, err := json.Marshal(metadata)
+	if err != nil {
+		return &proto.LogResponse{
+			Success: false,
+			Message: "Failed to marshal metadata: " + err.Error(),
+		}, nil
+	}
+
 	log := models.Log{
 		Titre:    req.Titre,
-		Metadata: metadata,
+		Metadata: datatypes.JSON(metadataJSON),
 	}
 
 	result := db.Create(&log)
@@ -49,11 +59,9 @@ func (s *LogServer) GetLogs(ctx context.Context, req *proto.EmptyRequest) (*prot
 
 	var protoLogs []*proto.LogEntry
 	for _, log := range logs {
-		metadata := make(map[string]string)
-		for k, v := range log.Metadata {
-			if str, ok := v.(string); ok {
-				metadata[k] = str
-			}
+		var metadata map[string]string
+		if err := json.Unmarshal(log.Metadata, &metadata); err != nil {
+			continue
 		}
 
 		protoLogs = append(protoLogs, &proto.LogEntry{

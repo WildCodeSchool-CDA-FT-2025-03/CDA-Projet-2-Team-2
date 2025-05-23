@@ -23,6 +23,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./server:/app
+      - ./proto:/app/proto
       - /app/node_modules
     depends_on:
       postgres:
