@@ -15,7 +15,7 @@ services:
     ports:
       - "5173:5173"
     depends_on:
-      - server
+      - codegen
 
   server:
     build:
@@ -28,7 +28,7 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O - http://localhost:4000 2>&1 | grep -q 'Bad Request' && exit 0 || exit 1"]
+      test: [ "CMD-SHELL", "wget -q -O - http://localhost:4000 2>&1 | grep -q 'Bad Request' && exit 0 || exit 1" ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -50,6 +50,17 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  logs:
+    build:
+      context: ./logs
+      dockerfile: Dockerfile
+    ports:
+      - "3333:3333"
+      - "50051:50051"
+    environment:
+      - GRPC_PORT=50051
+      - PORT=3333
 
   upload:
     build:
@@ -86,7 +97,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./db:/docker-entrypoint-initdb.d/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
