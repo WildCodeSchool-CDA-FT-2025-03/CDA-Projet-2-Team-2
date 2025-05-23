@@ -32,14 +32,8 @@ export const GET_DOCTORS_BY_DEPARTEMENT = gql`
   }
 `;
 
-export const GET_USER_BY_MAIL = gql`
+export const SEND_RESET_PASSWORD_BY_MAIL = gql`
   mutation SendResetPassword($email: String!) {
     sendResetPassword(email: $email)
-  }
-`;
-
-export const RESET_PASSWORD = gql`
-  mutation ResetPassword($password: String!) {
-    resetPassword(password: $password)
   }
 `;
