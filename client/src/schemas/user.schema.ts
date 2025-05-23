@@ -37,3 +37,9 @@ export const GET_USER_BY_MAIL = gql`
     sendResetPassword(email: $email)
   }
 `;
+
+export const RESET_PASSWORD = gql`
+  mutation ResetPassword($password: String!) {
+    resetPassword(password: $password)
+  }
+`;
