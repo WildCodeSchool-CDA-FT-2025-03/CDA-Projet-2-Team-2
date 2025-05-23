@@ -13,7 +13,7 @@ class PatientFile {
 
     fs.rename(
       file.path,
-      `public/patient/${file.originalname}`,
+      `public/patient/${file.filename}`,
       async (err) => {
         if (err) {
           res.status(400).send("Error while uploading");
@@ -29,7 +29,7 @@ class PatientFile {
           const variables = {
             "docInput": {
               "name": req.body.name,
-              "url": file.originalname,
+              "url": file.filename,
               "patientId": +req.body.patientId,
               "docTypeId": +req.body.type,
             },
