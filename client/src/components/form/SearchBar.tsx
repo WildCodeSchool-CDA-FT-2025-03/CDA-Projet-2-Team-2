@@ -8,6 +8,7 @@ export default function SearchBar() {
   const handleClickOutside = (event: MouseEvent) => {
     if (clickOutsideRef.current && !clickOutsideRef.current.contains(event.target as Node)) {
       setIsOpen(false);
+      setQuery('');
     }
   };
 
@@ -80,6 +81,10 @@ export default function SearchBar() {
                 <Link
                   to={`/patient-secretary/${patient.id}`}
                   className="block p-2 border-b last:border-b-0 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onClick={() => {
+                    setQuery('');
+                    setIsOpen(false);
+                  }}
                 >
                   <p className="font-semibold">
                     🧑 {patient.firstname} {patient.lastname}
