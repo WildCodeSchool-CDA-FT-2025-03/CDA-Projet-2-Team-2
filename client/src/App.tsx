@@ -12,6 +12,7 @@ import SecretaryDashboard from './pages/secretaryDashboard/SecretaryDashboard';
 import ForgotPassword from './pages/ForgotPassword';
 import User from './pages/User';
 import Logs from './pages/Logs';
+import CreateUser from './pages/CreateUser';
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
           {
             path: '/users',
             element: <User />,
+          },
+          {
+            path: '/create-user',
+            element: <CreateUser />,
           },
           {
             path: '/secretary-dashboard',
