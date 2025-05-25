@@ -39,6 +39,7 @@ class PatientFile {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                'Cookie': req.headers.cookie || '',
               },
               body: JSON.stringify({
                 query,

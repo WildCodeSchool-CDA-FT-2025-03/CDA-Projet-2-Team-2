@@ -1,9 +1,10 @@
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
 import { GraphQLError } from 'graphql';
 import { PatientDoc } from '../entities/patient-doc.entity';
 import { Patient } from '../entities/patient.entity';
 import { DocType } from '../entities/doc-type.entity';
 import { PatientDocInput } from '../types/patient-doc.type';
+import { UserRole } from '../entities/user.entity';
 
 @Resolver()
 export class PatientDocResolver {
@@ -17,6 +18,7 @@ export class PatientDocResolver {
   }
 
   @Mutation(() => PatientDoc)
+  @Authorized([UserRole.SECRETARY])
   async addDocument(@Arg('docInput') docInput: PatientDocInput): Promise<PatientDoc> {
     try {
       const patientDoc = new PatientDoc();
