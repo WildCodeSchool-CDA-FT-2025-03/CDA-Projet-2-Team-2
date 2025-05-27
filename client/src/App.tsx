@@ -43,10 +43,6 @@ const router = createBrowserRouter([
             element: <HomePage />,
           },
           {
-            path: '/department',
-            element: <Department />,
-          },
-          {
             path: '/admin/users',
             element: <User />,
           },
@@ -57,6 +53,10 @@ const router = createBrowserRouter([
           {
             path: '/admin/logs',
             element: <Logs />,
+          },
+          {
+            path: '/admin/department',
+            element: <Department />,
           },
           {
             path: '/secretary',
