@@ -28,6 +28,19 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    environment:
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+
+      - FRONTEND_URL=${FRONTEND_URL}
+      - SERVER_SEND_MAIL=${SERVER_SEND_MAIL}
+
+      - PORT=${SERVER_PORT}
+
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
+
+      - JWT_SECRET=${JWT_SECRET}
     healthcheck:
       test: [ "CMD-SHELL", "wget -q -O - http://localhost:4000 2>&1 | grep -q 'Bad Request' && exit 0 || exit 1" ]
       interval: 10s
