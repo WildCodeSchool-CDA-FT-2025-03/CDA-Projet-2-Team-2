@@ -55,16 +55,16 @@ const router = createBrowserRouter([
             element: <CreateUser />,
           },
           {
+            path: '/admin/logs',
+            element: <Logs />,
+          },
+          {
             path: '/secretary',
             element: <SecretaryDashboard />,
           },
           {
-            path: '/patient-secretary/:id',
+            path: '/secretary/patient/:id',
             element: <PatientFileSecretary />,
-          },
-          {
-            path: '/admin/logs',
-            element: <Logs />,
           },
         ],
       },
