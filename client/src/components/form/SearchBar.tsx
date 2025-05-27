@@ -79,7 +79,7 @@ export default function SearchBar() {
             {patients.map(patient => (
               <li key={`patient-${patient.id}`}>
                 <Link
-                  to={`/patient-secretary/${patient.id}`}
+                  to={`/secretary/patient/${patient.id}`}
                   className="block p-2 border-b last:border-b-0 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onClick={() => {
                     setQuery('');

@@ -11,7 +11,7 @@ export default function User() {
     <main className="container  mx-auto pt-4 pr-12 pl-12 pb-12 flex overflow-hidden flex-col gap-4 h-screen">
       <header className="flex items-center mb-4">
         <h2 className="text-xl mr-5 font-semibold text-gray-700">Tableau de bord administrateur</h2>
-        <Link className="bg-blue text-white px-4 py-2 rounded-md" to={'/create-user'}>
+        <Link className="bg-blue text-white px-4 py-2 rounded-md" to={'/admin/users/create'}>
           Nouvel utilistateur
         </Link>
       </header>
