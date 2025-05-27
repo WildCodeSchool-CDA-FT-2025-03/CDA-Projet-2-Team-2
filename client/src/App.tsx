@@ -55,7 +55,7 @@ const router = createBrowserRouter([
             element: <CreateUser />,
           },
           {
-            path: '/secretary-dashboard',
+            path: '/secretary',
             element: <SecretaryDashboard />,
           },
           {
