@@ -24,6 +24,18 @@ export class AppointmentResolver {
     });
   }
 
+  @Query(() => [Appointment])
+  async getDoctorByPatient(@Arg('patientId') patientId: number): Promise<Appointment[]> {
+    return Appointment.find({
+      where: {
+        patient: {
+          id: Equal(patientId),
+        },
+      },
+      relations: ['doctor', 'doctor.departement', 'patient'],
+    });
+  }
+
   // 📌 Appointments by Doctor
   @Query(() => [Appointment])
   async getAppointmentsByDoctor(@Arg('doctorId') doctorId: number): Promise<Appointment[]> {
