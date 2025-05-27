@@ -73,6 +73,6 @@ export class Patient extends BaseEntity {
   city: City;
 
   @Field(() => [PatientDoc])
-  @OneToMany(() => PatientDoc, (patient_docs) => patient_docs.patient)
-  patient_docs: PatientDoc[];
+  @OneToMany(() => PatientDoc, (patientDocs) => patientDocs.patient)
+  patientDocs: PatientDoc[];
 }
