@@ -14,12 +14,12 @@ export default function LoginPage() {
     setError('');
     try {
       const role = await login(email, password);
-      if (role) {
-        if (role === 'admin') {
-          navigate('/admin/users');
-        } else {
-          console.error('role not supported for redirection: ', role);
-        }
+      if (!role) return;
+
+      if (role === 'admin') {
+        navigate('/admin/users');
+      } else {
+        console.error('role not supported for redirection: ', role);
       }
     } catch (error) {
       setError(
