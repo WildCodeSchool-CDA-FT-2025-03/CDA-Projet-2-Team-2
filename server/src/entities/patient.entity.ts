@@ -1,6 +1,7 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { City } from './city.entity';
+import { PatientDoc } from './patient-doc.entity';
 
 @ObjectType()
 @Entity('patient')
@@ -70,4 +71,8 @@ export class Patient extends BaseEntity {
   @Field(() => City)
   @ManyToOne(() => City, (city) => city.patients)
   city: City;
+
+  @Field(() => [PatientDoc])
+  @OneToMany(() => PatientDoc, (patientDocs) => patientDocs.patient)
+  patientDocs: PatientDoc[];
 }

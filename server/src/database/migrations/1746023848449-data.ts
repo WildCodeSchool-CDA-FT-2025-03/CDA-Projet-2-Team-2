@@ -117,6 +117,14 @@ export class Data1746023848449 implements MigrationInterface {
         INNER JOIN "appointement-type" at ON at.reason = m.motif_consultation
         INNER JOIN departement d ON d.label = m.service;
     `);
+
+    await queryRunner.query(`
+      INSERT INTO doc_type VALUES (1,'Carte didentité','patient');
+      INSERT INTO doc_type VALUES (2,'Passeport','patient');
+      INSERT INTO doc_type VALUES (3,'Assurance','patient');
+      INSERT INTO doc_type VALUES (4,'Carte vitale','patient');
+      INSERT INTO doc_type VALUES (5,'Notes','patient');
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
