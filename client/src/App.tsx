@@ -4,14 +4,14 @@ import Layout from '@/components/layout/Layout';
 import Login from '@/pages/Login';
 import PageNotFound from '@/pages/PageNotFound';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import Department from './pages/Department';
+import Department from '@/pages/Department';
 
-import PatientFileSecretary from './pages/PatientFileSecretary';
-import SecretaryDashboard from './pages/secretaryDashboard/SecretaryDashboard';
-import ForgotPassword from './pages/ForgotPassword';
-import User from './pages/User';
-import Logs from './pages/Logs';
-import CreateUser from './pages/CreateUser';
+import PatientFileSecretary from '@/pages/PatientFileSecretary';
+import SecretaryDashboard from '@/pages/secretaryDashboard/SecretaryDashboard';
+import ForgotPassword from '@/pages/ForgotPassword';
+import User from '@/pages/User';
+import Logs from '@/pages/Logs';
+import CreateUser from '@/pages/CreateUser';
 
 const router = createBrowserRouter([
   {
