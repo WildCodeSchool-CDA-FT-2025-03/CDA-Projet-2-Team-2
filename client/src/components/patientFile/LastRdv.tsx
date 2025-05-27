@@ -21,6 +21,7 @@ export default function LastRdv({ patientNum }: inputPersonnal) {
       <h2 className="text-xl font-semibold mb-4">Derniers rendez-vous</h2>
       <ModuleList<Rdv>
         data={dataLastRdv}
+        getKey={item => item.id}
         renderItem={item => (
           <>
             <span className="font-bold text-gray-800">

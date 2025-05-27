@@ -21,6 +21,7 @@ export default function NextRdv({ patientNum }: inputPersonnal) {
       <h2 className="text-xl font-semibold mb-4">Prochains rendez-vous</h2>
       <ModuleList<Rdv>
         data={dataNextRdv}
+        getKey={item => item.id}
         renderItem={item => (
           <>
             <span className="font-bold text-gray-800">
