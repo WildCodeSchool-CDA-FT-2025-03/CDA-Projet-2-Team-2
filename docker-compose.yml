@@ -58,6 +58,9 @@ services:
       - ./mail:/app
       - /app/node_modules
     environment:
+      - SERVER_API_MAIL=${SERVER_API_MAIL}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - SERVER_PORT=${SERVER_PORT}
       - EMAIL_HOST=${EMAIL_HOST}
       - EMAIL_PORT=${EMAIL_PORT}
       - EMAIL_SECURE=${EMAIL_SECURE}
