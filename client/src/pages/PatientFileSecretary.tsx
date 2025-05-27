@@ -29,7 +29,7 @@ export default function PatientFileSecretary() {
       {/* Colonne 3 */}
       <section className="flex flex-col gap-6 flex-1 min-w-[400px] max-w-[700px]">
         <LastRdv patientNum={parseInt(id)} />
-        <FollowBy />
+        <FollowBy patientNum={parseInt(id)} />
       </section>
     </div>
   );
