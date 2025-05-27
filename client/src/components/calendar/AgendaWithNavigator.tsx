@@ -9,6 +9,21 @@ import SearchBar from '@/components/form/SearchBar';
 import type { Appointment } from '@/types/CalendarEvent.type';
 import { roundStartToNextHalfHour } from '@/utils/roundStartToNextHalfHour';
 
+type EventClickArgs = {
+  e: {
+    data: {
+      id: string;
+      text: string;
+      start: DayPilot.Date;
+      end: DayPilot.Date;
+      resource: string | number;
+      patient_name: string;
+      appointment_type: string;
+      [key: string]: unknown;
+    };
+  };
+};
+
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = 'Cardiologie';
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
@@ -23,6 +38,36 @@ export default function AgendaWithNavigator() {
   const selectedDate = useMemo(() => startDate.toDate(), [startDate]);
 
   const { appointments } = useAppointmentsData(doctorIds, selectedDate);
+
+  function handleEventClick(args: EventClickArgs) {
+    const event = args.e.data;
+
+    // Exemple simple avec prompt (a remplacer par modal)
+    const shouldEdit = window.confirm(`Modifier le rendez-vous de ${event.text} ?`);
+    if (shouldEdit) {
+      // Logique de modification ici
+      console.warn('Édition à implémenter :', event);
+    }
+  }
+
+  function handleTimeRangeSelected(args: {
+    start: DayPilot.Date;
+    end: DayPilot.Date;
+    resource: string | number;
+  }) {
+    const patientName = window.prompt('Nom du patient :');
+    if (!patientName) return;
+
+    const newEvent = {
+      id: DayPilot.guid(), //  génère un ID unique automatiquement
+      text: patientName,
+      start: args.start, // args = objet événementiel généré par DayPilot. { start: DayPilot.Date (début de la sélection), end: DayPilot.Date (fin de la sélection), resource: string (ID de la colonne (médecin) sélectionnée) }
+      end: args.end,
+      resource: args.resource,
+    };
+
+    console.warn('Nouveau rendez-vous :', newEvent);
+  }
 
   return (
     <div
@@ -128,6 +173,8 @@ export default function AgendaWithNavigator() {
                 resource: doctorId,
               };
             })}
+            onEventClick={handleEventClick}
+            onTimeRangeSelected={handleTimeRangeSelected}
           />
         </article>
       </section>
