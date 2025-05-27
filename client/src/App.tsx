@@ -47,11 +47,11 @@ const router = createBrowserRouter([
             element: <Department />,
           },
           {
-            path: '/users',
+            path: '/admin/users',
             element: <User />,
           },
           {
-            path: '/create-user',
+            path: '/admin/users/create',
             element: <CreateUser />,
           },
           {
