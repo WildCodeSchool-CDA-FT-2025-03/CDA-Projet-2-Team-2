@@ -28,6 +28,6 @@ export class PatientDoc extends BaseEntity {
   patient: Patient;
 
   @Field(() => DocType)
-  @ManyToOne(() => DocType, (docType) => docType.patient_docs_type)
+  @ManyToOne(() => DocType, (docType) => docType.patientDocsType)
   docType: DocType;
 }
