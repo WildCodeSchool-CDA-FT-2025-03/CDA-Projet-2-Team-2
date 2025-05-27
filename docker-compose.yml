@@ -78,8 +78,8 @@ services:
       - "3333:3333"
       - "50051:50051"
     environment:
-      - GRPC_PORT=50051
-      - PORT=3333
+      - GRPC_PORT=${GRPC_PORT}
+      - PORT=${LOGS_PORT}
 
   seed:
     build:
