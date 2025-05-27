@@ -18,6 +18,8 @@ export default function LoginPage() {
 
       if (role === 'admin') {
         navigate('/admin/users');
+      } else if (role === 'secretary') {
+        navigate('/secretary');
       } else {
         console.error('role not supported for redirection: ', role);
       }
