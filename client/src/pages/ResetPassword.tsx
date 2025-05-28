@@ -9,7 +9,7 @@ type FormValues = {
   confirmpassword: string;
 };
 
-export default function ForgotPassword() {
+export default function ResetPassword() {
   const navigate = useNavigate();
 
   const [error, setError] = useState('');
