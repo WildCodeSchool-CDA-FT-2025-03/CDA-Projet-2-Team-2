@@ -1,11 +1,11 @@
 import { generateTimeOptions } from '@/utils/generatedTimeOptions';
 
-type TimeSelectProps = {
+type TimeSelectStartProps = {
   value: string;
   onChange: (value: string) => void;
 };
 
-export default function TimeSelect({ value, onChange }: TimeSelectProps) {
+export default function TimeSelectStart({ value, onChange }: TimeSelectStartProps) {
   const timeOptions = generateTimeOptions();
 
   return (
