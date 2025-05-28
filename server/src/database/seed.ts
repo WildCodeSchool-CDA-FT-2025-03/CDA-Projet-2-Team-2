@@ -1,14 +1,14 @@
 import argon2 from 'argon2';
 import { dataSource } from './client';
 import { User, UserRole, UserStatus } from '../entities/user.entity';
-import 'dotenv/config';
-import 'reflect-metadata';
 import { Departement } from '../entities/departement.entity';
 import { seedDoctors } from './seed-fakeDoctors';
 import { Appointment, AppointmentStatus } from '../entities/appointment.entity';
 import { Patient } from '../entities/patient.entity';
 import { AppointmentType } from '../entities/appointment-type.entity';
 import { City } from '../entities/city.entity';
+import 'reflect-metadata';
+import 'dotenv/config';
 
 async function seedDatabase() {
   console.info('🌱 Starting database seeding...');
@@ -120,12 +120,6 @@ async function seedTestAppointments() {
   console.info('📅 Creating test appointments for agent page...');
 
   try {
-    const existingAppointments = await Appointment.find();
-    if (existingAppointments.length > 0) {
-      console.info('📅 Test appointments already exist, skipping creation');
-      return;
-    }
-
     const departments = [
       { label: 'Dermatologie', building: 'B', wing: 'gauche', level: '1er' },
       { label: 'Cardiologie', building: 'C', wing: 'droite', level: '2ème' },
