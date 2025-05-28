@@ -1,4 +1,4 @@
-import AdminDocs from './patientFile/AdminDocs';
+import AdminDocs from '../components/patientFile/AdminDocs';
 import FollowBy from '../components/patientFile/FollowBy';
 import LastRdv from '../components/patientFile/LastRdv';
 import NextRdv from '../components/patientFile/NextRdv';
@@ -23,13 +23,13 @@ export default function PatientFileSecretary() {
       {/* Colonne 2 */}
       <section className="flex flex-col gap-6 flex-1 min-w-[500px] max-w-[700px]">
         <NextRdv patientNum={parseInt(id)} />
-        <AdminDocs />
+        <AdminDocs patientNum={parseInt(id)} />
       </section>
 
       {/* Colonne 3 */}
       <section className="flex flex-col gap-6 flex-1 min-w-[400px] max-w-[700px]">
         <LastRdv patientNum={parseInt(id)} />
-        <FollowBy />
+        <FollowBy patientNum={parseInt(id)} />
       </section>
     </div>
   );

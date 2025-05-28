@@ -13,8 +13,18 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     try {
-      await login(email, password);
-      navigate('/');
+      const role = await login(email, password);
+      if (!role) return;
+
+      if (role === 'admin') {
+        navigate('/admin/users');
+      } else if (role === 'secretary') {
+        navigate('/secretary');
+      } else if (role === 'agent') {
+        navigate('/agent');
+      } else {
+        console.error('role not supported for redirection: ', role);
+      }
     } catch (error) {
       setError(
         error instanceof Error

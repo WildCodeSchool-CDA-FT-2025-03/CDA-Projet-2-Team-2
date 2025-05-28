@@ -2,16 +2,16 @@ import { Resolver, Query, Arg, Authorized } from 'type-graphql';
 import { Appointment, AppointmentStatus } from '../entities/appointment.entity';
 import { UserRole } from '../entities/user.entity';
 import { Between } from 'typeorm';
+import { AppointmentInput } from '../types/agent.type';
 
 @Resolver()
 export class AgentResolver {
   @Query(() => [Appointment])
   @Authorized([UserRole.AGENT])
   async getUpcomingAppointmentsByPatientAndDepartment(
-    @Arg('socialNumber', { nullable: true }) socialNumber?: string,
-    @Arg('departmentId', { nullable: true }) departmentId?: number,
+    @Arg('input') input: AppointmentInput,
   ): Promise<Appointment[]> {
-    if (!socialNumber && !departmentId) {
+    if (!input.socialNumber && !input.departmentId) {
       throw new Error('Either socialNumber or departmentId must be provided');
     }
 
@@ -28,12 +28,12 @@ export class AgentResolver {
       start_time: Between<Date>(now, thirtyMinutesLater),
     };
 
-    if (socialNumber) {
-      where.patient = { social_number: socialNumber };
+    if (input.socialNumber) {
+      where.patient = { social_number: input.socialNumber };
     }
 
-    if (departmentId) {
-      where.departement = { id: departmentId };
+    if (input.departmentId) {
+      where.departement = { id: input.departmentId };
     }
 
     return Appointment.find({

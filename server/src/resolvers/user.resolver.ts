@@ -1,19 +1,31 @@
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { Arg, Authorized, Ctx, Int, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { User, UserRole, UserStatus } from '../entities/user.entity';
-import { CreateUserInput } from '../types/user.type';
+import { CreateUserInput, UsersWithTotal } from '../types/user.type';
 import { GraphQLError } from 'graphql';
 import { Departement } from '../entities/departement.entity';
 import log from '../utils/log';
 import argon2 from 'argon2';
+import { ILike } from 'typeorm';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
 import jwt from 'jsonwebtoken';
 import { ResetPasswordInput } from '../types/user.type';
 
 @Resolver()
 export class UserResolver {
-  @Query(() => [User])
-  async getAllUsers() {
-    return await User.find({ relations: ['departement'] });
+  @Query(() => UsersWithTotal)
+  async getAllUsers(
+    @Arg('limit', () => Int, { nullable: true }) limit?: number,
+    @Arg('page', () => Int, { nullable: true }) page?: number,
+  ) {
+    const take = limit ?? 0;
+    const skip = page && page > 0 ? (page - 1) * take : 0;
+    const [users, total] = await User.findAndCount({
+      relations: ['departement'],
+      order: { lastname: 'ASC' },
+      take,
+      skip,
+    });
+    return { users, total };
   }
 
   // 📋 checks if the email exists and requests sending of the reset email
@@ -88,6 +100,19 @@ export class UserResolver {
     });
   }
 
+  @Query(() => [User])
+  @Authorized([UserRole.SECRETARY])
+  async searchDoctors(@Arg('query') query: string): Promise<User[]> {
+    return User.find({
+      where: [
+        { role: UserRole.DOCTOR, status: UserStatus.ACTIVE, firstname: ILike(`%${query}%`) },
+        { role: UserRole.DOCTOR, status: UserStatus.ACTIVE, lastname: ILike(`%${query}%`) },
+      ],
+      relations: ['departement'],
+      take: 5,
+    });
+  }
+
   @Mutation(() => User)
   @Authorized([UserRole.ADMIN])
   @UseMiddleware(AuthMiddleware)
@@ -145,5 +170,22 @@ export class UserResolver {
         },
       });
     }
+  }
+
+  @Mutation(() => Boolean)
+  async changeStatusStatus(@Arg('id') id: string) {
+    const user = await User.findOneBy({ id: +id });
+    if (!user) {
+      throw new GraphQLError('User non trouvé', {
+        extensions: {
+          code: 'USER_NOT_FOUND',
+        },
+      });
+    }
+
+    user.status = user.status === UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
+
+    await User.update({ id: user.id }, { ...user });
+    return true;
   }
 }

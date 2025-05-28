@@ -1,18 +1,18 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AuthProvider } from '@/contexts/auth.context';
 import Layout from '@/components/layout/Layout';
-import HomePage from '@/pages/Home';
 import Login from '@/pages/Login';
 import PageNotFound from '@/pages/PageNotFound';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import Department from './pages/Department';
+import Department from '@/pages/Department';
 
-import PatientFileSecretary from './pages/PatientFileSecretary';
-import SecretaryDashboard from './pages/secretaryDashboard/SecretaryDashboard';
-import ForgotPassword from './pages/ForgotPassword';
-import User from './pages/User';
-import Logs from './pages/Logs';
-import CreateUser from './pages/CreateUser';
+import PatientFileSecretary from '@/pages/PatientFileSecretary';
+import SecretaryDashboard from '@/pages/secretaryDashboard/SecretaryDashboard';
+import ForgotPassword from '@/pages/ForgotPassword';
+import User from '@/pages/User';
+import Logs from '@/pages/Logs';
+import CreateUser from '@/pages/CreateUser';
+import Agent from '@/pages/Agent';
 import ResetPassword from './pages/ResetPassword';
 
 const router = createBrowserRouter([
@@ -44,32 +44,32 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
           {
-            path: '/',
-            element: <HomePage />,
-          },
-          {
-            path: '/department',
-            element: <Department />,
-          },
-          {
-            path: '/users',
+            path: '/admin/users',
             element: <User />,
           },
           {
-            path: '/create-user',
+            path: '/admin/users/create',
             element: <CreateUser />,
-          },
-          {
-            path: '/secretary-dashboard',
-            element: <SecretaryDashboard />,
-          },
-          {
-            path: '/patient-secretary/:id',
-            element: <PatientFileSecretary />,
           },
           {
             path: '/admin/logs',
             element: <Logs />,
+          },
+          {
+            path: '/admin/department',
+            element: <Department />,
+          },
+          {
+            path: '/secretary',
+            element: <SecretaryDashboard />,
+          },
+          {
+            path: '/secretary/patient/:id',
+            element: <PatientFileSecretary />,
+          },
+          {
+            path: '/agent',
+            element: <Agent />,
           },
         ],
       },

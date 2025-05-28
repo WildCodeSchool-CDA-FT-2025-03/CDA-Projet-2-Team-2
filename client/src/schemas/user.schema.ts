@@ -1,22 +1,25 @@
 import { gql } from '@apollo/client';
 
 export const GET_USERS = gql`
-  query GetAllUsers {
-    getAllUsers {
-      id
-      email
-      role
-      firstname
-      lastname
-      status
-      activationDate
-      gender
-      tel
-      profession
-      departement {
+  query GetAllUsers($page: Int, $limit: Int) {
+    getAllUsers(page: $page, limit: $limit) {
+      users {
         id
-        label
+        email
+        role
+        firstname
+        lastname
+        status
+        activationDate
+        gender
+        tel
+        profession
+        departement {
+          id
+          label
+        }
       }
+      total
     }
   }
 `;
@@ -58,9 +61,30 @@ export const GET_DOCTORS_BY_DEPARTEMENT = gql`
   }
 `;
 
+export const SEARCH_DOCTORS = gql`
+  query SearchDoctors($query: String!) {
+    searchDoctors(query: $query) {
+      id
+      firstname
+      lastname
+      profession
+      departement {
+        id
+        label
+      }
+    }
+  }
+`;
+
 export const SEND_RESET_PASSWORD_BY_MAIL = gql`
   mutation SendResetPassword($email: String!) {
     sendResetPassword(email: $email)
+  }
+`;
+
+export const UPDATE_USER_STATUS = gql`
+  mutation ChangeStatusStatus($changeStatusStatusId: String!) {
+    changeStatusStatus(id: $changeStatusStatusId)
   }
 `;
 

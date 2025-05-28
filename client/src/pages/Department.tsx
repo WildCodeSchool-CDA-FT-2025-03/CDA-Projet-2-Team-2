@@ -1,14 +1,18 @@
-import { useGetDepartementsQuery } from '@/types/graphql-generated';
+import {
+  useChangeDepartmentStatusMutation,
+  useGetDepartementsQuery,
+} from '@/types/graphql-generated';
 import { useState } from 'react';
 import CreateDepartmentModal from '../components/department/CreateDepartmentModal';
-import DepartmentStatusModal from '@/components/department/DepartmentStatusModal';
+import StatusModal from '@/components/StatusModal';
 
 export default function Department() {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showStatusModal, setShowStatusModal] = useState<string | null>(null);
+  const [showStatusModal, setShowStatusModal] = useState<boolean>(false);
   const [departmentId, setDepartmentId] = useState<string | null>(null);
-  const { loading, error, data } = useGetDepartementsQuery();
+  const { loading, error, data, refetch } = useGetDepartementsQuery();
   const [searchTerm, setSearchTerm] = useState('');
+  const [updateStatus] = useChangeDepartmentStatusMutation();
 
   if (error) return <p>Error</p>;
   if (loading) return <p>Loading</p>;
@@ -16,6 +20,14 @@ export default function Department() {
   const filteredDepartments = data?.getDepartements.filter(department =>
     department.label.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  const updateDepartmentStatus = async () => {
+    if (departmentId) {
+      await updateStatus({ variables: { changeDepartmentStatusId: departmentId } });
+      refetch();
+      setShowStatusModal(false);
+    }
+  };
   return (
     <>
       <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4 h-screen">
@@ -80,15 +92,22 @@ export default function Department() {
                     className={`text-white px-5 py-2 rounded text-sm w-28 ${
                       department.status === 'active' ? 'bg-bgActiveStatus' : 'bg-bgInActiveStatus'
                     }`}
-                    onClick={() => setShowStatusModal(department.id)}
+                    onClick={() => {
+                      setShowStatusModal(true);
+                      setDepartmentId(department.id);
+                    }}
                   >
                     {department.status}
                   </button>
                 </div>
-                {showStatusModal === department.id && (
-                  <DepartmentStatusModal
-                    department={department}
-                    onClose={() => setShowStatusModal(null)}
+                {departmentId === department.id && showStatusModal && (
+                  <StatusModal
+                    data={{
+                      id: department.id,
+                      title: `Etes-vous sur de vouloir changer le status de ce service : ${department.label}`,
+                    }}
+                    onClose={() => setShowStatusModal(false)}
+                    updateStatus={updateDepartmentStatus}
                   />
                 )}
               </div>

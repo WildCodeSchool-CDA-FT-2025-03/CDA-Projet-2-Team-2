@@ -1,5 +1,5 @@
-import { Field, InputType } from 'type-graphql';
-import { UserRole, UserStatus } from '../entities/user.entity';
+import { Field, InputType, Int, ObjectType } from 'type-graphql';
+import { User, UserRole, UserStatus } from '../entities/user.entity';
 import { Matches } from 'class-validator';
 
 @InputType()
@@ -36,6 +36,15 @@ export class CreateUserInput {
 
   @Field(() => String, { nullable: true })
   status?: UserStatus;
+}
+
+@ObjectType()
+export class UsersWithTotal {
+  @Field(() => [User])
+  users: User[];
+
+  @Field(() => Int)
+  total: number;
 }
 
 @InputType()

@@ -6,7 +6,7 @@ export type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<string | undefined>;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

@@ -6,10 +6,11 @@ import PaginationControls from './PaginationControls';
 import useResources from '@/hooks/useResources';
 import DepartmentSelect from '@/components/form/DepartmentSelect';
 import SearchBar from '@/components/form/SearchBar';
+import type { Appointment } from '@/types/CalendarEvent.type';
+import { roundStartToNextHalfHour } from '@/utils/roundStartToNextHalfHour';
 
 export default function AgendaWithNavigator() {
-  const DEFAULT_DEPARTMENT = 'Cardiologie'; // Later, replace it by 'session.user.department.label'
-
+  const DEFAULT_DEPARTMENT = 'Cardiologie';
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState(DEFAULT_DEPARTMENT);
@@ -31,7 +32,6 @@ export default function AgendaWithNavigator() {
     >
       <section className="flex flex-col md:flex-row lg:justify-between md:items-center gap-4 mb-6">
         <div className="flex justify-center lg:justify-start w-full">
-          {/* 🎯 Department selection */}
           <DepartmentSelect
             value={selectedDepartment}
             onChange={newLabel => {
@@ -46,6 +46,7 @@ export default function AgendaWithNavigator() {
           </div>
         </div>
       </section>
+
       {/* Pagination desktop */}
       <section
         className="hidden lg:flex justify-end items-center gap-4 mb-4"
@@ -104,19 +105,29 @@ export default function AgendaWithNavigator() {
                 </div>
               `,
             }))}
-            events={appointments.map(event => ({
-              id: event.id,
-              text: event.patient_name,
-              html: `
-                <div style="background-color: #e2e8f0;">
-                  <p class="text-xs font-semibold">${event.patient_name}</p>
-                  <p class="text-xs text-gray-600">${event.appointment_type}</p>
+            events={appointments.map((event: Appointment) => {
+              const doctorId = event.doctor_id;
+
+              // Start rounded in order to adjust Start to the visible grid
+              const snappedStart = roundStartToNextHalfHour(event.start_time);
+              const snappedEnd = new Date(snappedStart);
+              snappedEnd.setMinutes(snappedStart.getMinutes() + 30); // fixed duration = 30 minutes added
+
+              return {
+                id: event.id,
+                text: event.patient_name,
+                html: `
+                <div style="background-color: #e2e8f0; line-height:1.2;">
+                  <p style="font-weight: 600; font-size: 11px;">${event.patient_name}</p>
+                  <p style="color: #4b5563; font-size: 10px;">${event.appointment_type} <span class="text-xs text-gray-400">Debut: ${event.start_time.slice(11, 16)}</span></p>
+                  
                 </div>
               `,
-              start: new DayPilot.Date(event.start_time),
-              end: new DayPilot.Date(event.end_time),
-              resource: event.doctor_id,
-            }))}
+                start: new DayPilot.Date(snappedStart.toISOString()),
+                end: new DayPilot.Date(snappedEnd.toISOString()),
+                resource: doctorId,
+              };
+            })}
           />
         </article>
       </section>

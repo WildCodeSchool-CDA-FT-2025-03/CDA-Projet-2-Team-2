@@ -1,17 +1,40 @@
-import { useGetAllUsersQuery } from '@/types/graphql-generated';
+import Pagination from '@/components/logs/Pagination';
+import StatusModal from '@/components/StatusModal';
+import { useChangeStatusStatusMutation, useGetAllUsersQuery } from '@/types/graphql-generated';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function User() {
-  const { loading, error, data } = useGetAllUsersQuery();
+  const [showStatusModal, setShowStatusModal] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const usersPerPage = 8;
 
+  const [updateStatus] = useChangeStatusStatusMutation();
+  const { loading, error, data, refetch } = useGetAllUsersQuery({
+    variables: {
+      page: currentPage,
+      limit: usersPerPage,
+    },
+  });
   if (error) return <p>Error</p>;
   if (loading) return <p>Loading</p>;
+  const users = data?.getAllUsers?.users || [];
+  const totalUsers = data?.getAllUsers?.total || 0;
 
+  const totalPages = Math.ceil(totalUsers / usersPerPage);
+  const handlePaginatation = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  const updateUserStatus = async () => {
+    if (userId) await updateStatus({ variables: { changeStatusStatusId: userId } });
+    refetch();
+    setShowStatusModal(false);
+  };
   return (
     <main className="container  mx-auto pt-4 pr-12 pl-12 pb-12 flex overflow-hidden flex-col gap-4 h-screen">
       <header className="flex items-center mb-4">
         <h2 className="text-xl mr-5 font-semibold text-gray-700">Tableau de bord administrateur</h2>
-        <Link className="bg-blue text-white px-4 py-2 rounded-md" to={'/create-user'}>
+        <Link className="bg-blue text-white px-4 py-2 rounded-md" to={'/admin/users/create'}>
           Nouvel utilistateur
         </Link>
       </header>
@@ -29,7 +52,7 @@ export default function User() {
             className="absolute right-3 top-1/2 -translate-y-1/2"
           />
         </div>
-        {data?.getAllUsers?.map(({ id, firstname, lastname, email, status, departement }) => (
+        {users.map(({ id, firstname, lastname, email, status, departement }) => (
           <section
             key={id}
             className="flex px-3 py-3 m-4 bg-white border border-borderColor rounded-sm justify-between"
@@ -38,14 +61,35 @@ export default function User() {
               {firstname} {lastname} - {email} - {departement.label}
             </p>
             <button
+              onClick={() => {
+                setShowStatusModal(true);
+                setUserId(id);
+              }}
               className={`text-white px-5 py-2 rounded text-sm w-28 ${
                 status === 'active' ? 'bg-bgActiveStatus' : 'bg-bgInActiveStatus'
               }`}
             >
               {status}
             </button>
+            {userId === id && showStatusModal && (
+              <StatusModal
+                data={{
+                  id,
+                  title: `Etes-vous sur de vouloir changer le status de cet utilisateur : ${firstname + lastname}`,
+                }}
+                onClose={() => setShowStatusModal(false)}
+                updateStatus={updateUserStatus}
+              />
+            )}
           </section>
         ))}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePaginatation}
+          totalItems={totalUsers}
+          pageSize={usersPerPage}
+        />
       </section>
     </main>
   );
