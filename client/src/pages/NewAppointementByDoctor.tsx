@@ -1,4 +1,5 @@
 import SearchBar from '@/components/form/SearchBar';
+import SelectForm from '@/components/form/SelectForm';
 import UserItem from '@/components/UserItem';
 import { DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useSearchParams } from 'react-router-dom';
@@ -25,9 +26,15 @@ export default function NewAppointementByDoctor() {
         <aside>
           <DayPilotNavigator />
         </aside>
-        <div>
+        <div className="flex flex-col gap-4">
           <UserItem />
-          <h3>Select motif de consultation</h3>
+          <SelectForm
+            name="motifs"
+            value="pupu"
+            title="Motif de consultation"
+            option={[]}
+            handle={() => console.warn('truc')}
+          />
           <div>
             Debut - Fin
             <button className="standard-button-red">Annuler</button>
