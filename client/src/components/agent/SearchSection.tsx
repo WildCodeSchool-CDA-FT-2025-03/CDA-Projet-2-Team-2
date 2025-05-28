@@ -20,11 +20,9 @@ export default function SearchSection({
   const [departmentSearchTerm, setDepartmentSearchTerm] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Récupération des départements
   const { data: departmentsData, loading: departmentsLoading } = useGetDepartementsQuery();
   const departments = departmentsData?.getDepartements || [];
 
-  // Filtrage des départements selon le terme de recherche
   const filteredDepartments = departments.filter(dept =>
     dept.label.toLowerCase().includes(departmentSearchTerm.toLowerCase()),
   );
@@ -99,7 +97,6 @@ export default function SearchSection({
 
         <div className="relative mb-4">
           {searchType === 'social' ? (
-            // Input pour la recherche par numéro de sécurité sociale
             <>
               <input
                 type="text"
@@ -112,7 +109,6 @@ export default function SearchSection({
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             </>
           ) : (
-            // Dropdown pour la sélection du service
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -136,7 +132,6 @@ export default function SearchSection({
                   exit={{ opacity: 0, y: -10 }}
                   className="absolute top-full left-0 right-0 mt-1 bg-white border border-borderColor rounded-xl shadow-lg z-50 max-h-60 overflow-hidden"
                 >
-                  {/* Input de recherche dans le dropdown */}
                   <div className="p-3 border-b border-borderColor">
                     <div className="relative">
                       <input
@@ -150,7 +145,6 @@ export default function SearchSection({
                     </div>
                   </div>
 
-                  {/* Liste des services */}
                   <div className="max-h-40 overflow-y-auto">
                     {departmentsLoading ? (
                       <div className="p-3 text-center text-gray-500">
