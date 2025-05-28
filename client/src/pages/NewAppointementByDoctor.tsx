@@ -1,4 +1,5 @@
 import SearchBar from '@/components/form/SearchBar';
+import UserItem from '@/components/UserItem';
 import { DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -25,7 +26,7 @@ export default function NewAppointementByDoctor() {
           <DayPilotNavigator />
         </aside>
         <div>
-          <h3>Patient info</h3>
+          <UserItem />
           <h3>Select motif de consultation</h3>
           <div>
             Debut - Fin
