@@ -5,7 +5,7 @@ import { authMiddleware } from "./middlewares/auth.middleware";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/tmp/')
+    cb(null, 'public/patient/')
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + Math.round(Math.random() * 1E9)
@@ -16,8 +16,6 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-router.use('/upload/patient-file', authMiddleware(['secretary']));
-
-router.post("/upload/patient-file", upload.single("myfile"), PatientFile.upload);
+router.post("/upload/patient-file", authMiddleware(['secretary']), upload.single("myfile"), PatientFile.upload);
 
 export default router;
