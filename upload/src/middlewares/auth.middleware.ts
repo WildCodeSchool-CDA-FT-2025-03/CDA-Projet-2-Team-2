@@ -10,7 +10,7 @@ export const authMiddleware = (roleaccess: string[]) => {
   return function (req: Request, res: Response, next: NextFunction) {
     const cookieHeader = req.headers.cookie as string | undefined;
     if(!cookieHeader) {
-      res.status(401).json({ message: "Unauthorized" });
+      res.sendStatus(401);
       return;
     }
 
@@ -25,7 +25,7 @@ export const authMiddleware = (roleaccess: string[]) => {
     const token = cookies['token'];
 
     if (!token) {
-      res.status(401).json({ message: "No token found" });
+      res.sendStatus(401);
       return;
     }
 
@@ -33,7 +33,7 @@ export const authMiddleware = (roleaccess: string[]) => {
     if(roleaccess.includes(decoded.role)) {
       next();
     } else {
-      res.status(401).json({ message: "Unauthorized" });
+      res.sendStatus(401);
       return;
     }
   }

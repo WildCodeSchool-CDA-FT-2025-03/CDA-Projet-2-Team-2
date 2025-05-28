@@ -1,16 +1,13 @@
-import { Resolver, Query, Arg } from 'type-graphql';
+import { Resolver, Query, Arg, Authorized } from 'type-graphql';
 import { Appointment } from '../entities/appointment.entity';
 import { Between, Equal, MoreThan, LessThan } from 'typeorm';
+import { UserRole } from '../entities/user.entity';
 
 @Resolver()
 export class AppointmentResolver {
-  @Query(() => String)
-  helloAppointments() {
-    return 'Hello from appointments!';
-  }
-
   // 📌 Appointments by Departement
   @Query(() => [Appointment])
+  @Authorized([UserRole.SECRETARY])
   async getAppointmentsByDepartement(
     @Arg('departementId') departementId: number,
   ): Promise<Appointment[]> {
@@ -24,8 +21,22 @@ export class AppointmentResolver {
     });
   }
 
+  @Query(() => [Appointment])
+  @Authorized([UserRole.SECRETARY])
+  async getDoctorByPatient(@Arg('patientId') patientId: number): Promise<Appointment[]> {
+    return Appointment.find({
+      where: {
+        patient: {
+          id: Equal(patientId),
+        },
+      },
+      relations: ['doctor', 'doctor.departement', 'patient'],
+    });
+  }
+
   // 📌 Appointments by Doctor
   @Query(() => [Appointment])
+  @Authorized([UserRole.SECRETARY])
   async getAppointmentsByDoctor(@Arg('doctorId') doctorId: number): Promise<Appointment[]> {
     return Appointment.find({
       where: {
@@ -39,6 +50,7 @@ export class AppointmentResolver {
 
   // 📌 Appointments by Doctor
   @Query(() => [Appointment])
+  @Authorized([UserRole.SECRETARY])
   async getNextAppointmentsByPatient(@Arg('patientId') patientId: number): Promise<Appointment[]> {
     return Appointment.find({
       where: {
@@ -54,6 +66,7 @@ export class AppointmentResolver {
 
   // 📌 Appointments by Doctor
   @Query(() => [Appointment])
+  @Authorized([UserRole.SECRETARY])
   async getLastAppointmentsByPatient(@Arg('patientId') patientId: number): Promise<Appointment[]> {
     return Appointment.find({
       where: {
@@ -70,6 +83,7 @@ export class AppointmentResolver {
 
   // 📌 Appointments by Day
   @Query(() => [Appointment])
+  @Authorized([UserRole.SECRETARY])
   async getAppointmentsByDate(
     @Arg('date') date: string, // format YYYY-MM-DD
   ): Promise<Appointment[]> {
@@ -89,6 +103,7 @@ export class AppointmentResolver {
 
   // 📌 Appointments by Doctor and Day
   @Query(() => [Appointment])
+  @Authorized([UserRole.SECRETARY])
   async getAppointmentsByDoctorAndDate(
     @Arg('doctorId') doctorId: number,
     @Arg('date') date: string, // format YYYY-MM-DD

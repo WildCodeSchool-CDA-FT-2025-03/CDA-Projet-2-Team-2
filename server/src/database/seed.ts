@@ -1,10 +1,11 @@
 import argon2 from 'argon2';
 import { dataSource } from './client';
 import { User, UserRole, UserStatus } from '../entities/user.entity';
-import 'dotenv/config';
-import 'reflect-metadata';
 import { Departement } from '../entities/departement.entity';
 import { seedDoctors } from './seed-fakeDoctors';
+import { seedTestAppointments } from './seedTestAppointments';
+import 'reflect-metadata';
+import 'dotenv/config';
 
 async function seedDatabase() {
   console.info('🌱 Starting database seeding...');
@@ -21,15 +22,22 @@ async function seedDatabase() {
       where: { email: 'admin@doctoplan.com' },
     });
 
+    let existingDepartement = await Departement.findOne({
+      where: { label: 'Administration' },
+    });
+
+    if (!existingDepartement) {
+      console.info('👤 Departement not found, creating...');
+      existingDepartement = new Departement();
+      existingDepartement.label = 'Administration';
+      existingDepartement.building = 'A';
+      existingDepartement.wing = 'droite';
+      existingDepartement.level = 'RDC';
+      await existingDepartement.save();
+    }
+
     if (!existingAdmin) {
       console.info('👤 Admin user not found, creating...');
-
-      const newDepartement = new Departement();
-      newDepartement.label = 'Administration';
-      newDepartement.building = 'A';
-      newDepartement.wing = 'droite';
-      newDepartement.level = 'RDC';
-      await newDepartement.save();
 
       const hashedPassword = await argon2.hash(process.env.ADMIN_PASSWORD || 'admin123');
 
@@ -39,7 +47,7 @@ async function seedDatabase() {
       adminUser.role = UserRole.ADMIN;
       adminUser.firstname = 'Admin';
       adminUser.lastname = 'User';
-      adminUser.departement = newDepartement;
+      adminUser.departement = existingDepartement;
       adminUser.profession = 'Administrateur';
       adminUser.gender = 'M';
       adminUser.tel = '0606060606';
@@ -55,7 +63,7 @@ async function seedDatabase() {
       secretaryUser.role = UserRole.SECRETARY;
       secretaryUser.firstname = 'secretary';
       secretaryUser.lastname = 'User';
-      secretaryUser.departement = newDepartement;
+      secretaryUser.departement = existingDepartement;
       secretaryUser.status = UserStatus.ACTIVE;
 
       await secretaryUser.save();
@@ -65,11 +73,38 @@ async function seedDatabase() {
       console.info('👤 Admin user already exists, skipping creation');
     }
 
+    const existingAgent = await User.findOne({
+      where: { email: 'agent@doctoplan.com' },
+    });
+
+    if (!existingAgent) {
+      console.info('👤 Agent user not found, creating...');
+
+      const hashedAgentPassword = await argon2.hash(process.env.AGENT_PASSWORD || 'agent123');
+
+      const agentUser = new User();
+      agentUser.email = 'agent@doctoplan.com';
+      agentUser.password = hashedAgentPassword;
+      agentUser.role = UserRole.AGENT;
+      agentUser.firstname = 'agent';
+      agentUser.lastname = 'User';
+      agentUser.departement = existingDepartement;
+      agentUser.status = UserStatus.ACTIVE;
+
+      await agentUser.save();
+
+      console.info('✅ Agent user created successfully');
+    } else {
+      console.info('👤 Agent user already exists, skipping creation');
+    }
+
     try {
       await seedDoctors();
     } catch (error) {
       console.error('❌ Failed to seed doctors:', error);
     }
+
+    await seedTestAppointments();
   } catch (error) {
     console.error('❌ Error seeding database:', error);
   } finally {

@@ -1,5 +1,6 @@
-import { Field, InputType } from 'type-graphql';
-import { UserRole, UserStatus } from '../entities/user.entity';
+import { Field, InputType, Int, ObjectType } from 'type-graphql';
+import { User, UserRole, UserStatus } from '../entities/user.entity';
+import { Matches } from 'class-validator';
 
 @InputType()
 export class CreateUserInput {
@@ -35,4 +36,25 @@ export class CreateUserInput {
 
   @Field(() => String, { nullable: true })
   status?: UserStatus;
+}
+
+@ObjectType()
+export class UsersWithTotal {
+  @Field(() => [User])
+  users: User[];
+
+  @Field(() => Int)
+  total: number;
+}
+
+@InputType()
+export class ResetPasswordInput {
+  @Field()
+  @Matches(/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/, {
+    message: "Le mot de passe n'est pas réglementaire !",
+  })
+  password: string;
+
+  @Field()
+  token: string;
 }

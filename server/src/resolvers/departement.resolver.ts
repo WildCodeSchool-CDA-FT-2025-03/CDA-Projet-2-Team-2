@@ -1,11 +1,13 @@
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver, Authorized } from 'type-graphql';
 import { Departement, DepartementStatus } from '../entities/departement.entity';
 import { GraphQLError } from 'graphql';
 import { DepartementInput } from '../types/departement.type';
+import { UserRole } from '../entities/user.entity';
 
 @Resolver()
 export class DepartementResolver {
   @Query(() => [Departement])
+  @Authorized([UserRole.SECRETARY, UserRole.DOCTOR, UserRole.ADMIN, UserRole.AGENT])
   async getDepartements(): Promise<Departement[]> {
     return await Departement.find({
       relations: {
@@ -15,6 +17,7 @@ export class DepartementResolver {
   }
 
   @Mutation(() => Boolean)
+  @Authorized([UserRole.ADMIN])
   async createDepartement(@Arg('data') data: DepartementInput) {
     try {
       const newDepartement = new Departement();
@@ -37,6 +40,7 @@ export class DepartementResolver {
   }
 
   @Mutation(() => Boolean)
+  @Authorized([UserRole.ADMIN])
   async updateDepartment(@Arg('id') id: string, @Arg('data') data: DepartementInput) {
     const department = await Departement.findOneBy({ id: +id });
     if (!department) {
@@ -57,6 +61,7 @@ export class DepartementResolver {
   }
 
   @Mutation(() => Boolean)
+  @Authorized([UserRole.ADMIN])
   async changeDepartmentStatus(@Arg('id') id: string) {
     const department = await Departement.findOneBy({ id: +id });
     if (!department) {

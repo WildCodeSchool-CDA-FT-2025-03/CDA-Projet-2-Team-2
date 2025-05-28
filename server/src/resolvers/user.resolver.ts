@@ -1,6 +1,6 @@
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { Arg, Authorized, Ctx, Int, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { User, UserRole, UserStatus } from '../entities/user.entity';
-import { CreateUserInput } from '../types/user.type';
+import { CreateUserInput, UsersWithTotal } from '../types/user.type';
 import { GraphQLError } from 'graphql';
 import { Departement } from '../entities/departement.entity';
 import log from '../utils/log';
@@ -8,12 +8,27 @@ import argon2 from 'argon2';
 import { ILike } from 'typeorm';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
 import jwt from 'jsonwebtoken';
+import { ResetPasswordInput } from '../types/user.type';
 
 @Resolver()
+@Authorized([UserRole.ADMIN])
 export class UserResolver {
-  @Query(() => [User])
-  async getAllUsers() {
-    return await User.find({ relations: ['departement'] });
+  @Query(() => UsersWithTotal)
+  async getAllUsers(
+    @Arg('limit', () => Int, { nullable: true }) limit?: number,
+    @Arg('page', () => Int, { nullable: true }) page?: number,
+    @Arg('search', { nullable: true }) search?: string,
+  ) {
+    const take = limit ?? 0;
+    const skip = page && page > 0 ? (page - 1) * take : 0;
+    const [users, total] = await User.findAndCount({
+      relations: ['departement'],
+      order: { lastname: 'ASC' },
+      take,
+      skip,
+      where: [{ firstname: ILike(`%${search}%`) }, { lastname: ILike(`%${search}%`) }],
+    });
+    return { users, total };
   }
 
   // 📋 checks if the email exists and requests sending of the reset email
@@ -26,8 +41,7 @@ export class UserResolver {
         try {
           // 🔗 creating the jwt token and password reset url
           const resetToken = jwt.sign({ email }, `${process.env.JWT_SECRET}`);
-          // 🔥 le lien url ne peut pas être testé maintenant.
-          // Cela sera fait lors du process de réinitialisation du pwd (une prochaine PR)
+
           const url = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
           // ☎️ call the server_send_mail (/mail on Express)
@@ -51,7 +65,32 @@ export class UserResolver {
     }
   }
 
+  // 🖲️ Reset password
+  @Mutation(() => Boolean)
+  async resetPassword(@Arg('input') { token, password }: ResetPasswordInput): Promise<boolean> {
+    try {
+      // 📤 retrieve the email in the token
+      const { email } = jwt.verify(token, process.env.JWT_SECRET || '') as unknown as {
+        email: string;
+      };
+
+      // then check that the user exists
+      const userUpdate = await User.findOneBy({ email });
+      if (!userUpdate) {
+        throw new Error('Utilisateur inconnu');
+      }
+      // ⚙️ hash and update new password
+      const hashedPassword = await argon2.hash(password);
+      userUpdate.password = hashedPassword;
+      await userUpdate.save();
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   @Query(() => [User])
+  @Authorized([UserRole.SECRETARY])
   async getDoctorsByDepartement(@Arg('label') label: string): Promise<User[]> {
     return await User.find({
       relations: ['departement'],
@@ -135,5 +174,23 @@ export class UserResolver {
         },
       });
     }
+  }
+
+  @Mutation(() => Boolean)
+  @Authorized([UserRole.ADMIN])
+  async changeStatusStatus(@Arg('id') id: string) {
+    const user = await User.findOneBy({ id: +id });
+    if (!user) {
+      throw new GraphQLError('User non trouvé', {
+        extensions: {
+          code: 'USER_NOT_FOUND',
+        },
+      });
+    }
+
+    user.status = user.status === UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
+
+    await User.update({ id: user.id }, { ...user });
+    return true;
   }
 }
