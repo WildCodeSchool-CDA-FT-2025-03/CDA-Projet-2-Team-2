@@ -124,13 +124,6 @@ export default function AppointmentSection({ appointments }: AppointmentSectionP
                       <span className="text-sm text-gray-500">
                         Motif: {appointment.appointmentType.reason}
                       </span>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="bg-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors"
-                      >
-                        Voir détails
-                      </motion.button>
                     </div>
                   </div>
                 </motion.div>
