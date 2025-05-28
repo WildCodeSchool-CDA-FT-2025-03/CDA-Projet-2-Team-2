@@ -10,11 +10,13 @@ import { AuthMiddleware } from '../middlewares/auth.middleware';
 import jwt from 'jsonwebtoken';
 
 @Resolver()
+@Authorized([UserRole.ADMIN])
 export class UserResolver {
   @Query(() => UsersWithTotal)
   async getAllUsers(
     @Arg('limit', () => Int, { nullable: true }) limit?: number,
     @Arg('page', () => Int, { nullable: true }) page?: number,
+    @Arg('search', { nullable: true }) search?: string,
   ) {
     const take = limit ?? 0;
     const skip = page && page > 0 ? (page - 1) * take : 0;
@@ -23,6 +25,7 @@ export class UserResolver {
       order: { lastname: 'ASC' },
       take,
       skip,
+      where: [{ firstname: ILike(`%${search}%`) }, { lastname: ILike(`%${search}%`) }],
     });
     return { users, total };
   }
@@ -63,6 +66,7 @@ export class UserResolver {
   }
 
   @Query(() => [User])
+  @Authorized([UserRole.SECRETARY])
   async getDoctorsByDepartement(@Arg('label') label: string): Promise<User[]> {
     return await User.find({
       relations: ['departement'],
@@ -149,6 +153,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
+  @Authorized([UserRole.ADMIN])
   async changeStatusStatus(@Arg('id') id: string) {
     const user = await User.findOneBy({ id: +id });
     if (!user) {
