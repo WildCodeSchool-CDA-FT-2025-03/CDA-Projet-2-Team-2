@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 export default function User() {
   const [showStatusModal, setShowStatusModal] = useState<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchUser, setSearchUser] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const usersPerPage = 8;
 
@@ -15,10 +17,10 @@ export default function User() {
     variables: {
       page: currentPage,
       limit: usersPerPage,
+      search: searchUser,
     },
   });
   if (error) return <p>Error</p>;
-  if (loading) return <p>Loading</p>;
   const users = data?.getAllUsers?.users || [];
   const totalUsers = data?.getAllUsers?.total || 0;
 
@@ -29,6 +31,13 @@ export default function User() {
     if (userId) await updateStatus({ variables: { changeStatusStatusId: userId } });
     refetch();
     setShowStatusModal(false);
+  };
+  const handleSearchBar = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+    if (e.target.value.length === 0 || e.target.value.length >= 2) {
+      setSearchUser(e.target.value);
+      setCurrentPage(0);
+    }
   };
   return (
     <main className="container  mx-auto pt-4 pr-12 pl-12 pb-12 flex overflow-hidden flex-col gap-4 h-screen">
@@ -42,7 +51,8 @@ export default function User() {
         <div className="bg-white m-4 w-2/5 relative border border-borderColor rounded-full">
           <input
             type="text"
-            id="dep"
+            value={searchInput}
+            onChange={handleSearchBar}
             className="w-full px-10 py-3 border border-borderColor rounded-full focus:outline-none focus:ring-1 focus:ring-borderColor"
             placeholder="Chercher un utilistateur"
           />
@@ -52,6 +62,7 @@ export default function User() {
             className="absolute right-3 top-1/2 -translate-y-1/2"
           />
         </div>
+        {loading && <p>loading</p>}
         {users.map(({ id, firstname, lastname, email, status, departement }) => (
           <section
             key={id}
