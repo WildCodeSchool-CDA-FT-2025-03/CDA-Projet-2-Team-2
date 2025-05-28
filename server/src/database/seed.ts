@@ -130,22 +130,28 @@ async function seedTestAppointments() {
     for (const dept of departments) {
       let department = await Departement.findOne({ where: { label: dept.label } });
       if (!department) {
+        console.info(`Creating department: ${dept.label}`);
         department = new Departement();
         department.label = dept.label;
         department.building = dept.building;
         department.wing = dept.wing;
         department.level = dept.level;
         await department.save();
+      } else {
+        console.info(`Department already exists: ${dept.label}`);
       }
       createdDepartments.push(department);
     }
 
     let testCity = await City.findOne({ where: { postal_code: '75001' } });
     if (!testCity) {
+      console.info('Creating test city: Paris');
       testCity = new City();
       testCity.postal_code = '75001';
       testCity.city = 'Paris';
       await testCity.save();
+    } else {
+      console.info('Test city already exists: Paris');
     }
 
     const patientsData = [
@@ -179,6 +185,7 @@ async function seedTestAppointments() {
     for (const patientData of patientsData) {
       let patient = await Patient.findOne({ where: { social_number: patientData.social_number } });
       if (!patient) {
+        console.info(`Creating patient: ${patientData.firstname} ${patientData.lastname}`);
         patient = new Patient();
         patient.firstname = patientData.firstname;
         patient.lastname = patientData.lastname;
@@ -195,6 +202,8 @@ async function seedTestAppointments() {
         patient.contact_person = '';
         patient.city = testCity;
         await patient.save();
+      } else {
+        console.info(`Patient already exists: ${patientData.firstname} ${patientData.lastname}`);
       }
       createdPatients.push(patient);
     }
@@ -230,6 +239,7 @@ async function seedTestAppointments() {
     for (const doctorData of doctorsData) {
       let doctor = await User.findOne({ where: { email: doctorData.email } });
       if (!doctor) {
+        console.info(`Creating doctor: ${doctorData.firstname} ${doctorData.lastname}`);
         const hashedPassword = await argon2.hash('doctor123');
         doctor = new User();
         doctor.email = doctorData.email;
@@ -243,6 +253,8 @@ async function seedTestAppointments() {
         doctor.gender = 'M';
         doctor.tel = '0123456789';
         await doctor.save();
+      } else {
+        console.info(`Doctor already exists: ${doctorData.firstname} ${doctorData.lastname}`);
       }
       createdDoctors.push(doctor);
     }
@@ -253,9 +265,12 @@ async function seedTestAppointments() {
     for (const typeName of appointmentTypesData) {
       let appointmentType = await AppointmentType.findOne({ where: { reason: typeName } });
       if (!appointmentType) {
+        console.info(`Creating appointment type: ${typeName}`);
         appointmentType = new AppointmentType();
         appointmentType.reason = typeName;
         await appointmentType.save();
+      } else {
+        console.info(`Appointment type already exists: ${typeName}`);
       }
       createdAppointmentTypes.push(appointmentType);
     }
@@ -297,16 +312,33 @@ async function seedTestAppointments() {
     ];
 
     for (const appointmentData of appointmentsData) {
-      const appointment = new Appointment();
-      appointment.patient = appointmentData.patient;
-      appointment.doctor = appointmentData.doctor;
-      appointment.created_by = appointmentData.doctor;
-      appointment.departement = appointmentData.department;
-      appointment.appointmentType = appointmentData.appointmentType;
-      appointment.start_time = appointmentData.start_time;
-      appointment.duration = appointmentData.duration;
-      appointment.status = AppointmentStatus.CONFIRMED;
-      await appointment.save();
+      const existingAppointment = await Appointment.findOne({
+        where: {
+          patient: { id: appointmentData.patient.id },
+          doctor: { id: appointmentData.doctor.id },
+          start_time: appointmentData.start_time,
+        },
+      });
+
+      if (!existingAppointment) {
+        console.info(
+          `Creating appointment for ${appointmentData.patient.firstname} ${appointmentData.patient.lastname} with Dr. ${appointmentData.doctor.lastname}`,
+        );
+        const appointment = new Appointment();
+        appointment.patient = appointmentData.patient;
+        appointment.doctor = appointmentData.doctor;
+        appointment.created_by = appointmentData.doctor;
+        appointment.departement = appointmentData.department;
+        appointment.appointmentType = appointmentData.appointmentType;
+        appointment.start_time = appointmentData.start_time;
+        appointment.duration = appointmentData.duration;
+        appointment.status = AppointmentStatus.CONFIRMED;
+        await appointment.save();
+      } else {
+        console.info(
+          `Appointment already exists for ${appointmentData.patient.firstname} ${appointmentData.patient.lastname} with Dr. ${appointmentData.doctor.lastname}`,
+        );
+      }
     }
 
     console.info('✅ Test appointments created successfully');
