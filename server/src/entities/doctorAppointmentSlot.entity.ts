@@ -2,7 +2,7 @@ import { ViewEntity, ViewColumn, BaseEntity } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 
 /**
- * Creation d'une vue pour les créneaux de rendez-vous disponibles des médecins.
+ * Creation d'une vue pour les créneaux de rendez-vous disponibles des médecins .
  * les WITH JOURS permettent de générer une série de dates à partir d'aujourd'hui jusqu'à 3 mois plus tard.
  * les CREENEAUX permettent de récupérer les horaires de disponibilité des médecins pour chaque jour.
  * date_part('isodow', tt.jour) est utilisé pour déterminer le jour de la semaine (1 = lundi, 2 = mardi, etc.).
