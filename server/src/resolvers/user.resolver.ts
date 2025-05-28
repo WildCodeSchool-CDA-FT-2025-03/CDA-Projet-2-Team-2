@@ -8,6 +8,7 @@ import argon2 from 'argon2';
 import { ILike } from 'typeorm';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
 import jwt from 'jsonwebtoken';
+import { ResetPasswordInput } from '../types/user.type';
 
 @Resolver()
 @Authorized([UserRole.ADMIN])
@@ -40,8 +41,7 @@ export class UserResolver {
         try {
           // 🔗 creating the jwt token and password reset url
           const resetToken = jwt.sign({ email }, `${process.env.JWT_SECRET}`);
-          // 🔥 le lien url ne peut pas être testé maintenant.
-          // Cela sera fait lors du process de réinitialisation du pwd (une prochaine PR)
+
           const url = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
           // ☎️ call the server_send_mail (/mail on Express)
@@ -62,6 +62,30 @@ export class UserResolver {
       return false;
     } catch (error) {
       return error;
+    }
+  }
+
+  // 🖲️ Reset password
+  @Mutation(() => Boolean)
+  async resetPassword(@Arg('input') { token, password }: ResetPasswordInput): Promise<boolean> {
+    try {
+      // 📤 retrieve the email in the token
+      const { email } = jwt.verify(token, process.env.JWT_SECRET || '') as unknown as {
+        email: string;
+      };
+
+      // then check that the user exists
+      const userUpdate = await User.findOneBy({ email });
+      if (!userUpdate) {
+        throw new Error('Utilisateur inconnu');
+      }
+      // ⚙️ hash and update new password
+      const hashedPassword = await argon2.hash(password);
+      userUpdate.password = hashedPassword;
+      await userUpdate.save();
+      return true;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 

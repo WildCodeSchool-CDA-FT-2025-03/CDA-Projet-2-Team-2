@@ -87,3 +87,9 @@ export const UPDATE_USER_STATUS = gql`
     changeStatusStatus(id: $changeStatusStatusId)
   }
 `;
+
+export const RESET_PASSWORD = gql`
+  mutation ResetPassword($input: ResetPasswordInput!) {
+    resetPassword(input: $input)
+  }
+`;
