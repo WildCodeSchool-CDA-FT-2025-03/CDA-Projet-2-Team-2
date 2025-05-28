@@ -62,12 +62,13 @@ export default function AgendaWithNavigator() {
     end: DayPilot.Date;
     resource: string | number;
   }) {
+    const doctorId = args.resource;
     const date = args.start.toString();
 
     setModalContent({
       title: 'Créer un rendez-vous',
       message: `Souhaitez-vous créer un rendez-vous le ${date.slice(0, 16).replace('T', ' à ')} ?`,
-      onConfirm: () => navigate('/secretary'), // TODO: navigate to createRDV doctorId + date
+      onConfirm: () => navigate(`/doctor/appointement/create?doctor=${doctorId}&date=${date}`),
     });
 
     setModalOpen(true);
