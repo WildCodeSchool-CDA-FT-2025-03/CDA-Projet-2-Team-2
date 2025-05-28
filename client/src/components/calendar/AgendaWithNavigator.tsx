@@ -48,12 +48,13 @@ export default function AgendaWithNavigator() {
   function handleEventClick(args: EventClickArgs) {
     const event = args.e.data;
 
-    // Exemple simple avec prompt (a remplacer par modal)
-    const shouldEdit = window.confirm(`Modifier le rendez-vous de ${event.text} ?`);
-    if (shouldEdit) {
-      // Logique de modification ici
-      console.warn('Édition à implémenter :', event);
-    }
+    setModalContent({
+      title: 'Modifier le rendez-vous',
+      message: `Voulez-vous modifier le rendez-vous de ${event.patient_name} ?`,
+      onConfirm: () => navigate('/secretary'), // TODO: navigate to update rdv event.id
+    });
+
+    setModalOpen(true);
   }
 
   function handleTimeRangeSelected(args: {
