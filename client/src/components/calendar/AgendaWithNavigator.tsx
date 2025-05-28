@@ -8,6 +8,8 @@ import DepartmentSelect from '@/components/form/DepartmentSelect';
 import SearchBar from '@/components/form/SearchBar';
 import type { Appointment } from '@/types/CalendarEvent.type';
 import { roundStartToNextHalfHour } from '@/utils/roundStartToNextHalfHour';
+import ConfirmationModal from '../modals/ConfirmationModal';
+import { useNavigate } from 'react-router-dom';
 
 type EventClickArgs = {
   e: {
@@ -39,6 +41,10 @@ export default function AgendaWithNavigator() {
 
   const { appointments } = useAppointmentsData(doctorIds, selectedDate);
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: '', message: '', onConfirm: () => {} });
+  const navigate = useNavigate();
+
   function handleEventClick(args: EventClickArgs) {
     const event = args.e.data;
 
@@ -55,18 +61,15 @@ export default function AgendaWithNavigator() {
     end: DayPilot.Date;
     resource: string | number;
   }) {
-    const patientName = window.prompt('Nom du patient :');
-    if (!patientName) return;
+    const date = args.start.toString();
 
-    const newEvent = {
-      id: DayPilot.guid(), //  génère un ID unique automatiquement
-      text: patientName,
-      start: args.start, // args = objet événementiel généré par DayPilot. { start: DayPilot.Date (début de la sélection), end: DayPilot.Date (fin de la sélection), resource: string (ID de la colonne (médecin) sélectionnée) }
-      end: args.end,
-      resource: args.resource,
-    };
+    setModalContent({
+      title: 'Créer un rendez-vous',
+      message: `Souhaitez-vous créer un rendez-vous le ${date.slice(0, 16).replace('T', ' à ')} ?`,
+      onConfirm: () => navigate('/secretary'), // TODO: navigate to createRDV doctorId + date
+    });
 
-    console.warn('Nouveau rendez-vous :', newEvent);
+    setModalOpen(true);
   }
 
   return (
@@ -177,6 +180,19 @@ export default function AgendaWithNavigator() {
             onTimeRangeSelected={handleTimeRangeSelected}
           />
         </article>
+        <ConfirmationModal
+          isOpen={modalOpen}
+          title={modalContent.title}
+          message={modalContent.message}
+          onConfirm={() => {
+            setModalOpen(false);
+            modalContent.onConfirm();
+          }}
+          onCancel={() => {
+            setModalOpen(false);
+            navigate('/secretary');
+          }}
+        />
       </section>
     </div>
   );
