@@ -23,10 +23,8 @@ export default function ProtectedRoute({ redirectPath = '/login' }: ProtectedRou
 
   const roleUrl = location.pathname.split('/')[1];
 
-  console.warn(roleUrl, user.role);
-
   if (roleUrl !== user.role) {
-    return <Navigate to={`/${user.role}`} />;
+    return <Navigate to={user.role === 'admin' ? '/admin/users' : `/${user.role}`} replace />;
   }
 
   return <Outlet />;
