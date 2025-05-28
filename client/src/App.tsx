@@ -12,6 +12,7 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import User from '@/pages/User';
 import Logs from '@/pages/Logs';
 import CreateUser from '@/pages/CreateUser';
+import Agent from '@/pages/Agent';
 
 const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
           {
             path: '/secretary/patient/:id',
             element: <PatientFileSecretary />,
+          },
+          {
+            path: '/agent',
+            element: <Agent />,
           },
         ],
       },

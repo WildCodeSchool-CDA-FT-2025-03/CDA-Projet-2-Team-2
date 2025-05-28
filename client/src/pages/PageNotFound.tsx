@@ -9,6 +9,8 @@ export default function PageNotFound() {
       return '/admin/users';
     } else if (user?.role === 'secretary') {
       return '/secretary';
+    } else if (user?.role === 'agent') {
+      return '/agent';
     }
     return '/login';
   };
