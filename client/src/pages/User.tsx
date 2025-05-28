@@ -1,13 +1,17 @@
 import Pagination from '@/components/logs/Pagination';
-import { useGetAllUsersQuery } from '@/types/graphql-generated';
+import StatusModal from '@/components/StatusModal';
+import { useChangeStatusStatusMutation, useGetAllUsersQuery } from '@/types/graphql-generated';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function User() {
+  const [showStatusModal, setShowStatusModal] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const usersPerPage = 8;
 
-  const { loading, error, data } = useGetAllUsersQuery({
+  const [updateStatus] = useChangeStatusStatusMutation();
+  const { loading, error, data, refetch } = useGetAllUsersQuery({
     variables: {
       page: currentPage,
       limit: usersPerPage,
@@ -20,6 +24,12 @@ export default function User() {
 
   const totalPages = Math.ceil(totalUsers / usersPerPage);
   const handlePaginatation = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  const updateUserStatus = async () => {
+    if (userId) await updateStatus({ variables: { changeStatusStatusId: userId } });
+    refetch();
+    setShowStatusModal(false);
+  };
   return (
     <main className="container  mx-auto pt-4 pr-12 pl-12 pb-12 flex overflow-hidden flex-col gap-4 h-screen">
       <header className="flex items-center mb-4">
@@ -51,12 +61,26 @@ export default function User() {
               {firstname} {lastname} - {email} - {departement.label}
             </p>
             <button
+              onClick={() => {
+                setShowStatusModal(true);
+                setUserId(id);
+              }}
               className={`text-white px-5 py-2 rounded text-sm w-28 ${
                 status === 'active' ? 'bg-bgActiveStatus' : 'bg-bgInActiveStatus'
               }`}
             >
               {status}
             </button>
+            {userId === id && showStatusModal && (
+              <StatusModal
+                data={{
+                  id,
+                  title: `Etes-vous sur de vouloir changer le status de cet utilisateur : ${firstname + lastname}`,
+                }}
+                onClose={() => setShowStatusModal(false)}
+                updateStatus={updateUserStatus}
+              />
+            )}
           </section>
         ))}
         <Pagination

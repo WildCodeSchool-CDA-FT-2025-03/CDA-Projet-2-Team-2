@@ -81,3 +81,9 @@ export const SEND_RESET_PASSWORD_BY_MAIL = gql`
     sendResetPassword(email: $email)
   }
 `;
+
+export const UPDATE_USER_STATUS = gql`
+  mutation ChangeStatusStatus($changeStatusStatusId: String!) {
+    changeStatusStatus(id: $changeStatusStatusId)
+  }
+`;

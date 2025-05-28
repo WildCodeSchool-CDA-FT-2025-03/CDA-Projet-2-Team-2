@@ -147,4 +147,21 @@ export class UserResolver {
       });
     }
   }
+
+  @Mutation(() => Boolean)
+  async changeStatusStatus(@Arg('id') id: string) {
+    const user = await User.findOneBy({ id: +id });
+    if (!user) {
+      throw new GraphQLError('User non trouvé', {
+        extensions: {
+          code: 'USER_NOT_FOUND',
+        },
+      });
+    }
+
+    user.status = user.status === UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
+
+    await User.update({ id: user.id }, { ...user });
+    return true;
+  }
 }
