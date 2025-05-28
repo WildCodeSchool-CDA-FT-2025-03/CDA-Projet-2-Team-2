@@ -1,6 +1,6 @@
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { Arg, Authorized, Ctx, Int, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { User, UserRole, UserStatus } from '../entities/user.entity';
-import { CreateUserInput } from '../types/user.type';
+import { CreateUserInput, UsersWithTotal } from '../types/user.type';
 import { GraphQLError } from 'graphql';
 import { Departement } from '../entities/departement.entity';
 import log from '../utils/log';
@@ -11,9 +11,20 @@ import jwt from 'jsonwebtoken';
 
 @Resolver()
 export class UserResolver {
-  @Query(() => [User])
-  async getAllUsers() {
-    return await User.find({ relations: ['departement'] });
+  @Query(() => UsersWithTotal)
+  async getAllUsers(
+    @Arg('limit', () => Int, { nullable: true }) limit?: number,
+    @Arg('page', () => Int, { nullable: true }) page?: number,
+  ) {
+    const take = limit ?? 0;
+    const skip = page && page > 0 ? (page - 1) * take : 0;
+    const [users, total] = await User.findAndCount({
+      relations: ['departement'],
+      order: { lastname: 'ASC' },
+      take,
+      skip,
+    });
+    return { users, total };
   }
 
   // 📋 checks if the email exists and requests sending of the reset email

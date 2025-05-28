@@ -1,12 +1,25 @@
+import Pagination from '@/components/logs/Pagination';
 import { useGetAllUsersQuery } from '@/types/graphql-generated';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function User() {
-  const { loading, error, data } = useGetAllUsersQuery();
+  const [currentPage, setCurrentPage] = useState(0);
+  const usersPerPage = 8;
 
+  const { loading, error, data } = useGetAllUsersQuery({
+    variables: {
+      page: currentPage,
+      limit: usersPerPage,
+    },
+  });
   if (error) return <p>Error</p>;
   if (loading) return <p>Loading</p>;
+  const users = data?.getAllUsers?.users || [];
+  const totalUsers = data?.getAllUsers?.total || 0;
 
+  const totalPages = Math.ceil(totalUsers / usersPerPage);
+  const handlePaginatation = (pageNumber: number) => setCurrentPage(pageNumber);
   return (
     <main className="container  mx-auto pt-4 pr-12 pl-12 pb-12 flex overflow-hidden flex-col gap-4 h-screen">
       <header className="flex items-center mb-4">
@@ -29,7 +42,7 @@ export default function User() {
             className="absolute right-3 top-1/2 -translate-y-1/2"
           />
         </div>
-        {data?.getAllUsers?.map(({ id, firstname, lastname, email, status, departement }) => (
+        {users.map(({ id, firstname, lastname, email, status, departement }) => (
           <section
             key={id}
             className="flex px-3 py-3 m-4 bg-white border border-borderColor rounded-sm justify-between"
@@ -46,6 +59,13 @@ export default function User() {
             </button>
           </section>
         ))}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePaginatation}
+          totalItems={totalUsers}
+          pageSize={usersPerPage}
+        />
       </section>
     </main>
   );

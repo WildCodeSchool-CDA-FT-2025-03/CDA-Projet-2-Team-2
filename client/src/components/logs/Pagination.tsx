@@ -21,7 +21,7 @@ export default function Pagination({
   return (
     <div className="flex items-center justify-between px-6 py-4 border-t border-borderColor">
       <section className="text-sm text-gray-600">
-        {startItem}-{endItem} sur {totalItems} logs
+        {startItem}-{endItem} sur {totalItems}
       </section>
 
       <section className="flex items-center gap-2">
