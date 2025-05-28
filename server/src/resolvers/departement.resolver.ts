@@ -7,7 +7,7 @@ import { UserRole } from '../entities/user.entity';
 @Resolver()
 export class DepartementResolver {
   @Query(() => [Departement])
-  @Authorized([UserRole.SECRETARY, UserRole.DOCTOR, UserRole.ADMIN])
+  @Authorized([UserRole.SECRETARY, UserRole.DOCTOR, UserRole.ADMIN, UserRole.AGENT])
   async getDepartements(): Promise<Departement[]> {
     return await Departement.find({
       relations: {
