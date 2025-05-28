@@ -78,7 +78,7 @@ export default function NewAppointementByDoctor() {
             onTimeRangeSelected={args => setSelectedDay(args.day)} // gestion des changements
           />
         </aside>
-        <div className="flex flex-col gap-4">
+        <section className="flex flex-col gap-4">
           <UserItem />
           <SelectForm
             name="motifs"
@@ -87,17 +87,15 @@ export default function NewAppointementByDoctor() {
             option={[]}
             handle={() => console.warn('truc')}
           />
-          <div>
-            <div className="flex flex-col gap-2">
-              {/* Ligne des champs : Jour, Début, Fin */}
-              <div className="flex gap-4 items-end whitespace-nowrap">
-                <DateDisplayInput value={formatDate(selectedDay.toDate())} />
-                <TimeSelectStart value={startTime} onChange={handleStartChange} />
-                <TimeDisplayInputEnd value={endTime} />
-              </div>
+          <section className="flex flex-col gap-2">
+            {/* Ligne des champs : Jour, Début, Fin */}
+            <div className="flex gap-4 items-end whitespace-nowrap">
+              <DateDisplayInput value={formatDate(selectedDay.toDate())} />
+              <TimeSelectStart value={startTime} onChange={handleStartChange} />
+              <TimeDisplayInputEnd value={endTime} />
             </div>
-          </div>
-        </div>
+          </section>
+        </section>
       </section>
     </>
   );
