@@ -63,3 +63,9 @@ export const SEND_RESET_PASSWORD_BY_MAIL = gql`
     sendResetPassword(email: $email)
   }
 `;
+
+export const RESET_PASSWORD = gql`
+  mutation ResetPassword($input: ResetPasswordInput!) {
+    resetPassword(input: $input)
+  }
+`;
