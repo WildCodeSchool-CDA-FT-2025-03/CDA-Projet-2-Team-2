@@ -1,6 +1,10 @@
+import DateDisplayInput from '@/components/appointement/DateDisplayInput';
+import TimeDisplayInputEnd from '@/components/appointement/TimeDisplayInputEnd';
+import TimeSelectStart from '@/components/appointement/TimeSelectStart';
 import SearchBar from '@/components/form/SearchBar';
 import SelectForm from '@/components/form/SelectForm';
 import UserItem from '@/components/user/UserItem';
+import { formatDate } from '@/utils/formatDateFr';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -11,35 +15,32 @@ export default function NewAppointementByDoctor() {
   const [selectedDay, setSelectedDay] = useState<DayPilot.Date>(
     new DayPilot.Date(DayPilot.Date.today()), // valeur par défaut = aujourd'hui
   );
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
 
   useEffect(() => {
     const dateParam = params.get('date');
     if (dateParam) {
-      setSelectedDay(new DayPilot.Date(dateParam));
+      const [fullDate, timePart] = dateParam.split('T');
+
+      // ✅ Mettre la date (YYYY-MM-DD) dans DayPilot.Date
+      setSelectedDay(new DayPilot.Date(fullDate));
+
+      // ✅ Si l'heure est présente, on la traite
+      if (timePart) {
+        const hourMinute = timePart.slice(0, 5); // "14:00"
+        setStartTime(hourMinute);
+
+        // Calcul automatique de fin (+30 min)
+        const [hour, minute] = hourMinute.split(':').map(Number);
+        const end = new Date();
+        end.setHours(hour, minute + 30);
+        const endHour = end.getHours().toString().padStart(2, '0');
+        const endMinute = end.getMinutes().toString().padStart(2, '0');
+        setEndTime(`${endHour}:${endMinute}`);
+      }
     }
   }, [params]);
-
-  const generateTimeOptions = () => {
-    const times = [];
-    for (let h = 8; h < 24; h++) {
-      times.push(`${h.toString().padStart(2, '0')}:00`);
-      times.push(`${h.toString().padStart(2, '0')}:30`);
-    }
-    return times;
-  };
-
-  const formatDate = (dpDate: DayPilot.Date) => {
-    const date = new Date(dpDate.toString()); // Convertir DayPilot.Date en Date JS
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
-  const timeOptions = generateTimeOptions();
-
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
 
   const handleStartChange = (value: string) => {
     setStartTime(value);
@@ -90,69 +91,9 @@ export default function NewAppointementByDoctor() {
             <div className="flex flex-col gap-2">
               {/* Ligne des champs : Jour, Début, Fin */}
               <div className="flex gap-4 items-end whitespace-nowrap">
-                {/* Jour */}
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="day-selected" className="text-sm text-blue-900 font-semibold">
-                    Jour
-                  </label>
-                  <div className="w-[120px] h-[60px]">
-                    <input
-                      id="day-selected"
-                      type="text"
-                      value={formatDate(selectedDay)}
-                      disabled
-                      className="w-full h-full pl-3 pr-4 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
-                    />
-                  </div>
-                </div>
-
-                {/* Début */}
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="start-time" className="text-sm text-blue-900 font-semibold">
-                    Début
-                  </label>
-                  <div className="relative w-[120px] h-[60px]">
-                    <img
-                      src="/alarm-clock-on.svg"
-                      alt="Icône début"
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2 w-5 h-5"
-                    />
-                    <select
-                      id="start-time"
-                      value={startTime}
-                      onChange={e => handleStartChange(e.target.value)}
-                      className="w-full h-full pl-10 pr-4 border border-gray-300 rounded-lg bg-white text-blue-900 cursor-pointer"
-                    >
-                      <option value="">-</option>
-                      {timeOptions.map(time => (
-                        <option key={time} value={time}>
-                          {time}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Fin */}
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="end-time" className="text-sm text-blue-900 font-semibold">
-                    Fin
-                  </label>
-                  <div className="relative w-[120px] h-[60px]">
-                    <img
-                      src="/alarm-clock-off.svg"
-                      alt="Icône fin"
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2 w-5 h-5"
-                    />
-                    <input
-                      id="end-time"
-                      type="text"
-                      value={endTime}
-                      disabled
-                      className="w-full h-full pl-10 pr-4 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
-                    />
-                  </div>
-                </div>
+                <DateDisplayInput value={formatDate(selectedDay.toDate())} />
+                <TimeSelectStart value={startTime} onChange={handleStartChange} />
+                <TimeDisplayInputEnd value={endTime} />
               </div>
             </div>
           </div>
