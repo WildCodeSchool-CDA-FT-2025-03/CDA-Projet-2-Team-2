@@ -9,6 +9,7 @@ import { UserRole } from '../entities/user.entity';
 @Resolver()
 export class PatientDocResolver {
   @Query(() => [PatientDoc])
+  @Authorized([UserRole.SECRETARY])
   async getDocumentByID(@Arg('patientId') patientId: number): Promise<PatientDoc[] | null> {
     return await PatientDoc.find({
       where: { patient: { id: patientId } },
