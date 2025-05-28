@@ -30,6 +30,7 @@ services:
         condition: service_healthy
     environment:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - AGENT_PASSWORD=${AGENT_PASSWORD}
       - FRONTEND_URL=${FRONTEND_URL}
       - SERVER_SEND_MAIL=${SERVER_SEND_MAIL}
       - PORT=${SERVER_PORT}
