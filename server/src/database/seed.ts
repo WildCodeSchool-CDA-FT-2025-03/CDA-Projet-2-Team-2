@@ -1,10 +1,11 @@
 import argon2 from 'argon2';
 import { dataSource } from './client';
 import { User, UserRole, UserStatus } from '../entities/user.entity';
-import 'dotenv/config';
-import 'reflect-metadata';
 import { Departement } from '../entities/departement.entity';
 import { seedDoctors } from './seed-fakeDoctors';
+import { seedTestAppointments } from './seedTestAppointments';
+import 'reflect-metadata';
+import 'dotenv/config';
 
 async function seedDatabase() {
   console.info('🌱 Starting database seeding...');
@@ -102,6 +103,8 @@ async function seedDatabase() {
     } catch (error) {
       console.error('❌ Failed to seed doctors:', error);
     }
+
+    await seedTestAppointments();
   } catch (error) {
     console.error('❌ Error seeding database:', error);
   } finally {
