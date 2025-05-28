@@ -1,12 +1,23 @@
 import SearchBar from '@/components/form/SearchBar';
 import SelectForm from '@/components/form/SelectForm';
 import UserItem from '@/components/UserItem';
-import { DayPilotNavigator } from '@daypilot/daypilot-lite-react';
-import { useState } from 'react';
+import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export default function NewAppointementByDoctor() {
   const [params] = useSearchParams();
+
+  const [selectedDay, setSelectedDay] = useState<DayPilot.Date>(
+    new DayPilot.Date(DayPilot.Date.today()), // valeur par défaut = aujourd'hui
+  );
+
+  useEffect(() => {
+    const dateParam = params.get('date');
+    if (dateParam) {
+      setSelectedDay(new DayPilot.Date(dateParam));
+    }
+  }, [params]);
 
   const generateTimeOptions = () => {
     const times = [];
@@ -15,6 +26,14 @@ export default function NewAppointementByDoctor() {
       times.push(`${h.toString().padStart(2, '0')}:30`);
     }
     return times;
+  };
+
+  const formatDate = (dpDate: DayPilot.Date) => {
+    const date = new Date(dpDate.toString()); // Convertir DayPilot.Date en Date JS
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   const timeOptions = generateTimeOptions();
@@ -49,7 +68,14 @@ export default function NewAppointementByDoctor() {
       </div>
       <section className="bg-bgBodyColor sm:w-full md:w-3/4 p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border-borderColor flex flex-col md:flex-row justify-center gap-10 md:gap-45">
         <aside>
-          <DayPilotNavigator />
+          <DayPilotNavigator
+            selectMode="Day"
+            showMonths={1}
+            skipMonths={1}
+            locale="fr-fr"
+            selectionDay={selectedDay} // toujours un DayPilot.Date valide
+            onTimeRangeSelected={args => setSelectedDay(args.day)} // gestion des changements
+          />
         </aside>
         <div className="flex flex-col gap-4">
           <UserItem />
@@ -62,7 +88,24 @@ export default function NewAppointementByDoctor() {
           />
           <div>
             <div className="flex flex-col gap-2">
-              <div className="flex gap-4 items-end">
+              {/* Ligne des champs : Jour, Début, Fin */}
+              <div className="flex gap-4 items-end whitespace-nowrap">
+                {/* Jour */}
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="day-selected" className="text-sm text-blue-900 font-semibold">
+                    Jour
+                  </label>
+                  <div className="w-[120px] h-[60px]">
+                    <input
+                      id="day-selected"
+                      type="text"
+                      value={formatDate(selectedDay)}
+                      disabled
+                      className="w-full h-full pl-3 pr-4 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                    />
+                  </div>
+                </div>
+
                 {/* Début */}
                 <div className="flex flex-col gap-1">
                   <label htmlFor="start-time" className="text-sm text-blue-900 font-semibold">
@@ -71,7 +114,7 @@ export default function NewAppointementByDoctor() {
                   <div className="relative w-[120px] h-[60px]">
                     <img
                       src="/alarm-clock-on.svg"
-                      alt="Icône horloge début"
+                      alt="Icône début"
                       className="absolute left-2 top-1/2 transform -translate-y-1/2 w-5 h-5"
                     />
                     <select
@@ -98,7 +141,7 @@ export default function NewAppointementByDoctor() {
                   <div className="relative w-[120px] h-[60px]">
                     <img
                       src="/alarm-clock-off.svg"
-                      alt="Icône horloge barrée"
+                      alt="Icône fin"
                       className="absolute left-2 top-1/2 transform -translate-y-1/2 w-5 h-5"
                     />
                     <input
