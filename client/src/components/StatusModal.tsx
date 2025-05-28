@@ -1,4 +1,3 @@
-
 type StatusModalProps = {
   onClose: () => void;
   updateStatus: () => void;
@@ -9,8 +8,6 @@ type StatusModalProps = {
 };
 
 export default function StatusModal({ data, onClose, updateStatus }: StatusModalProps) {
-
-
   return (
     <section className="fixed inset-0 flex bg-bgModalColor backdrop-blur-xs">
       <dialog
@@ -18,9 +15,7 @@ export default function StatusModal({ data, onClose, updateStatus }: StatusModal
         className="fixed top-10 left-1/2 transform -translate-x-1/2 flex items-start justify-center"
       >
         <form method="dialog" className="bg-white p-4 border border-red-600 rounded-md ">
-          <h3 className="text-center mb-4">
-            {data.title} ?
-          </h3>
+          <h3 className="text-center mb-4">{data.title} ?</h3>
           <section className="flex justify-center items-center p-2 mt-4">
             <button
               onClick={onClose}
