@@ -1,6 +1,6 @@
 import SearchBar from '@/components/form/SearchBar';
 import SelectForm from '@/components/form/SelectForm';
-import UserItem from '@/components/UserItem';
+import UserItem from '@/components/user/UserItem';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
