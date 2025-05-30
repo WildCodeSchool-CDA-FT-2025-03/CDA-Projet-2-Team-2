@@ -11,9 +11,9 @@ import jwt from 'jsonwebtoken';
 import { ResetPasswordInput } from '../types/user.type';
 
 @Resolver()
-@Authorized([UserRole.ADMIN])
 export class UserResolver {
   @Query(() => UsersWithTotal)
+  @Authorized([UserRole.ADMIN])
   async getAllUsers(
     @Arg('limit', () => Int, { nullable: true }) limit?: number,
     @Arg('page', () => Int, { nullable: true }) page?: number,
@@ -29,6 +29,21 @@ export class UserResolver {
       where: [{ firstname: ILike(`%${search}%`) }, { lastname: ILike(`%${search}%`) }],
     });
     return { users, total };
+  }
+
+  @Query(() => User)
+  @Authorized([UserRole.ADMIN])
+  async getUserById(@Arg('id') id: string) {
+    try {
+      return await User.findOneByOrFail({ id: +id });
+    } catch (error) {
+      throw new GraphQLError(`l'utilisateur avec l'id ${id} n'existe pas`, {
+        extensions: {
+          code: 'USER_NOT_FOUND',
+          originalError: error.message,
+        },
+      });
+    }
   }
 
   // 📋 checks if the email exists and requests sending of the reset email
