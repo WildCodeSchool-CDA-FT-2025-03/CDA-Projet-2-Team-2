@@ -1,9 +1,9 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { buildSchema } from 'type-graphql';
 
+import createSchema from './schema';
 import { dataSource } from './database/client';
-import { HelloResolver } from './resolvers/hello.resolver';
+import { grpcClient } from './utils/grpcClient';
 
 import 'dotenv/config';
 import 'reflect-metadata';
@@ -11,9 +11,7 @@ import 'reflect-metadata';
 async function startServer() {
   await dataSource.initialize();
 
-  const schema = await buildSchema({
-    resolvers: [HelloResolver],
-  });
+  const schema = await createSchema();
 
   const server = new ApolloServer({
     schema,
@@ -21,7 +19,14 @@ async function startServer() {
 
   const { url } = await startStandaloneServer(server, {
     listen: { port: parseInt(process.env.PORT as string) || 4000 },
+    context: async ({ req, res }) => ({
+      req,
+      res,
+      grpcClient,
+    }),
   });
+
+  grpcClient.createLog('Server has started', { server: 'started' });
 
   console.info(`🚀 Server ready at ${url}`);
 }

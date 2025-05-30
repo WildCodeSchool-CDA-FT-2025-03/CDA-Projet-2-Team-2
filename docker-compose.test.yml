@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres_test
+      - POSTGRES_PASSWORD=postgres_test
+      - POSTGRES_DB=doctoplan_test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres_test -d doctoplan_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  db-init:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.test
+    command: npm run seed:test
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=test
+      - DB_HOST=postgres-test
+      - DB_PORT=5432
+      - DB_USERNAME=postgres_test
+      - DB_PASSWORD=postgres_test
+      - DB_DATABASE=doctoplan_test
+      - JWT_SECRET=test_secret_key
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  server-test:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.test
+    command: npm run test
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      - NODE_ENV=test
+      - DB_HOST=postgres-test
+      - DB_PORT=5432
+      - DB_USERNAME=postgres_test
+      - DB_PASSWORD=postgres_test
+      - DB_DATABASE=doctoplan_test
+      - JWT_SECRET=test_secret_key
+      - SKIP_DB_INIT=true
+    volumes:
+      - ./server:/app
+      - /app/node_modules

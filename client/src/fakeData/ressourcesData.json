@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Anais Vallee",
+    "speciality": "Ph. Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
+    "id": "d1"
+  },
+  {
+    "name": "Alain Houx",
+    "speciality": "Interne Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
+    "id": "d2"
+  },
+  {
+    "name": "Bianca Jardin",
+    "speciality": "Cadre de sante",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
+    "id": "d3"
+  },
+  {
+    "name": "Emilie Masser",
+    "speciality": "Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
+    "id": "d4"
+  },
+  {
+    "name": "Pierre Sancet",
+    "speciality": "Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
+    "id": "d5"
+  },
+  {
+    "name": "Jean-Martin Tremblay",
+    "speciality": "Interne Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
+    "id": "d6"
+  },
+  {
+    "name": "Marie-Soleil Roy",
+    "speciality": "Cadre sup. de sante",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
+    "id": "d7"
+  },
+  {
+    "name": "Charlotte Edwin",
+    "speciality": "Pedopsychiatre",
+    "department": "pedopsychiatrie 1",
+    "avatar": "/doctoplan-logo.svg",
+    "id": "d8"
+  }
+]

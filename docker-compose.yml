@@ -5,43 +5,156 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    ports:
-      - "5173:5173"
     volumes:
-      - ./client:/app
+      - ./client:/app:delegated
       - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_HOST=localhost
+      - WATCHPACK_POLLING=true
+      - VITE_APOLLO_SERVER=${VITE_APOLLO_SERVER}
+      - VITE_SERVER_API_MAIL=${VITE_SERVER_API_MAIL}
     depends_on:
-      - server
+      - codegen
 
   server:
     build:
       context: ./server
       dockerfile: Dockerfile
-    ports:
-      - "4000:4000"
     volumes:
       - ./server:/app
+      - ./proto:/app/proto
       - /app/node_modules
     depends_on:
       postgres:
         condition: service_healthy
+    environment:
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - AGENT_PASSWORD=${AGENT_PASSWORD}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - SERVER_SEND_MAIL=${SERVER_SEND_MAIL}
+      - PORT=${SERVER_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
+      - JWT_SECRET=${JWT_SECRET}
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q -O - http://localhost:4000 2>&1 | grep -q 'Bad Request' && exit 0 || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  mail:
+    build:
+      context: ./mail
+      dockerfile: Dockerfile
+    volumes:
+      - ./mail:/app
+      - /app/node_modules
+    environment:
+      - SERVER_API_MAIL=${SERVER_API_MAIL}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - SERVER_PORT=${SERVER_PORT}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_SECURE=${EMAIL_SECURE}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  logs:
+    build:
+      context: ./logs
+      dockerfile: Dockerfile
+    ports:
+      - "${LOGS_PORT}:${LOGS_PORT}"
+      - "${GRPC_PORT}:${GRPC_PORT}"
+    environment:
+      - GRPC_PORT=${GRPC_PORT}
+      - PORT=${LOGS_PORT}
+
+  upload:
+    build:
+      context: ./upload
+      dockerfile: Dockerfile
+    volumes:
+      - ./upload:/app
+      - /app/node_modules
+
+  seed:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: sh -c "sleep 15 && npm run seed"
+    depends_on:
+      server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    restart: "no"
 
   postgres:
     image: postgres:16-alpine
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=doctoplan
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    container_name: adminer
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  codegen:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    command: npm run codegen:watch
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      server:
+        condition: service_healthy
+
+  gateway:
+    image: nginx:latest
+    ports:
+      - "${NGINX_PORT}:80"
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      server:
+        condition: service_healthy
+      client:
+        condition: service_started
+      codegen:
+        condition: service_started
+      mail:
+        condition: service_started
 
 volumes:
   postgres_data:
