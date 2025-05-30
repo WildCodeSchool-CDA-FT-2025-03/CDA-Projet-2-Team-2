@@ -8,6 +8,23 @@ import DepartmentSelect from '@/components/form/DepartmentSelect';
 import SearchBar from '@/components/form/SearchBar';
 import type { Appointment } from '@/types/CalendarEvent.type';
 import { roundStartToNextHalfHour } from '@/utils/roundStartToNextHalfHour';
+import ConfirmationModal from '../modals/ConfirmationModal';
+import { useNavigate } from 'react-router-dom';
+
+type EventClickArgs = {
+  e: {
+    data: {
+      id: string;
+      text: string;
+      start: DayPilot.Date;
+      end: DayPilot.Date;
+      resource: string | number;
+      patient_name: string;
+      appointment_type: string;
+      [key: string]: unknown;
+    };
+  };
+};
 
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = 'Cardiologie';
@@ -23,6 +40,39 @@ export default function AgendaWithNavigator() {
   const selectedDate = useMemo(() => startDate.toDate(), [startDate]);
 
   const { appointments } = useAppointmentsData(doctorIds, selectedDate);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: '', message: '', onConfirm: () => {} });
+  const navigate = useNavigate();
+
+  function handleEventClick(args: EventClickArgs) {
+    const event = args.e.data;
+
+    setModalContent({
+      title: 'Modifier le rendez-vous',
+      message: `Voulez-vous modifier le rendez-vous de ${event.patient_name} ?`,
+      onConfirm: () => navigate('/secretary'), // TODO: navigate to update rdv event.id
+    });
+
+    setModalOpen(true);
+  }
+
+  function handleTimeRangeSelected(args: {
+    start: DayPilot.Date;
+    end: DayPilot.Date;
+    resource: string | number;
+  }) {
+    const doctorId = args.resource;
+    const date = args.start.toString();
+
+    setModalContent({
+      title: 'Créer un rendez-vous',
+      message: `Souhaitez-vous créer un rendez-vous le ${date.slice(0, 16).replace('T', ' à ')} ?`,
+      onConfirm: () => navigate(`/doctor/appointement/create?doctor=${doctorId}&date=${date}`),
+    });
+
+    setModalOpen(true);
+  }
 
   return (
     <div
@@ -128,8 +178,23 @@ export default function AgendaWithNavigator() {
                 resource: doctorId,
               };
             })}
+            onEventClick={handleEventClick}
+            onTimeRangeSelected={handleTimeRangeSelected}
           />
         </article>
+        <ConfirmationModal
+          isOpen={modalOpen}
+          title={modalContent.title}
+          message={modalContent.message}
+          onConfirm={() => {
+            setModalOpen(false);
+            modalContent.onConfirm();
+          }}
+          onCancel={() => {
+            setModalOpen(false);
+            navigate('/secretary');
+          }}
+        />
       </section>
     </div>
   );
