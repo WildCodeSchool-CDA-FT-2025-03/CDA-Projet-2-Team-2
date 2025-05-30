@@ -159,7 +159,7 @@ export default function CreateUser({ id }: CreateUserModalProps) {
         // updateUser
       }
       await refetch();
-      navigate('/users');
+      navigate('/admin/users');
     } catch (err) {
       setError(
         err instanceof ApolloError
