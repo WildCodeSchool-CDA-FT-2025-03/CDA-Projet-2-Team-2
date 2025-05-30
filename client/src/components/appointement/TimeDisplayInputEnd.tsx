@@ -1,6 +1,6 @@
-interface TimeDisplayInputEndProps {
+type TimeDisplayInputEndProps = {
   value: string;
-}
+};
 
 export default function TimeDisplayInputEnd({ value }: TimeDisplayInputEndProps) {
   return (
@@ -8,7 +8,7 @@ export default function TimeDisplayInputEnd({ value }: TimeDisplayInputEndProps)
       <label htmlFor="end-time" className="text-sm text-blue-900 font-semibold">
         Fin
       </label>
-      <div className="relative w-[120px] h-[60px]">
+      <div className="relative w-[134px] h-[60px]">
         <img
           src="/alarm-clock-off.svg"
           alt="Icône fin"
@@ -16,7 +16,7 @@ export default function TimeDisplayInputEnd({ value }: TimeDisplayInputEndProps)
         />
         <input
           id="end-time"
-          type="text"
+          type="time"
           value={value}
           disabled
           className="w-full h-full pl-10 pr-4 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"

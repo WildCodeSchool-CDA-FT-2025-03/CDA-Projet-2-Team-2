@@ -13,7 +13,7 @@ export default function TimeSelectStart({ value, onChange }: TimeSelectStartProp
       <label htmlFor="start-time" className="text-sm text-blue-900 font-semibold">
         Début
       </label>
-      <div className="relative w-[120px] h-[60px]">
+      <div className="relative w-[134px] h-[60px]">
         <img
           src="/alarm-clock-on.svg"
           alt="Icône début"

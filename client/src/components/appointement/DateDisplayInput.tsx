@@ -8,7 +8,7 @@ export default function DateDisplayInput({ value }: DateDisplayInputProps) {
       <label htmlFor="day-selected" className="text-sm text-blue-900 font-semibold">
         Jour
       </label>
-      <div className="w-[120px] h-[60px]">
+      <div className="w-[134px] h-[60px]">
         <input
           id="day-selected"
           type="text"
