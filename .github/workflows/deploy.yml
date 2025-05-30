@@ -27,7 +27,7 @@ jobs:
             git pull origin main
 
             echo "🛑 Arrêt des conteneurs existants..."
-            docker compose down -v
+            docker compose down
 
             echo "🔨 Construction et démarrage des nouveaux conteneurs..."
             docker compose up --build -d
