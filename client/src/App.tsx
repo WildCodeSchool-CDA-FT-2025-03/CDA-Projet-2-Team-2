@@ -69,7 +69,7 @@ const router = createBrowserRouter([
             element: <PatientFileSecretary />,
           },
           {
-            path: '/doctor/appointement/create',
+            path: '/secretary/appointement/create',
             element: <NewAppointementByDoctor />,
           },
           {

@@ -1,7 +1,6 @@
 import DateDisplayInput from '@/components/appointement/DateDisplayInput';
 import TimeDisplayInputEnd from '@/components/appointement/TimeDisplayInputEnd';
 import TimeSelectStart from '@/components/appointement/TimeSelectStart';
-import SearchBar from '@/components/form/SearchBar';
 import SelectForm from '@/components/form/SelectForm';
 import UserItem from '@/components/user/UserItem';
 import { formatDate } from '@/utils/formatDateFr';
@@ -62,9 +61,7 @@ export default function NewAppointementByDoctor() {
               Creer un rendez-vous avec Nom du doctor, <span>profession, service</span>
             </h2>
           </div>
-          <div className="self-start">
-            <SearchBar />
-          </div>
+          <div className="self-start"></div>
         </section>
       </div>
       <section className="bg-bgBodyColor sm:w-full md:w-3/4 p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border-borderColor flex flex-col md:flex-row justify-center gap-10 md:gap-45">

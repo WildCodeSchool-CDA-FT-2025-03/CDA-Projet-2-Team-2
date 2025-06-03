@@ -13,7 +13,7 @@ type Upload = {
 };
 
 type UploadModalProps = {
-  patientNum: number;
+  patientNum: string;
   onClose: () => void;
   GetDocumentByIdQuery: GetDocumentByIdQueryHookResult;
 };

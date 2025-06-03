@@ -47,8 +47,8 @@ import { Field, ObjectType } from 'type-graphql';
           WHEN date_part('isodow', tt.jour) = 7 THEN sunday_end
         END AS fin_libreapp
       FROM planning a
-      JOIN "user" u on u.id = a.user_id and u.status = 'active'
-      CROSS JOIN jours tt
+      INNER JOIN "user" u on u.id = a.user_id and u.status = 'active'
+      INNER JOIN jours tt ON tt.jour >= (a.start)::DATE AND tt.jour <= COALESCE((a."end")::DATE, tt.jour)
     ),
     appointement AS (
       SELECT
