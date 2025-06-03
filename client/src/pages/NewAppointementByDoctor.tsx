@@ -4,7 +4,7 @@ import TimeSelectStart from '@/components/appointement/TimeSelectStart';
 import SearchBar from '@/components/form/SearchBar';
 import SelectForm from '@/components/form/SelectForm';
 import UserItem from '@/components/user/UserItem';
-import { useSearchPatientsQuery } from '@/types/graphql-generated';
+import { useSearchPatientsQuery, useGetAppointmentTypesQuery } from '@/types/graphql-generated';
 import { Patient } from '@/types/patient.type';
 import { formatDate } from '@/utils/formatDateFr';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
@@ -71,6 +71,15 @@ export default function NewAppointementByDoctor() {
       error: errorPatients ? errorPatients.message : null,
       getKey: (patient: Patient) => `patient-${patient.id}`,
     },
+  ];
+
+  const { data: appointmentTypesData } = useGetAppointmentTypesQuery();
+  const consultationOptions = [
+    { key: '', value: '--- Choisissez un motif' },
+    ...(appointmentTypesData?.getAppointmentTypes.map(type => ({
+      key: type.id,
+      value: type.reason,
+    })) ?? []),
   ];
 
   return (
@@ -142,10 +151,10 @@ export default function NewAppointementByDoctor() {
 
           <SelectForm
             name="motifs"
-            value="pupu"
+            value=""
             title="Motif de consultation"
-            option={[]}
-            handle={() => console.warn('truc')}
+            option={consultationOptions}
+            handle={value => console.warn('Motif sélectionné :', value)}
           />
           <section className="flex flex-col gap-2">
             <div className="flex gap-4 items-end whitespace-nowrap">
