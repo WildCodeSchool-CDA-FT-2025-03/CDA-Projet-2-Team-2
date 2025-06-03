@@ -57,7 +57,7 @@ export default function NewAppointementByDoctor() {
     })) ?? []),
   ];
 
-  // Récupère les rendez-vous pour bloquer les horaires déjà pris
+  // Retrieve appointments to block times already taken
   const doctorId = Number(params.get('doctor'));
   const { data: appointmentsData } = useGetAppointmentsByDoctorAndDateQuery({
     variables: {
@@ -67,7 +67,7 @@ export default function NewAppointementByDoctor() {
     skip: !doctorId || !selectedDay,
   });
 
-  // Conversion explicite pour éviter l'erreur TypeScript
+  // Explicit conversion to avoid TypeScript error
   const appointments: AppointmentSlot[] =
     appointmentsData?.getAppointmentsByDoctorAndDate.map(appt => ({
       start_time: appt.start_time,
@@ -76,7 +76,6 @@ export default function NewAppointementByDoctor() {
 
   const disabledTimes = getDisabledTimes(selectedDay, appointments, HOURS);
 
-  // Mise à jour de l'heure de fin
   const handleStartChange = (value: string) => {
     setStartTime(value);
     const [hour, minute] = value.split(':').map(Number);
@@ -87,7 +86,6 @@ export default function NewAppointementByDoctor() {
     setEndTime(`${endHour}:${endMinute}`);
   };
 
-  // Chargement de la date depuis les params
   useEffect(() => {
     const dateParam = params.get('date');
     if (dateParam) {
