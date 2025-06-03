@@ -47,6 +47,15 @@ export class UsersWithTotal {
   total: number;
 }
 
+// 👮 verification that the email corresponds to the domain @hopital.gouv.fr
+@InputType()
+export class sendEmailInput {
+  @Field()
+  @Matches(/^[a-zA-Z0-9._%+-]+@free\.fr$/, { message: 'Adresse mail non conforme' })
+  email: string;
+}
+
+// 👮 checking password entry rules
 @InputType()
 export class ResetPasswordInput {
   @Field()

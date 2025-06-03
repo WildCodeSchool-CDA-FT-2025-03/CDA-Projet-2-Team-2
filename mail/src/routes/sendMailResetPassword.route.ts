@@ -1,8 +1,9 @@
 import express from 'express';
-import { sendResetPassword } from '../modules/users/controller';
+//import { sendResetPassword } from '../modules/users/controller';
+import { activateLogin } from '../modules/users/controller';
 const router = express.Router();
 
 // ⚙️ route to process email reset
-router.post('/mail/login/init', sendResetPassword);
+router.post('/mail/login/init', activateLogin);
 
 export default router;

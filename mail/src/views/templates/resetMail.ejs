@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hôpital DoctoPlan</title>
+  <%- include('./includes/header.ejs') %>
+</head>
+
+<body>
+  <div class="header">
+    <h1>DoctoPlan</h1>
+    <p>Mail de ré-initialisation de mot de passe</p>
+  </div>
+
+  <div class="content">
+    <h2>Bonjour !</h2>
+    <p>Vous avez demandé la réinitialisation de votre mot de passe.</p>
+    <p>Cliquez sur le lien ci-dessous pour définir un nouveau mot de passe :</p>
+
+    <div class="mdp">
+      <a href="<%= templateData.url %>" class="button">Cliquez ici pour réinitialiser le mot de passe</a>
+    </div>
+    <p>ou copiez collez le lien ci-dessous dans le votre navigateur</p>
+
+    <a href="<%= templateData.url %>">
+      <%= templateData.url %>
+    </a>
+
+
+    <%- include('./includes/footer.ejs') %>
+</body>
+
+</html>

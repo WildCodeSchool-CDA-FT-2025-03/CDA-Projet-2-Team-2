@@ -77,7 +77,7 @@ export const SEARCH_DOCTORS = gql`
 `;
 
 export const SEND_RESET_PASSWORD_BY_MAIL = gql`
-  mutation SendResetPassword($email: String!) {
+  mutation SendResetPassword($email: sendEmailInput!) {
     sendResetPassword(email: $email)
   }
 `;
