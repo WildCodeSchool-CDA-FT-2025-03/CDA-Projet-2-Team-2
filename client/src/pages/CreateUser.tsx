@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  useGetAllUsersQuery,
-  useCreateUserMutation,
-  useCreateDoctorPlanningMutation,
-} from '@/types/graphql-generated';
+import { useGetAllUsersQuery, useCreateUserMutation } from '@/types/graphql-generated';
 import { ApolloError } from '@apollo/client';
 import UserPersonalForm from '@/components/user/UserPersonalForm';
 import UserProfessionalForm from '@/components/user/UserProfessionalForm';
@@ -65,7 +61,6 @@ const initialPlanning: Planning = days.reduce((acc, day) => {
 export default function CreateUser({ id }: CreateUserModalProps) {
   const { data, refetch } = useGetAllUsersQuery();
   const [createUser] = useCreateUserMutation();
-  const [createPlanning] = useCreateDoctorPlanningMutation();
   const [error, setError] = useState('');
   const [isDoctor, setIsDoctor] = useState(false);
   const [isDisable, setIsDisable] = useState(false);
@@ -74,7 +69,7 @@ export default function CreateUser({ id }: CreateUserModalProps) {
   const navigate = useNavigate();
   useEffect(() => {
     if (id) {
-      const user = data?.getAllUsers?.find(user => user.id === id);
+      const user = data?.getAllUsers?.users.find(user => user.id === id);
       if (user) {
         setFormData({
           lastname: user.lastname,
@@ -117,38 +112,41 @@ export default function CreateUser({ id }: CreateUserModalProps) {
       setIsDisable(true);
     }
     try {
-      if (!id) {
-        const createdUser = await createUser({
-          variables: { input: { ...formData, departementId: +formData.departementId } },
-        });
+      let planningInput: Record<string, string | null> = {};
+      if (isDoctor) {
+        planningInput = Object.keys(userPlanning).reduce(
+          (acc, day) => {
+            const dayLower = day.toLowerCase();
+            acc[`${dayLower}_start`] =
+              (userPlanning[day].off || userPlanning[day].start) === ''
+                ? null
+                : userPlanning[day].start;
+            acc[`${dayLower}_end`] =
+              userPlanning[day].off || userPlanning[day].end === '' ? null : userPlanning[day].end;
+            return acc;
+          },
+          {} as Record<string, string | null>,
+        );
+      }
 
-        if (isDoctor && createdUser.data) {
-          const planningInput = Object.keys(userPlanning).reduce(
-            (acc, day) => {
-              const dayLower = day.toLowerCase();
-              acc[`${dayLower}_start`] =
-                (userPlanning[day].off || userPlanning[day].start) === ''
-                  ? null
-                  : userPlanning[day].start;
-              acc[`${dayLower}_end`] =
-                userPlanning[day].off || userPlanning[day].end === ''
-                  ? null
-                  : userPlanning[day].end;
-              return acc;
+      if (!id) {
+        await createUser({
+          variables: {
+            input: {
+              ...formData,
+              departementId: +formData.departementId,
+              ...(isDoctor && {
+                plannings: [
+                  {
+                    start: formData.activationDate ?? new Date().toDateString(),
+                    end: null,
+                    ...planningInput,
+                  },
+                ],
+              }),
             },
-            {} as Record<string, string | null>,
-          );
-          await createPlanning({
-            variables: {
-              createDoctorPlanningId: createdUser.data?.createUser.id,
-              input: {
-                start: new Date().toISOString(),
-                end: null,
-                ...planningInput,
-              },
-            },
-          });
-        }
+          },
+        });
       } else {
         // updateUser
       }
