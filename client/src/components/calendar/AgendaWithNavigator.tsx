@@ -124,9 +124,7 @@ export default function AgendaWithNavigator() {
                       <p className="font-semibold">
                         👨‍⚕️ {String(doctor.firstname)} {String(doctor.lastname)}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        {String(doctor.profession)} {String(doctor.departement.label)}
-                      </p>
+                      <p className="text-sm text-gray-500">{String(doctor.departement.label)}</p>
                     </Link>
                   );
                 }
