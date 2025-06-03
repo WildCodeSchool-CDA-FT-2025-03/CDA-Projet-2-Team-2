@@ -1,14 +1,12 @@
 import { Field, InputType, Int, ObjectType } from 'type-graphql';
 import { User, UserRole, UserStatus } from '../entities/user.entity';
-import { Matches } from 'class-validator';
+import { IsEmail, Matches } from 'class-validator';
 
 @InputType()
 export class CreateUserInput {
   @Field()
+  @IsEmail()
   email: string;
-
-  @Field()
-  password: string;
 
   @Field()
   firstname: string;
@@ -24,9 +22,6 @@ export class CreateUserInput {
 
   @Field({ nullable: true })
   activationDate?: string;
-
-  @Field({ nullable: true })
-  profession: string;
 
   @Field()
   departementId: number;
