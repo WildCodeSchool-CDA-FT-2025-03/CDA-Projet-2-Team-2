@@ -1,12 +1,15 @@
 import DateDisplayInput from '@/components/appointement/DateDisplayInput';
 import TimeDisplayInputEnd from '@/components/appointement/TimeDisplayInputEnd';
 import TimeSelectStart from '@/components/appointement/TimeSelectStart';
+import SearchBar from '@/components/form/SearchBar';
 import SelectForm from '@/components/form/SelectForm';
 import UserItem from '@/components/user/UserItem';
+import { useSearchPatientsQuery } from '@/types/graphql-generated';
+import { Patient } from '@/types/patient.type';
 import { formatDate } from '@/utils/formatDateFr';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export default function NewAppointementByDoctor() {
   const [params] = useSearchParams();
@@ -16,6 +19,9 @@ export default function NewAppointementByDoctor() {
   );
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const dateParam = params.get('date');
@@ -50,6 +56,26 @@ export default function NewAppointementByDoctor() {
     const endMinute = newDate.getMinutes().toString().padStart(2, '0');
     setEndTime(`${endHour}:${endMinute}`);
   };
+
+  const {
+    data: patientData,
+    loading: loadingPatients,
+    error: errorPatients,
+  } = useSearchPatientsQuery({
+    variables: { query: searchQuery },
+    skip: searchQuery.length < 2,
+  });
+
+  const searchSources = [
+    {
+      name: 'Patients',
+      items: patientData?.searchPatients ?? [],
+      loading: loadingPatients,
+      error: errorPatients ? errorPatients.message : null,
+      getKey: (patient: Patient) => `patient-${patient.id}`,
+    },
+  ];
+
   return (
     <>
       <div>{`NewAppointementByDoctor ${params.get('doctor')}`}</div>
@@ -61,7 +87,29 @@ export default function NewAppointementByDoctor() {
               Creer un rendez-vous avec Nom du doctor, <span>profession, service</span>
             </h2>
           </div>
-          <div className="self-start"></div>
+          <div className="self-start">
+            <SearchBar<Patient>
+              placeholder="Rechercher un patient..."
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              sources={searchSources}
+            >
+              {(patient, _source, onSelect) => (
+                <Link
+                  to={`/secretary/patient/${patient.id}`}
+                  className="block p-2 border-b last:border-b-0 hover:bg-gray-100"
+                  onClick={onSelect}
+                >
+                  <p className="font-semibold">
+                    🧑 {String(patient.firstname)} {String(patient.lastname)}
+                  </p>
+                  <p className="text-sm text-gray-500">N° sécu : {String(patient.social_number)}</p>
+                </Link>
+              )}
+            </SearchBar>
+          </div>
         </section>
       </div>
       <section className="bg-bgBodyColor sm:w-full md:w-3/4 p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border-borderColor flex flex-col md:flex-row justify-center gap-10 md:gap-45">
