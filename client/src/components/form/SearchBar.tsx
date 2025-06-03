@@ -15,6 +15,11 @@ type SearchBarProps<T> = {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   sources: SearchSource<T>[];
+  /**
+   * Fonction à appeler lorsqu’un item est sélectionné (pour personnaliser l’action).
+   * Si non fourni, le comportement par défaut est de fermer la searchBar et vider la query.
+   */
+  onSelect?: () => void;
   children: (item: T, source: SearchSource<T>, onSelect: () => void) => ReactNode;
 };
 
@@ -25,6 +30,7 @@ export default function SearchBar<T>({
   isOpen,
   setIsOpen,
   sources,
+  onSelect,
   children,
 }: SearchBarProps<T>) {
   const clickOutsideRef = useRef<HTMLDivElement>(null);
@@ -81,8 +87,12 @@ export default function SearchBar<T>({
                 {source.items.map(item => (
                   <li key={source.getKey(item)}>
                     {children(item, source, () => {
-                      setSearchQuery('');
-                      setIsOpen(false);
+                      if (typeof onSelect === 'function') {
+                        onSelect();
+                      } else {
+                        setSearchQuery('');
+                        setIsOpen(false);
+                      }
                     })}
                   </li>
                 ))}
