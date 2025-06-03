@@ -31,11 +31,19 @@ export default function TimeSelectStart({
           className="w-full h-full pl-10 pr-4 border border-gray-300 rounded-lg bg-white text-blue-900 cursor-pointer"
         >
           <option value="">-</option>
-          {timeOptions.map(time => (
-            <option key={time} value={time} disabled={disabledOptions?.includes(time)}>
-              {time}
-            </option>
-          ))}
+          {timeOptions.map(time => {
+            const isDisabled = disabledOptions?.includes(time);
+            return (
+              <option
+                key={time}
+                value={time}
+                disabled={isDisabled}
+                className={isDisabled ? 'bg-red-100 text-red-400' : ''}
+              >
+                {time}
+              </option>
+            );
+          })}
         </select>
       </div>
     </div>
