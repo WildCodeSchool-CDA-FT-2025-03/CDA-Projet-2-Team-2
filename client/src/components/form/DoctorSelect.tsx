@@ -2,17 +2,13 @@ import SelectForm from '@/components/form/SelectForm';
 import { useGetDoctorsByDepartementQuery } from '@/types/graphql-generated';
 import { ChangeEvent } from 'react';
 
-type DepartmentSelectProps = {
+type DoctorSelectProps = {
   value: string;
   selectedDepartment: string;
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
 };
 
-export default function DoctorSelect({
-  value,
-  selectedDepartment,
-  onChange,
-}: DepartmentSelectProps) {
+export default function DoctorSelect({ value, selectedDepartment, onChange }: DoctorSelectProps) {
   const { data: datadpt } = useGetDoctorsByDepartementQuery({
     variables: { label: parseInt(selectedDepartment) },
   });
@@ -30,9 +26,9 @@ export default function DoctorSelect({
   return (
     <div className="mb-4 max-w-xs">
       <SelectForm
-        name="department"
+        name="user_id"
         value={value}
-        title="Service"
+        title="Docteur"
         option={optionSelectDoctor}
         handle={onChange}
       />
