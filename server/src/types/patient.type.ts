@@ -4,7 +4,7 @@ import { IsEmail, Matches, Length } from 'class-validator';
 @InputType()
 export class PatientInput {
   @Field(() => ID)
-  id?: number;
+  id?: string;
 
   @Field({ nullable: true })
   @IsEmail()
