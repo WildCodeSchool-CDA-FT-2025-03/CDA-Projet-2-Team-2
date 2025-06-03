@@ -48,7 +48,7 @@ export class AppointmentResolver {
     });
   }
 
-  // 📌 Appointments by Doctor
+  // 📌 Next Appointments by Patient
   @Query(() => [Appointment])
   @Authorized([UserRole.SECRETARY])
   async getNextAppointmentsByPatient(@Arg('patientId') patientId: string): Promise<Appointment[]> {
@@ -64,7 +64,7 @@ export class AppointmentResolver {
     });
   }
 
-  // 📌 Appointments by Doctor
+  // 📌 Last Appointments by Patient
   @Query(() => [Appointment])
   @Authorized([UserRole.SECRETARY])
   async getLastAppointmentsByPatient(@Arg('patientId') patientId: string): Promise<Appointment[]> {
