@@ -9,34 +9,31 @@ import { Patient } from '@/types/patient.type';
 import { formatDate } from '@/utils/formatDateFr';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 export default function NewAppointementByDoctor() {
   const [params] = useSearchParams();
 
   const [selectedDay, setSelectedDay] = useState<DayPilot.Date>(
-    new DayPilot.Date(DayPilot.Date.today()), // valeur par défaut = aujourd'hui
+    new DayPilot.Date(DayPilot.Date.today()),
   );
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   useEffect(() => {
     const dateParam = params.get('date');
     if (dateParam) {
       const [fullDate, timePart] = dateParam.split('T');
-
-      // ✅ Mettre la date (YYYY-MM-DD) dans DayPilot.Date
       setSelectedDay(new DayPilot.Date(fullDate));
 
-      // ✅ Si l'heure est présente, on la traite
       if (timePart) {
-        const hourMinute = timePart.slice(0, 5); // "14:00"
+        const hourMinute = timePart.slice(0, 5);
         setStartTime(hourMinute);
 
-        // Calcul automatique de fin (+30 min)
         const [hour, minute] = hourMinute.split(':').map(Number);
         const end = new Date();
         end.setHours(hour, minute + 30);
@@ -97,21 +94,25 @@ export default function NewAppointementByDoctor() {
               sources={searchSources}
             >
               {(patient, _source, onSelect) => (
-                <Link
-                  to={`/secretary/patient/${patient.id}`}
-                  className="block p-2 border-b last:border-b-0 hover:bg-gray-100"
-                  onClick={onSelect}
+                <button
+                  type="button"
+                  className="w-full text-left block p-2 border-b last:border-b-0 hover:bg-gray-100"
+                  onClick={() => {
+                    setSelectedPatient(patient); // sélectionne le patient
+                    onSelect(); // ferme la searchBar
+                  }}
                 >
                   <p className="font-semibold">
-                    🧑 {String(patient.firstname)} {String(patient.lastname)}
+                    🧑 {patient.firstname} {patient.lastname}
                   </p>
-                  <p className="text-sm text-gray-500">N° sécu : {String(patient.social_number)}</p>
-                </Link>
+                  <p className="text-sm text-gray-500">N° sécu : {patient.social_number}</p>
+                </button>
               )}
             </SearchBar>
           </div>
         </section>
       </div>
+
       <section className="bg-bgBodyColor sm:w-full md:w-3/4 p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border-borderColor flex flex-col md:flex-row justify-center gap-10 md:gap-45">
         <aside>
           <DayPilotNavigator
@@ -119,12 +120,26 @@ export default function NewAppointementByDoctor() {
             showMonths={1}
             skipMonths={1}
             locale="fr-fr"
-            selectionDay={selectedDay} // toujours un DayPilot.Date valide
-            onTimeRangeSelected={args => setSelectedDay(args.day)} // gestion des changements
+            selectionDay={selectedDay}
+            onTimeRangeSelected={args => setSelectedDay(args.day)}
           />
         </aside>
+
         <section className="flex flex-col gap-4">
-          <UserItem />
+          {/* ✅ Affiche les infos du patient sélectionné */}
+          {selectedPatient && (
+            <UserItem<Patient> user={selectedPatient}>
+              {p => (
+                <p>
+                  <span className="font-bold">
+                    {p.firstname} {p.lastname}
+                  </span>{' '}
+                  - N° sécu : {p.social_number}
+                </p>
+              )}
+            </UserItem>
+          )}
+
           <SelectForm
             name="motifs"
             value="pupu"
@@ -133,7 +148,6 @@ export default function NewAppointementByDoctor() {
             handle={() => console.warn('truc')}
           />
           <section className="flex flex-col gap-2">
-            {/* Ligne des champs : Jour, Début, Fin */}
             <div className="flex gap-4 items-end whitespace-nowrap">
               <DateDisplayInput value={formatDate(selectedDay.toDate())} />
               <TimeSelectStart value={startTime} onChange={handleStartChange} />
