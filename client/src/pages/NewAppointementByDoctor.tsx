@@ -4,7 +4,11 @@ import TimeSelectStart from '@/components/appointement/TimeSelectStart';
 import SearchBar from '@/components/form/SearchBar';
 import SelectForm from '@/components/form/SelectForm';
 import UserItem from '@/components/user/UserItem';
-import { useSearchPatientsQuery, useGetAppointmentTypesQuery } from '@/types/graphql-generated';
+import {
+  useSearchPatientsQuery,
+  useGetAppointmentTypesQuery,
+  useGetAppointmentsByDoctorAndDateQuery,
+} from '@/types/graphql-generated';
 import { Patient } from '@/types/patient.type';
 import { formatDate } from '@/utils/formatDateFr';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
@@ -23,36 +27,6 @@ export default function NewAppointementByDoctor() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-
-  useEffect(() => {
-    const dateParam = params.get('date');
-    if (dateParam) {
-      const [fullDate, timePart] = dateParam.split('T');
-      setSelectedDay(new DayPilot.Date(fullDate));
-
-      if (timePart) {
-        const hourMinute = timePart.slice(0, 5);
-        setStartTime(hourMinute);
-
-        const [hour, minute] = hourMinute.split(':').map(Number);
-        const end = new Date();
-        end.setHours(hour, minute + 30);
-        const endHour = end.getHours().toString().padStart(2, '0');
-        const endMinute = end.getMinutes().toString().padStart(2, '0');
-        setEndTime(`${endHour}:${endMinute}`);
-      }
-    }
-  }, [params]);
-
-  const handleStartChange = (value: string) => {
-    setStartTime(value);
-    const [hour, minute] = value.split(':').map(Number);
-    const newDate = new Date();
-    newDate.setHours(hour, minute + 30);
-    const endHour = newDate.getHours().toString().padStart(2, '0');
-    const endMinute = newDate.getMinutes().toString().padStart(2, '0');
-    setEndTime(`${endHour}:${endMinute}`);
-  };
 
   const {
     data: patientData,
@@ -82,6 +56,99 @@ export default function NewAppointementByDoctor() {
     })) ?? []),
   ];
 
+  // Récupère les rendez-vous pour bloquer les horaires déjà pris
+  const doctorId = Number(params.get('doctor'));
+  const { data: appointmentsData } = useGetAppointmentsByDoctorAndDateQuery({
+    variables: {
+      doctorId,
+      date: selectedDay.toString().slice(0, 10), // format YYYY-MM-DD
+    },
+    skip: !doctorId || !selectedDay,
+  });
+  const appointments = appointmentsData?.getAppointmentsByDoctorAndDate ?? [];
+
+  // Convertit une heure en Date UTC
+  const toDateTime = (time: string): Date => {
+    const [hour, minute] = time.split(':').map(Number);
+    const dateIsoString = selectedDay.toDate().toISOString().slice(0, 10);
+    const date = new Date(dateIsoString + 'T00:00:00Z');
+    date.setUTCHours(hour, minute, 0, 0);
+    return date;
+  };
+
+  // Vérifie si deux intervalles se chevauchent
+  const isOverlap = (startA: number, endA: number, startB: number, endB: number): boolean => {
+    return startA < endB && startB < endA;
+  };
+
+  // Vérifie si un créneau est dispo
+  const isSlotAvailable = (time: string): boolean => {
+    const slotStart = toDateTime(time).getTime();
+    const slotEnd = slotStart + 30 * 60 * 1000;
+
+    return !appointments.some(appt => {
+      const apptStart = new Date(appt.start_time).getTime();
+      const apptEnd = apptStart + appt.duration * 60 * 1000;
+      return isOverlap(slotStart, slotEnd, apptStart, apptEnd);
+    });
+  };
+
+  const hours = [
+    '08:00',
+    '08:30',
+    '09:00',
+    '09:30',
+    '10:00',
+    '10:30',
+    '11:00',
+    '11:30',
+    '12:00',
+    '12:30',
+    '13:00',
+    '13:30',
+    '14:00',
+    '14:30',
+    '15:00',
+    '15:30',
+    '16:00',
+    '16:30',
+    '17:00',
+    '17:30',
+  ];
+  const disabledTimes = hours.filter(hour => !isSlotAvailable(hour));
+
+  // Mise à jour de l'heure de fin
+  const handleStartChange = (value: string) => {
+    setStartTime(value);
+    const [hour, minute] = value.split(':').map(Number);
+    const newDate = new Date();
+    newDate.setHours(hour, minute + 30);
+    const endHour = newDate.getHours().toString().padStart(2, '0');
+    const endMinute = newDate.getMinutes().toString().padStart(2, '0');
+    setEndTime(`${endHour}:${endMinute}`);
+  };
+
+  // Chargement de la date depuis les params
+  useEffect(() => {
+    const dateParam = params.get('date');
+    if (dateParam) {
+      const [fullDate, timePart] = dateParam.split('T');
+      setSelectedDay(new DayPilot.Date(fullDate));
+
+      if (timePart) {
+        const hourMinute = timePart.slice(0, 5);
+        setStartTime(hourMinute);
+
+        const [hour, minute] = hourMinute.split(':').map(Number);
+        const end = new Date();
+        end.setHours(hour, minute + 30);
+        const endHour = end.getHours().toString().padStart(2, '0');
+        const endMinute = end.getMinutes().toString().padStart(2, '0');
+        setEndTime(`${endHour}:${endMinute}`);
+      }
+    }
+  }, [params]);
+
   return (
     <>
       <div>{`NewAppointementByDoctor ${params.get('doctor')}`}</div>
@@ -107,8 +174,8 @@ export default function NewAppointementByDoctor() {
                   type="button"
                   className="w-full text-left block p-2 border-b last:border-b-0 hover:bg-gray-100"
                   onClick={() => {
-                    setSelectedPatient(patient); // sélectionne le patient
-                    onSelect(); // ferme la searchBar
+                    setSelectedPatient(patient);
+                    onSelect();
                   }}
                 >
                   <p className="font-semibold">
@@ -159,7 +226,11 @@ export default function NewAppointementByDoctor() {
           <section className="flex flex-col gap-2">
             <div className="flex gap-4 items-end whitespace-nowrap">
               <DateDisplayInput value={formatDate(selectedDay.toDate())} />
-              <TimeSelectStart value={startTime} onChange={handleStartChange} />
+              <TimeSelectStart
+                value={startTime}
+                onChange={handleStartChange}
+                disabledOptions={disabledTimes}
+              />
               <TimeDisplayInputEnd value={endTime} />
             </div>
           </section>

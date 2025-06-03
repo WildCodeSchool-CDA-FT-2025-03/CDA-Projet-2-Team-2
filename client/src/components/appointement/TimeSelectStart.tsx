@@ -3,9 +3,14 @@ import { generateTimeOptions } from '@/utils/generatedTimeOptions';
 type TimeSelectStartProps = {
   value: string;
   onChange: (value: string) => void;
+  disabledOptions?: string[];
 };
 
-export default function TimeSelectStart({ value, onChange }: TimeSelectStartProps) {
+export default function TimeSelectStart({
+  value,
+  onChange,
+  disabledOptions,
+}: TimeSelectStartProps) {
   const timeOptions = generateTimeOptions();
 
   return (
@@ -27,7 +32,7 @@ export default function TimeSelectStart({ value, onChange }: TimeSelectStartProp
         >
           <option value="">-</option>
           {timeOptions.map(time => (
-            <option key={time} value={time}>
+            <option key={time} value={time} disabled={disabledOptions?.includes(time)}>
               {time}
             </option>
           ))}
