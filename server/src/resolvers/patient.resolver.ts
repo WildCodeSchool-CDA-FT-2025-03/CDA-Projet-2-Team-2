@@ -9,7 +9,7 @@ import { ILike } from 'typeorm';
 export class PatientResolver {
   @Query(() => Patient)
   @Authorized([UserRole.SECRETARY, UserRole.DOCTOR])
-  async getPatientByID(@Arg('patientId') patientId: number): Promise<Patient | null> {
+  async getPatientByID(@Arg('patientId') patientId: string): Promise<Patient | null> {
     const patient = await Patient.findOne({
       where: { id: patientId },
       relations: ['city'],

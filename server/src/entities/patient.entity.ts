@@ -7,8 +7,8 @@ import { PatientDoc } from './patient-doc.entity';
 @Entity('patient')
 export class Patient extends BaseEntity {
   @Field(() => ID)
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
