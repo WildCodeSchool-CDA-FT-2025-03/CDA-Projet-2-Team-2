@@ -19,14 +19,12 @@ type FormDataType = {
   lastname: string;
   firstname: string;
   email: string;
-  password: string;
   role: string;
   status: string;
   activationDate: string | null;
   departementId: number;
   gender: string;
   tel: string;
-  profession: string;
 };
 
 export type Planning = {
@@ -41,14 +39,12 @@ const initialFormData: FormDataType = {
   lastname: '',
   firstname: '',
   email: '',
-  password: '',
   role: '',
   status: 'active',
   activationDate: null,
   departementId: 0,
   gender: '',
   tel: '',
-  profession: '',
 };
 
 const days = [
@@ -84,14 +80,12 @@ export default function CreateUser({ id }: CreateUserModalProps) {
           lastname: user.lastname,
           firstname: user.firstname,
           email: user.email,
-          password: '',
           role: user.role,
           status: user.status || 'active',
           departementId: Number(user.departement?.id),
           activationDate: user.activationDate || null,
           gender: user.gender || '',
           tel: user.tel || '',
-          profession: user.profession || '',
         });
       }
     }

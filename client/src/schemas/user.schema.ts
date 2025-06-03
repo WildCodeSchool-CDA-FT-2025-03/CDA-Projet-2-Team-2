@@ -13,7 +13,6 @@ export const GET_USERS = gql`
         activationDate
         gender
         tel
-        profession
         departement {
           id
           label
@@ -40,7 +39,6 @@ export const CREATE_USER = gql`
       activationDate
       gender
       tel
-      profession
     }
   }
 `;
@@ -67,7 +65,6 @@ export const SEARCH_DOCTORS = gql`
       id
       firstname
       lastname
-      profession
       departement {
         id
         label
