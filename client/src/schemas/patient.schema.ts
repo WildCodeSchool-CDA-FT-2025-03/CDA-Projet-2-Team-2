@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const PATIENT_QUERY = gql`
-  query GetPatientByID($patientId: Float!) {
+  query GetPatientByID($patientId: String!) {
     getPatientByID(patientId: $patientId) {
       birth_date
       city {
