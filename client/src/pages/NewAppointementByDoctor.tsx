@@ -14,6 +14,7 @@ import { formatDate } from '@/utils/formatDateFr';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { getDisabledTimes, HOURS, AppointmentSlot } from '@/utils/getAppointementTimeStartDisabled';
 
 export default function NewAppointementByDoctor() {
   const [params] = useSearchParams();
@@ -61,61 +62,19 @@ export default function NewAppointementByDoctor() {
   const { data: appointmentsData } = useGetAppointmentsByDoctorAndDateQuery({
     variables: {
       doctorId,
-      date: selectedDay.toString().slice(0, 10), // format YYYY-MM-DD
+      date: selectedDay.toString().slice(0, 10),
     },
     skip: !doctorId || !selectedDay,
   });
-  const appointments = appointmentsData?.getAppointmentsByDoctorAndDate ?? [];
 
-  // Convertit une heure en Date UTC
-  const toDateTime = (time: string): Date => {
-    const [hour, minute] = time.split(':').map(Number);
-    const dateIsoString = selectedDay.toDate().toISOString().slice(0, 10);
-    const date = new Date(dateIsoString + 'T00:00:00Z');
-    date.setUTCHours(hour, minute, 0, 0);
-    return date;
-  };
+  // Conversion explicite pour éviter l'erreur TypeScript
+  const appointments: AppointmentSlot[] =
+    appointmentsData?.getAppointmentsByDoctorAndDate.map(appt => ({
+      start_time: appt.start_time,
+      duration: appt.duration,
+    })) ?? [];
 
-  // Vérifie si deux intervalles se chevauchent
-  const isOverlap = (startA: number, endA: number, startB: number, endB: number): boolean => {
-    return startA < endB && startB < endA;
-  };
-
-  // Vérifie si un créneau est dispo
-  const isSlotAvailable = (time: string): boolean => {
-    const slotStart = toDateTime(time).getTime();
-    const slotEnd = slotStart + 30 * 60 * 1000;
-
-    return !appointments.some(appt => {
-      const apptStart = new Date(appt.start_time).getTime();
-      const apptEnd = apptStart + appt.duration * 60 * 1000;
-      return isOverlap(slotStart, slotEnd, apptStart, apptEnd);
-    });
-  };
-
-  const hours = [
-    '08:00',
-    '08:30',
-    '09:00',
-    '09:30',
-    '10:00',
-    '10:30',
-    '11:00',
-    '11:30',
-    '12:00',
-    '12:30',
-    '13:00',
-    '13:30',
-    '14:00',
-    '14:30',
-    '15:00',
-    '15:30',
-    '16:00',
-    '16:30',
-    '17:00',
-    '17:30',
-  ];
-  const disabledTimes = hours.filter(hour => !isSlotAvailable(hour));
+  const disabledTimes = getDisabledTimes(selectedDay, appointments, HOURS);
 
   // Mise à jour de l'heure de fin
   const handleStartChange = (value: string) => {
