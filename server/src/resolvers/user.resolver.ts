@@ -106,14 +106,14 @@ export class UserResolver {
 
   @Query(() => [User])
   @Authorized([UserRole.SECRETARY])
-  async getDoctorsByDepartement(@Arg('label') label: string): Promise<User[]> {
+  async getDoctorsByDepartement(@Arg('label') label: number): Promise<User[]> {
     return await User.find({
       relations: ['departement'],
       where: {
         role: UserRole.DOCTOR,
         status: UserStatus.ACTIVE,
         departement: {
-          label,
+          id: label,
         },
       },
     });

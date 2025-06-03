@@ -2,7 +2,7 @@ import { useGetDoctorsByDepartementQuery } from '@/types/graphql-generated';
 
 export default function useResources(label: string) {
   const { data, loading, error } = useGetDoctorsByDepartementQuery({
-    variables: { label },
+    variables: { label: parseInt(label) },
   });
 
   const doctors = data?.getDoctorsByDepartement ?? [];
