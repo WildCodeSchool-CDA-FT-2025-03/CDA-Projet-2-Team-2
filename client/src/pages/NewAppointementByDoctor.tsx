@@ -14,7 +14,8 @@ import { formatDate } from '@/utils/formatDateFr';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getDisabledTimes, HOURS, AppointmentSlot } from '@/utils/getAppointementTimeStartDisabled';
+import { getDisabledTimes, AppointmentSlot } from '@/utils/getAppointementTimeStartDisabled';
+import { generateTimeOptions } from '@/utils/generatedTimeOptions';
 
 export default function NewAppointementByDoctor() {
   const [params] = useSearchParams();
@@ -74,7 +75,7 @@ export default function NewAppointementByDoctor() {
       duration: appt.duration,
     })) ?? [];
 
-  const disabledTimes = getDisabledTimes(selectedDay, appointments, HOURS);
+  const disabledTimes = getDisabledTimes(selectedDay, appointments, generateTimeOptions());
 
   const handleStartChange = (value: string) => {
     setStartTime(value);
