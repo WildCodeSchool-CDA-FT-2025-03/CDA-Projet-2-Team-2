@@ -1,11 +1,14 @@
-export default function UserItem() {
+import { ReactNode } from 'react';
+
+type UserItemProps<T> = {
+  user: T;
+  children: (user: T) => ReactNode;
+};
+
+export default function UserItem<T>({ user, children }: UserItemProps<T>) {
   return (
-    <>
-      <article className="border-1 border-solid border-blue bg-white rounded-md w-full max-w-md mx-auto p-4">
-        <p>
-          <span className="font-bold">Pierre Durand</span>- ne le trucmuche - 1111111111
-        </p>
-      </article>
-    </>
+    <article className="border-1 border-solid border-blue bg-white rounded-md w-full max-w-md mx-auto p-4">
+      {children(user)}
+    </article>
   );
 }

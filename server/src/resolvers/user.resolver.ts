@@ -154,22 +154,16 @@ export class UserResolver {
       });
     }
 
-    const hashedPassword = await argon2.hash(input.password);
     try {
       const newUser = new User();
       newUser.email = input.email;
-      newUser.password = hashedPassword;
       newUser.firstname = input.firstname;
       newUser.lastname = input.lastname;
       newUser.role = input.role as UserRole;
-      newUser.profession = input.profession;
       newUser.gender = input.gender;
       newUser.tel = input.tel;
-      if (input.activationDate) {
-        newUser.activationDate = input.activationDate;
-      }
+      newUser.activationDate = input.activationDate ?? new Date().toDateString();
       newUser.status = input.status as UserStatus;
-
       newUser.departement = departement;
 
       await newUser.save();
