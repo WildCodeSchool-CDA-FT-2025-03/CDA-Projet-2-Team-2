@@ -1,13 +1,9 @@
 import SelectForm from '@/components/form/SelectForm';
 import { useGetAppointmentTypesQuery } from '@/types/graphql-generated';
-import { ChangeEvent } from 'react';
+import { useAppointmentContext } from '@/hooks/useAppointment';
 
-type AppointmentTypesSelectProps = {
-  value: string;
-  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
-};
-
-export default function AppointmentTypesSelect({ value, onChange }: AppointmentTypesSelectProps) {
+export default function AppointmentTypesSelect() {
+  const { savePatient, HandleAppointment } = useAppointmentContext();
   const { data: dataapp } = useGetAppointmentTypesQuery();
 
   const optionSelectAppointment =
@@ -24,10 +20,10 @@ export default function AppointmentTypesSelect({ value, onChange }: AppointmentT
     <div className="mb-4 max-w-xs">
       <SelectForm
         name="appointmentType"
-        value={value}
+        value={savePatient.appointmentType || ''}
         title="Type de rendez-vous"
         option={optionSelectAppointment}
-        handle={onChange}
+        handle={HandleAppointment}
       />
     </div>
   );

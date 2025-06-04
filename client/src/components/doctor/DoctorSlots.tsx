@@ -4,31 +4,21 @@ import {
   useGetDoctorSlotByDepartementLazyQuery,
 } from '@/types/graphql-generated';
 import DepartmentSelect from '@/components/form/DepartmentSelect';
-import { DayPilot } from '@daypilot/daypilot-lite-react';
-import { PatientAppointment } from '@/types/appointement.type';
+import { useAppointmentContext } from '@/hooks/useAppointment';
 
-type DoctorSlotsProps = {
-  setSelectedDepartment: (value: string) => void;
-  setStartTime: (value: string) => void;
-  setSavePatient: (value: PatientAppointment) => void;
-  handleStartChange: (value: string) => void;
-  selectedDepartment: string;
-  selectedDay: DayPilot.Date;
-  savePatient: PatientAppointment;
-};
-
-export default function DoctorSlots({
-  setSelectedDepartment,
-  setStartTime,
-  setSavePatient,
-  handleStartChange,
-  selectedDepartment,
-  selectedDay,
-  savePatient,
-}: DoctorSlotsProps) {
+export default function DoctorSlots() {
   const [loading, setLoading] = useState(false);
   const [slots, setSlots] = useState<DoctorAppointmentSlot[]>([]);
   const [GetDoctorSlotByDepartement] = useGetDoctorSlotByDepartementLazyQuery();
+  const {
+    selectedDepartment,
+    selectedDay,
+    savePatient,
+    setStartTime,
+    handleStartChange,
+    setSavePatient,
+    setSelectedDepartment,
+  } = useAppointmentContext();
 
   const checkDoctorAvailability = async () => {
     setLoading(true);
@@ -51,9 +41,8 @@ export default function DoctorSlots({
   const handleSlotClick = (slot: DoctorAppointmentSlot) => {
     setStartTime(slot.debut_libre.split(':').slice(0, 2).join(':'));
     handleStartChange(slot.debut_libre.split(':').slice(0, 2).join(':'));
-    setSavePatient({ ...savePatient, user_id: slot.id.toString() });
+    setSavePatient({ ...savePatient, user_id: slot.user_id });
   };
-
   return (
     <>
       <section className="flex flex-col md:flex-row lg:justify-between md:items-center gap-4 mb-0">

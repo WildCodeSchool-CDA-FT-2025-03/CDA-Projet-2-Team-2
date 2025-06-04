@@ -1,14 +1,9 @@
 import SelectForm from '@/components/form/SelectForm';
 import { useGetDoctorsByDepartementQuery } from '@/types/graphql-generated';
-import { ChangeEvent } from 'react';
+import { useAppointmentContext } from '@/hooks/useAppointment';
 
-type DoctorSelectProps = {
-  value: string;
-  selectedDepartment: string;
-  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
-};
-
-export default function DoctorSelect({ value, selectedDepartment, onChange }: DoctorSelectProps) {
+export default function DoctorSelect() {
+  const { selectedDepartment, savePatient, HandleAppointment } = useAppointmentContext();
   const { data: datadpt } = useGetDoctorsByDepartementQuery({
     variables: { label: parseInt(selectedDepartment) },
   });
@@ -27,10 +22,10 @@ export default function DoctorSelect({ value, selectedDepartment, onChange }: Do
     <div className="mb-4 max-w-xs">
       <SelectForm
         name="user_id"
-        value={value}
+        value={savePatient.user_id || ''}
         title="Docteur"
         option={optionSelectDoctor}
-        handle={onChange}
+        handle={HandleAppointment}
       />
     </div>
   );
