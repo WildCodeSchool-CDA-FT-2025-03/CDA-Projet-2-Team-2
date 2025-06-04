@@ -5,7 +5,7 @@ import { useAppointmentContext } from '@/hooks/useAppointment';
 export default function DoctorSelect() {
   const { selectedDepartment, savePatient, HandleAppointment } = useAppointmentContext();
   const { data: datadpt } = useGetDoctorsByDepartementQuery({
-    variables: { label: parseInt(selectedDepartment) },
+    variables: { id: parseInt(selectedDepartment) },
   });
 
   const optionSelectDoctor =
