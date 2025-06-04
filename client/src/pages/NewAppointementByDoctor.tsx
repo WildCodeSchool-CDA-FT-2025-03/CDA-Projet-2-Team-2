@@ -10,6 +10,7 @@ import {
   useGetAppointmentsByDoctorAndDateQuery,
 } from '@/types/graphql-generated';
 import { Patient } from '@/types/patient.type';
+import { Doctor } from '@/types/doctor.type';
 import { formatDate } from '@/utils/formatDateFr';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useEffect, useState } from 'react';
@@ -30,6 +31,7 @@ export default function NewAppointementByDoctor() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
+  // Requête GraphQL pour les patients
   const {
     data: patientData,
     loading: loadingPatients,
@@ -58,7 +60,7 @@ export default function NewAppointementByDoctor() {
     })) ?? []),
   ];
 
-  // Retrieve appointments to block times already taken
+  // Récupération des rendez-vous pour bloquer les horaires déjà pris
   const doctorId = Number(params.get('doctor'));
   const { data: appointmentsData } = useGetAppointmentsByDoctorAndDateQuery({
     variables: {
@@ -68,7 +70,6 @@ export default function NewAppointementByDoctor() {
     skip: !doctorId || !selectedDay,
   });
 
-  // Explicit conversion to avoid TypeScript error
   const appointments: AppointmentSlot[] =
     appointmentsData?.getAppointmentsByDoctorAndDate.map(appt => ({
       start_time: appt.start_time,
@@ -107,42 +108,29 @@ export default function NewAppointementByDoctor() {
     }
   }, [params]);
 
+  //  Docteur mocké (en attendant l’API)
+  const doctorMock: Doctor = {
+    id: '123',
+    firstname: 'Emilie',
+    lastname: 'Masser',
+    profession: 'Pedospsychiatre',
+    departement: {
+      label: 'Pédiatrie',
+    },
+  };
+
   return (
     <>
-      <div>{`NewAppointementByDoctor ${params.get('doctor')}`}</div>
+      <div>{`NewAppointementByDoctor ${doctorId}`}</div>
+
       <div className="flex flex-col w-3/4">
         <section className="flex flex-col gap-4 self-start">
           <div className="flex gap-4">
             <img src="/calendar-clock.svg" alt="icone de creation de rendez-vous" />
             <h2>
-              Creer un rendez-vous avec Nom du doctor, <span>profession, service</span>
+              Créer un rendez-vous avec {doctorMock.firstname} {doctorMock.lastname},{' '}
+              <span>{doctorMock.departement?.label}</span>
             </h2>
-          </div>
-          <div className="self-start">
-            <SearchBar<Patient>
-              placeholder="Rechercher un patient..."
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              sources={searchSources}
-            >
-              {(patient, _source, onSelect) => (
-                <button
-                  type="button"
-                  className="w-full text-left block p-2 border-b last:border-b-0 hover:bg-gray-100"
-                  onClick={() => {
-                    setSelectedPatient(patient);
-                    onSelect();
-                  }}
-                >
-                  <p className="font-semibold">
-                    🧑 {patient.firstname} {patient.lastname}
-                  </p>
-                  <p className="text-sm text-gray-500">N° sécu : {patient.social_number}</p>
-                </button>
-              )}
-            </SearchBar>
           </div>
         </section>
       </div>
@@ -160,7 +148,45 @@ export default function NewAppointementByDoctor() {
         </aside>
 
         <section className="flex flex-col gap-4">
-          {/* ✅ Affiche les infos du patient sélectionné */}
+          {/* ✅ UserItem of the selected doctor */}
+          <UserItem<Doctor> user={doctorMock}>
+            {d => (
+              <p>
+                <span className="font-bold">
+                  {d.firstname} {d.lastname}
+                </span>{' '}
+                - {d.departement?.label ?? 'service'}
+              </p>
+            )}
+          </UserItem>
+
+          {/* ✅ Search bar */}
+          <SearchBar<Patient>
+            placeholder="Rechercher un patient..."
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            sources={searchSources}
+          >
+            {(patient, _source, onSelect) => (
+              <button
+                type="button"
+                className="w-full text-left block p-2 border-b last:border-b-0 hover:bg-gray-100"
+                onClick={() => {
+                  setSelectedPatient(patient);
+                  onSelect();
+                }}
+              >
+                <p className="font-semibold">
+                  🧑 {patient.firstname} {patient.lastname}
+                </p>
+                <p className="text-sm text-gray-500">N° sécu : {patient.social_number}</p>
+              </button>
+            )}
+          </SearchBar>
+
+          {/* ✅ UserItem of the selected patient */}
           {selectedPatient && (
             <UserItem<Patient> user={selectedPatient}>
               {p => (
@@ -174,6 +200,7 @@ export default function NewAppointementByDoctor() {
             </UserItem>
           )}
 
+          {/* ✅ Appointement type + date + hour */}
           <SelectForm
             name="motifs"
             value=""
