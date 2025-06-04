@@ -22,7 +22,7 @@ export default function PatientSearch({
   setSelectedPatient,
 }: PatientSearchProps) {
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="w-full">
       <SearchBar<Patient>
         placeholder="Rechercher un patient..."
         searchQuery={searchQuery}
