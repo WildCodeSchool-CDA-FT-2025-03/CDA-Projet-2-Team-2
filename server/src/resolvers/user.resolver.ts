@@ -142,11 +142,6 @@ export class UserResolver {
     @Ctx() context: { user: User },
     @Arg('input') input: CreateUserInput,
   ): Promise<User> {
-    const departement = await Departement.findOneBy({ id: +input.departementId });
-    if (!departement) {
-      throw new GraphQLError('Department not found');
-    }
-
     const userExist = await User.findOneBy({ email: input.email });
     if (userExist) {
       throw new GraphQLError('User with this email already exists', {
@@ -157,6 +152,10 @@ export class UserResolver {
       });
     }
 
+    const departement = await Departement.findOneBy({ id: +input.departementId });
+    if (!departement) {
+      throw new GraphQLError('Department not found');
+    }
     try {
       const newUser = new User();
       await dataSource.transaction(async (transactionalEntityManager) => {
@@ -177,7 +176,7 @@ export class UserResolver {
           createdBy: context.user.id,
         });
 
-        if (input.plannings && input.plannings.length > 0) {
+        if (input.role === UserRole.DOCTOR && input.plannings) {
           const planning = input.plannings[0];
           const newPlanning = this.createPlanning(planning);
           newPlanning.user = newUser;
@@ -201,6 +200,7 @@ export class UserResolver {
       });
     }
   }
+
   formatTimeForPostgres(timeStr: string | null): string | null {
     if (!timeStr) {
       return null;
@@ -209,8 +209,6 @@ export class UserResolver {
   }
 
   createPlanning(input: Planning) {
-    // console.info(input);
-
     const newPlanning = new Planning();
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -228,7 +226,10 @@ export class UserResolver {
         newPlanning[endKey] = formattedEnd;
       }
     });
-    console.info(input.start);
+
+    if (Object.values(newPlanning).length === 0) {
+      throw new GraphQLError('Au moins un jour doit être rempli.');
+    }
     newPlanning.start = input.start ?? new Date().toISOString();
     return newPlanning;
   }
