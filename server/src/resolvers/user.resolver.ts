@@ -9,6 +9,9 @@ import { ILike } from 'typeorm';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
 import jwt from 'jsonwebtoken';
 import { ResetPasswordInput } from '../types/user.type';
+import { Planning } from '../entities/planning.entity';
+import { CreatePlanningInput } from '../types/planning.type';
+import { dataSource } from '../database/client';
 
 @Resolver()
 export class UserResolver {
@@ -139,11 +142,6 @@ export class UserResolver {
     @Ctx() context: { user: User },
     @Arg('input') input: CreateUserInput,
   ): Promise<User> {
-    const departement = await Departement.findOneBy({ id: +input.departementId });
-    if (!departement) {
-      throw new GraphQLError('Department not found');
-    }
-
     const userExist = await User.findOneBy({ email: input.email });
     if (userExist) {
       throw new GraphQLError('User with this email already exists', {
@@ -154,24 +152,42 @@ export class UserResolver {
       });
     }
 
+    const departement = await Departement.findOneBy({ id: +input.departementId });
+    if (!departement) {
+      throw new GraphQLError('Department not found');
+    }
     try {
       const newUser = new User();
-      newUser.email = input.email;
-      newUser.firstname = input.firstname;
-      newUser.lastname = input.lastname;
-      newUser.role = input.role as UserRole;
-      newUser.gender = input.gender;
-      newUser.tel = input.tel;
-      newUser.activationDate = input.activationDate ?? new Date().toDateString();
-      newUser.status = input.status as UserStatus;
-      newUser.departement = departement;
+      await dataSource.transaction(async (transactionalEntityManager) => {
+        newUser.email = input.email;
+        newUser.firstname = input.firstname;
+        newUser.lastname = input.lastname;
+        newUser.role = input.role as UserRole;
+        newUser.gender = input.gender;
+        newUser.tel = input.tel;
+        newUser.activationDate = input.activationDate ?? new Date().toDateString();
+        newUser.status = input.status as UserStatus;
+        newUser.departement = departement;
+        await transactionalEntityManager.save(newUser);
+        await log('User created', {
+          userId: newUser.id,
+          email: newUser.email,
+          role: newUser.role,
+          createdBy: context.user.id,
+        });
 
-      await newUser.save();
-      await log('User created', {
-        userId: newUser.id,
-        email: newUser.email,
-        role: newUser.role,
-        createdBy: context.user.id,
+        if (input.role === UserRole.DOCTOR && input.plannings) {
+          const planning = input.plannings[0];
+          const newPlanning = this.createPlanning(planning);
+          newPlanning.user = newUser;
+          await transactionalEntityManager.save(newPlanning);
+          await log('User planning created', {
+            PlanningId: newPlanning.id,
+            userId: newPlanning.user.id,
+            role: newPlanning.user.role,
+            createdBy: context.user.id,
+          });
+        }
       });
       return newUser;
     } catch (error) {
@@ -183,6 +199,39 @@ export class UserResolver {
         },
       });
     }
+  }
+
+  formatTimeForPostgres(timeStr: string | null): string | null {
+    if (!timeStr) {
+      return null;
+    }
+    return `${timeStr.replace('h', ':')}:00`;
+  }
+
+  createPlanning(input: Planning) {
+    const newPlanning = new Planning();
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+    days.forEach((day: string) => {
+      const startKey = `${day}_start` as keyof CreatePlanningInput;
+      const endKey = `${day}_end` as keyof CreatePlanningInput;
+
+      const formattedStart = this.formatTimeForPostgres(input[startKey] as string);
+      if (formattedStart) {
+        newPlanning[startKey] = formattedStart;
+      }
+
+      const formattedEnd = this.formatTimeForPostgres(input[endKey] as string);
+      if (formattedEnd) {
+        newPlanning[endKey] = formattedEnd;
+      }
+    });
+
+    if (Object.values(newPlanning).length === 0) {
+      throw new GraphQLError('Au moins un jour doit être rempli.');
+    }
+    newPlanning.start = input.start ?? new Date().toISOString();
+    return newPlanning;
   }
 
   @Mutation(() => Boolean)
