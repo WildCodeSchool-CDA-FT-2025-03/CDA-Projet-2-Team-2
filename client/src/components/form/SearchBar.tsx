@@ -52,7 +52,7 @@ export default function SearchBar<T>({
   const shouldSearch = searchQuery.length >= 2;
 
   return (
-    <div ref={clickOutsideRef} className="relative w-full max-w-xs ml-auto">
+    <div ref={clickOutsideRef} className="relative w-full ml-auto">
       <input
         type="text"
         value={searchQuery}
