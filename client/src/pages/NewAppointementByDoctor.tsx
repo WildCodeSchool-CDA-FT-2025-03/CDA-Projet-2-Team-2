@@ -189,7 +189,7 @@ export default function NewAppointementByDoctor() {
           </div>
 
           {/* ✅ UserItem of the selected patient */}
-          <div className="w-full min-h-[3.5rem] flex items-center transition-all duration-300">
+          <div className="w-full min-h-[5rem] flex items-center transition-all duration-300">
             {selectedPatient && (
               <div className="animate-fadeInSlideIn" key={selectedPatient.id}>
                 <UserItem<Patient> user={selectedPatient}>
