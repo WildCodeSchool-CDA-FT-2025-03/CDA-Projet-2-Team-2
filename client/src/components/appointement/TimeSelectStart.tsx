@@ -1,12 +1,16 @@
 import { generateTimeOptions } from '@/utils/generatedTimeOptions';
-import { useAppointmentContext } from '@/hooks/useAppointment';
 
 type TimeSelectStartProps = {
+  value: string;
+  onChange: (value: string) => void;
   disabledOptions?: string[];
 };
 
-export default function TimeSelectStart({ disabledOptions }: TimeSelectStartProps) {
-  const { startTime, handleStartChange } = useAppointmentContext();
+export default function TimeSelectStart({
+  value,
+  onChange,
+  disabledOptions,
+}: TimeSelectStartProps) {
   const timeOptions = generateTimeOptions();
 
   return (
@@ -22,8 +26,8 @@ export default function TimeSelectStart({ disabledOptions }: TimeSelectStartProp
         />
         <select
           id="start-time"
-          value={startTime}
-          onChange={e => handleStartChange(e.target.value)}
+          value={value}
+          onChange={e => onChange(e.target.value)}
           className="w-full h-full pl-10 pr-4 border border-gray-300 rounded-lg bg-white text-blue-900 cursor-pointer"
         >
           <option value="">-</option>
