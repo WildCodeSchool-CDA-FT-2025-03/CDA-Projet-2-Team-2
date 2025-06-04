@@ -143,7 +143,7 @@ export class AppointmentResolver {
     } catch (error) {
       throw new GraphQLError(`Échec de la création de du rendez-vous`, {
         extensions: {
-          code: 'USER_CREATION_FAILED',
+          code: 'APPOINTMENT_CREATION_FAILED',
           originalError: error.message,
         },
       });
