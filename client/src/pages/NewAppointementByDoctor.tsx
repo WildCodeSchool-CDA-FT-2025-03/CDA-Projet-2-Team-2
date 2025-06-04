@@ -106,27 +106,13 @@ export default function NewAppointementByDoctor() {
   };
 
   return (
-    <>
-      <DoctorInfo doctor={doctorMock} />
+    <div className="w-full sm:w-[80%] max-w-screen-xl m-auto">
+      <div className="pl-3 sm:pl-0">
+        <DoctorInfo doctor={doctorMock} />
+      </div>
 
-      <section
-        className="bg-bgBodyColor
-       w-full sm:w-[80%] max-w-screen-lg 
-    p-4 sm:p-6 md:p-12 lg:p-24
-    rounded-sm shadow-md border-borderColor
-    m-auto
-  
-
-  "
-      >
-        <div
-          className="
-    flex flex-col lg:flex-row
-      w-full
-      justify-center items-center
-      space-y-4  gap-10
-  "
-        >
+      <section className="bg-bgBodyColor p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border-borderColor mt-4">
+        <div className="flex flex-col lg:flex-row w-full justify-center items-center space-y-4  gap-10 lg:gap-35">
           <aside>
             <DayPilotNavigator
               selectMode="Day"
@@ -138,13 +124,8 @@ export default function NewAppointementByDoctor() {
             />
           </aside>
 
-          <section
-            className=" flex flex-col gap-2
-        w-full 
-        lg:w-max justify-center items-center
-  "
-          >
-            <div className="flex flex-col gap-4 max-w-[375px] w-full">
+          <section className=" flex flex-col gap-2 w-full lg:w-max justify-center items-center">
+            <div className="flex flex-col gap-4 max-w-[375px] lg:max-w-[500px] sm:max-w-[420px] w-full">
               <UserItem<Doctor> user={doctorMock}>
                 {d => (
                   <p>
@@ -185,6 +166,6 @@ export default function NewAppointementByDoctor() {
           </section>
         </div>
       </section>
-    </>
+    </div>
   );
 }
