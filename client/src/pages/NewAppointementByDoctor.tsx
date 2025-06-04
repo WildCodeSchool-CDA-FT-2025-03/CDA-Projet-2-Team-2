@@ -109,58 +109,81 @@ export default function NewAppointementByDoctor() {
     <>
       <DoctorInfo doctor={doctorMock} />
 
-      <section className="bg-bgBodyColor sm:w-full md:w-3/4 p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border-borderColor flex flex-col md:flex-row justify-center gap-10 md:gap-45">
-        <aside>
-          <DayPilotNavigator
-            selectMode="Day"
-            showMonths={1}
-            skipMonths={1}
-            locale="fr-fr"
-            selectionDay={selectedDay}
-            onTimeRangeSelected={args => setSelectedDay(args.day)}
-          />
-        </aside>
+      <section
+        className="bg-bgBodyColor
+       w-full sm:w-[80%] max-w-screen-lg 
+    p-4 sm:p-6 md:p-12 lg:p-24
+    rounded-sm shadow-md border-borderColor
+    m-auto
+  
 
-        <section className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 w-max">
-            <UserItem<Doctor> user={doctorMock}>
-              {d => (
-                <p>
-                  <span className="font-bold">
-                    {d.firstname} {d.lastname}
-                  </span>{' '}
-                  - {d.departement?.label ?? 'service'}
-                </p>
-              )}
-            </UserItem>
-
-            <PatientSearch
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              searchSources={searchSources}
-              selectedPatient={selectedPatient}
-              setSelectedPatient={setSelectedPatient}
+  "
+      >
+        <div
+          className="
+    flex flex-col lg:flex-row
+      w-full
+      justify-center items-center
+      space-y-4  gap-10
+  "
+        >
+          <aside>
+            <DayPilotNavigator
+              selectMode="Day"
+              showMonths={1}
+              skipMonths={1}
+              locale="fr-fr"
+              selectionDay={selectedDay}
+              onTimeRangeSelected={args => setSelectedDay(args.day)}
             />
+          </aside>
 
-            <SelectForm
-              name="motifs"
-              value=""
-              title="Motif de consultation"
-              option={consultationOptions}
-              handle={value => console.warn('Motif sélectionné :', value)}
-            />
+          <section
+            className=" flex flex-col gap-2
+        w-full 
+        lg:w-max justify-center items-center
+  "
+          >
+            <div className="flex flex-col gap-4 max-w-[375px] w-full">
+              <UserItem<Doctor> user={doctorMock}>
+                {d => (
+                  <p>
+                    <span className="font-bold">
+                      {d.firstname} {d.lastname}
+                    </span>{' '}
+                    - {d.departement?.label ?? 'service'}
+                  </p>
+                )}
+              </UserItem>
 
-            <DateTimeSection
-              selectedDay={selectedDay}
-              startTime={startTime}
-              handleStartChange={handleStartChange}
-              endTime={endTime}
-              disabledTimes={disabledTimes}
-            />
-          </div>
-        </section>
+              <PatientSearch
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                searchSources={searchSources}
+                selectedPatient={selectedPatient}
+                setSelectedPatient={setSelectedPatient}
+              />
+
+              <SelectForm
+                name="motifs"
+                value=""
+                title="Motif de consultation"
+                option={consultationOptions}
+                handle={value => console.warn('Motif sélectionné :', value)}
+              />
+
+              <DateTimeSection
+                selectedDay={selectedDay}
+                startTime={startTime}
+                handleStartChange={handleStartChange}
+                endTime={endTime}
+                disabledTimes={disabledTimes}
+              />
+            </div>
+          </section>
+        </div>
       </section>
     </>
   );
