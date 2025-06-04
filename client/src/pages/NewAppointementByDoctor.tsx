@@ -4,12 +4,18 @@ import TimeSelectStart from '@/components/appointement/TimeSelectStart';
 import SearchBar from '@/components/form/SearchBar';
 import SelectForm from '@/components/form/SelectForm';
 import UserItem from '@/components/user/UserItem';
-import { useSearchPatientsQuery } from '@/types/graphql-generated';
+import {
+  useSearchPatientsQuery,
+  useGetAppointmentTypesQuery,
+  useGetAppointmentsByDoctorAndDateQuery,
+} from '@/types/graphql-generated';
 import { Patient } from '@/types/patient.type';
 import { formatDate } from '@/utils/formatDateFr';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { getDisabledTimes, AppointmentSlot } from '@/utils/getAppointementTimeStartDisabled';
+import { generateTimeOptions } from '@/utils/generatedTimeOptions';
 
 export default function NewAppointementByDoctor() {
   const [params] = useSearchParams();
@@ -23,6 +29,63 @@ export default function NewAppointementByDoctor() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+
+  const {
+    data: patientData,
+    loading: loadingPatients,
+    error: errorPatients,
+  } = useSearchPatientsQuery({
+    variables: { query: searchQuery },
+    skip: searchQuery.length < 2,
+  });
+
+  const searchSources = [
+    {
+      name: 'Patients',
+      items: patientData?.searchPatients ?? [],
+      loading: loadingPatients,
+      error: errorPatients ? errorPatients.message : null,
+      getKey: (patient: Patient) => `patient-${patient.id}`,
+    },
+  ];
+
+  const { data: appointmentTypesData } = useGetAppointmentTypesQuery();
+  const consultationOptions = [
+    { key: '', value: '--- Choisissez un motif' },
+    ...(appointmentTypesData?.getAppointmentTypes.map(type => ({
+      key: type.id,
+      value: type.reason,
+    })) ?? []),
+  ];
+
+  // Retrieve appointments to block times already taken
+  const doctorId = Number(params.get('doctor'));
+  const { data: appointmentsData } = useGetAppointmentsByDoctorAndDateQuery({
+    variables: {
+      doctorId,
+      date: selectedDay.toString().slice(0, 10),
+    },
+    skip: !doctorId || !selectedDay,
+  });
+
+  // Explicit conversion to avoid TypeScript error
+  const appointments: AppointmentSlot[] =
+    appointmentsData?.getAppointmentsByDoctorAndDate.map(appt => ({
+      start_time: appt.start_time,
+      duration: appt.duration,
+    })) ?? [];
+
+  const disabledTimes = getDisabledTimes(selectedDay, appointments, generateTimeOptions());
+
+  const handleStartChange = (value: string) => {
+    setStartTime(value);
+    const [hour, minute] = value.split(':').map(Number);
+    const newDate = new Date();
+    newDate.setHours(hour, minute + 30);
+    const endHour = newDate.getHours().toString().padStart(2, '0');
+    const endMinute = newDate.getMinutes().toString().padStart(2, '0');
+    setEndTime(`${endHour}:${endMinute}`);
+  };
 
   useEffect(() => {
     const dateParam = params.get('date');
@@ -43,35 +106,6 @@ export default function NewAppointementByDoctor() {
       }
     }
   }, [params]);
-
-  const handleStartChange = (value: string) => {
-    setStartTime(value);
-    const [hour, minute] = value.split(':').map(Number);
-    const newDate = new Date();
-    newDate.setHours(hour, minute + 30);
-    const endHour = newDate.getHours().toString().padStart(2, '0');
-    const endMinute = newDate.getMinutes().toString().padStart(2, '0');
-    setEndTime(`${endHour}:${endMinute}`);
-  };
-
-  const {
-    data: patientData,
-    loading: loadingPatients,
-    error: errorPatients,
-  } = useSearchPatientsQuery({
-    variables: { query: searchQuery },
-    skip: searchQuery.length < 2,
-  });
-
-  const searchSources = [
-    {
-      name: 'Patients',
-      items: patientData?.searchPatients ?? [],
-      loading: loadingPatients,
-      error: errorPatients ? errorPatients.message : null,
-      getKey: (patient: Patient) => `patient-${patient.id}`,
-    },
-  ];
 
   return (
     <>
@@ -98,8 +132,8 @@ export default function NewAppointementByDoctor() {
                   type="button"
                   className="w-full text-left block p-2 border-b last:border-b-0 hover:bg-gray-100"
                   onClick={() => {
-                    setSelectedPatient(patient); // sélectionne le patient
-                    onSelect(); // ferme la searchBar
+                    setSelectedPatient(patient);
+                    onSelect();
                   }}
                 >
                   <p className="font-semibold">
@@ -142,15 +176,19 @@ export default function NewAppointementByDoctor() {
 
           <SelectForm
             name="motifs"
-            value="pupu"
+            value=""
             title="Motif de consultation"
-            option={[]}
-            handle={() => console.warn('truc')}
+            option={consultationOptions}
+            handle={value => console.warn('Motif sélectionné :', value)}
           />
           <section className="flex flex-col gap-2">
             <div className="flex gap-4 items-end whitespace-nowrap">
               <DateDisplayInput value={formatDate(selectedDay.toDate())} />
-              <TimeSelectStart value={startTime} onChange={handleStartChange} />
+              <TimeSelectStart
+                value={startTime}
+                onChange={handleStartChange}
+                disabledOptions={disabledTimes}
+              />
               <TimeDisplayInputEnd value={endTime} />
             </div>
           </section>
