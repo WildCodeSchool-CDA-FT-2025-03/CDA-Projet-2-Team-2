@@ -10,6 +10,7 @@ import {
   useGetAppointmentsByDoctorAndDateQuery,
 } from '@/types/graphql-generated';
 import { Patient } from '@/types/patient.type';
+import { Doctor } from '@/types/doctor.type';
 import { formatDate } from '@/utils/formatDateFr';
 import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useEffect, useState } from 'react';
@@ -30,6 +31,7 @@ export default function NewAppointementByDoctor() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
+  // Requête GraphQL pour les patients
   const {
     data: patientData,
     loading: loadingPatients,
@@ -58,7 +60,7 @@ export default function NewAppointementByDoctor() {
     })) ?? []),
   ];
 
-  // Retrieve appointments to block times already taken
+  // Récupération des rendez-vous pour bloquer les horaires déjà pris
   const doctorId = Number(params.get('doctor'));
   const { data: appointmentsData } = useGetAppointmentsByDoctorAndDateQuery({
     variables: {
@@ -68,7 +70,6 @@ export default function NewAppointementByDoctor() {
     skip: !doctorId || !selectedDay,
   });
 
-  // Explicit conversion to avoid TypeScript error
   const appointments: AppointmentSlot[] =
     appointmentsData?.getAppointmentsByDoctorAndDate.map(appt => ({
       start_time: appt.start_time,
@@ -107,18 +108,60 @@ export default function NewAppointementByDoctor() {
     }
   }, [params]);
 
+  //  Docteur mocké (en attendant l’API)
+  const doctorMock: Doctor = {
+    id: '123',
+    firstname: 'Emilie',
+    lastname: 'Masser',
+    profession: 'Pedospsychiatre',
+    departement: {
+      label: 'Pédiatrie',
+    },
+  };
+
   return (
     <>
-      <div>{`NewAppointementByDoctor ${params.get('doctor')}`}</div>
+      <div>{`NewAppointementByDoctor ${doctorId}`}</div>
+
       <div className="flex flex-col w-3/4">
         <section className="flex flex-col gap-4 self-start">
           <div className="flex gap-4">
             <img src="/calendar-clock.svg" alt="icone de creation de rendez-vous" />
             <h2>
-              Creer un rendez-vous avec Nom du doctor, <span>profession, service</span>
+              Créer un rendez-vous avec {doctorMock.firstname} {doctorMock.lastname},{' '}
+              <span>{doctorMock.departement?.label}</span>
             </h2>
           </div>
-          <div className="self-start">
+        </section>
+      </div>
+
+      <section className="bg-bgBodyColor sm:w-full md:w-3/4 p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border-borderColor flex flex-col md:flex-row justify-center gap-10 md:gap-45">
+        <aside>
+          <DayPilotNavigator
+            selectMode="Day"
+            showMonths={1}
+            skipMonths={1}
+            locale="fr-fr"
+            selectionDay={selectedDay}
+            onTimeRangeSelected={args => setSelectedDay(args.day)}
+          />
+        </aside>
+
+        <section className="flex flex-col gap-4">
+          {/* ✅ UserItem of the selected doctor */}
+          <UserItem<Doctor> user={doctorMock}>
+            {d => (
+              <p>
+                <span className="font-bold">
+                  {d.firstname} {d.lastname}
+                </span>{' '}
+                - {d.departement?.label ?? 'service'}
+              </p>
+            )}
+          </UserItem>
+
+          {/* ✅ Search bar */}
+          <div className="w-full">
             <SearchBar<Patient>
               placeholder="Rechercher un patient..."
               searchQuery={searchQuery}
@@ -144,36 +187,25 @@ export default function NewAppointementByDoctor() {
               )}
             </SearchBar>
           </div>
-        </section>
-      </div>
 
-      <section className="bg-bgBodyColor sm:w-full md:w-3/4 p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border-borderColor flex flex-col md:flex-row justify-center gap-10 md:gap-45">
-        <aside>
-          <DayPilotNavigator
-            selectMode="Day"
-            showMonths={1}
-            skipMonths={1}
-            locale="fr-fr"
-            selectionDay={selectedDay}
-            onTimeRangeSelected={args => setSelectedDay(args.day)}
-          />
-        </aside>
-
-        <section className="flex flex-col gap-4">
-          {/* ✅ Affiche les infos du patient sélectionné */}
-          {selectedPatient && (
-            <UserItem<Patient> user={selectedPatient}>
-              {p => (
-                <p>
-                  <span className="font-bold">
-                    {p.firstname} {p.lastname}
-                  </span>{' '}
-                  - N° sécu : {p.social_number}
-                </p>
-              )}
-            </UserItem>
-          )}
-
+          {/* ✅ UserItem of the selected patient */}
+          <div className="w-full min-h-[5rem] flex items-center transition-all duration-300">
+            {selectedPatient && (
+              <div className="animate-fadeInSlideIn" key={selectedPatient.id}>
+                <UserItem<Patient> user={selectedPatient}>
+                  {p => (
+                    <p>
+                      <span className="font-bold">
+                        {p.firstname} {p.lastname}
+                      </span>{' '}
+                      - N° sécu : {p.social_number}
+                    </p>
+                  )}
+                </UserItem>
+              </div>
+            )}
+          </div>
+          {/* ✅ Appointement type + date + hour */}
           <SelectForm
             name="motifs"
             value=""
