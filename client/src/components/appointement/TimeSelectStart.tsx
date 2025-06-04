@@ -1,9 +1,13 @@
 import { generateTimeOptions } from '@/utils/generatedTimeOptions';
 import { useAppointmentContext } from '@/hooks/useAppointment';
 
-export default function TimeSelectStart() {
-  const timeOptions = generateTimeOptions();
+type TimeSelectStartProps = {
+  disabledOptions?: string[];
+};
+
+export default function TimeSelectStart({ disabledOptions }: TimeSelectStartProps) {
   const { startTime, handleStartChange } = useAppointmentContext();
+  const timeOptions = generateTimeOptions();
 
   return (
     <div className="flex flex-col gap-1">
@@ -18,16 +22,24 @@ export default function TimeSelectStart() {
         />
         <select
           id="start-time"
-          value={startTime || ''}
+          value={startTime}
           onChange={e => handleStartChange(e.target.value)}
           className="w-full h-full pl-10 pr-4 border border-gray-300 rounded-lg bg-white text-blue-900 cursor-pointer"
         >
           <option value="">-</option>
-          {timeOptions.map(time => (
-            <option key={time} value={time}>
-              {time}
-            </option>
-          ))}
+          {timeOptions.map(time => {
+            const isDisabled = disabledOptions?.includes(time);
+            return (
+              <option
+                key={time}
+                value={time}
+                disabled={isDisabled}
+                className={isDisabled ? 'bg-red-100 text-red-400' : ''}
+              >
+                {time}
+              </option>
+            );
+          })}
         </select>
       </div>
     </div>
