@@ -21,14 +21,18 @@ export default function DateTimeSection({
 }: DateTimeSectionProps) {
   return (
     <section className="flex flex-col gap-2">
-      <div className="flex gap-4 items-end whitespace-nowrap">
-        <DateDisplayInput value={formatDate(selectedDay.toDate())} />
-        <TimeSelectStart
-          value={startTime}
-          onChange={handleStartChange}
-          disabledOptions={disabledTimes}
-        />
-        <TimeDisplayInputEnd value={endTime} />
+      <div className="flex flex-col gap-2 sm:flex-row sm:gap-4 items-start sm:items-end whitespace-nowrap">
+        <div>
+          <DateDisplayInput value={formatDate(selectedDay.toDate())} />
+        </div>
+        <div className="flex gap-2">
+          <TimeSelectStart
+            value={startTime}
+            onChange={handleStartChange}
+            disabledOptions={disabledTimes}
+          />
+          <TimeDisplayInputEnd value={endTime} />
+        </div>
       </div>
     </section>
   );

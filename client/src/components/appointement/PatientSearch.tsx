@@ -48,7 +48,7 @@ export default function PatientSearch({
         )}
       </SearchBar>
 
-      <div className="w-full min-h-[5rem] flex items-center transition-all duration-300">
+      <div className="w-full min-h-[5rem] flex items-center transition-all duration-300 mt-4">
         {selectedPatient && (
           <div className="animate-fadeInSlideIn w-full" key={selectedPatient.id}>
             <UserItem<Patient> user={selectedPatient}>
