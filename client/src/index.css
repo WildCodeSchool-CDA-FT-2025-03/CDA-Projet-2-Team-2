@@ -81,7 +81,7 @@
 }
 
 @layer utilities {
-   @keyframes fadeInSlideIn {
+  @keyframes fadeInSlideIn {
     0% {
       opacity: 0;
       transform: translateY(-10px);
