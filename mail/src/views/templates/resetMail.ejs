@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hôpital DoctoPlan</title>
+  <!-- 💡 adding the file that makes up the header -->
   <%- include('./includes/header.ejs') %>
 </head>
 
@@ -20,14 +21,14 @@
     <p>Cliquez sur le lien ci-dessous pour définir un nouveau mot de passe :</p>
 
     <div class="mdp">
-      <a href="<%= templateData.url %>" class="button">Cliquez ici pour réinitialiser le mot de passe</a>
+
+      <!-- 💡inserting the value 'url' into the template-->
+      <a href="<%= dataTemplate.url %>" class="button">Cliquez ici pour réinitialiser le mot de passe</a>
     </div>
     <p>ou copiez collez le lien ci-dessous dans le votre navigateur</p>
-
-    <a href="<%= templateData.url %>">
-      <%= templateData.url %>
+    <a href="<%= dataTemplate.url %>">
+      <%= dataTemplate.url %>
     </a>
-
 
     <%- include('./includes/footer.ejs') %>
 </body>

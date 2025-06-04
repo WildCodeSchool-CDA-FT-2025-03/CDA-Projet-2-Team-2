@@ -24,7 +24,9 @@ export default function ForgotPassword() {
   const onSubmit = async (input: FormValues) => {
     setError('');
     try {
-      const { data } = await sendResetPasswordMutation({ variables: { email: input.email } });
+      const { data } = await sendResetPasswordMutation({
+        variables: { email: { email: input.email } },
+      });
       if (data) {
         toast.success(`Un mail à été envoyé à l'adresse ${input.email}`);
         setMessage(`Un mail à été envoyé à l'adresse ${input.email}`);

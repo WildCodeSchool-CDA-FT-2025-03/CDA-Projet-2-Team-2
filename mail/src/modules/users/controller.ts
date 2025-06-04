@@ -1,5 +1,13 @@
 import type { RequestHandler } from 'express';
-import { sendEmailByTemplate } from '../../views/reset.mail';
+import { sendEmailByTemplate } from '../../utils/mails/send.mail';
+
+/**
+ * expected values in sendEmailByTemplate()
+ * email {string} - user's email
+ * subject {string} - subject of the email
+ * emailTemplate {string} - .ejs file name
+ * dataTemplate {object} - object with values ​​to include in the .ejs file
+ */
 
 const sendResetPassword: RequestHandler = async (req, res, next) => {
   const { email, url } = req.body;
@@ -17,22 +25,4 @@ const sendResetPassword: RequestHandler = async (req, res, next) => {
   }
 };
 
-// exemple : activation du login
-
-const activateLogin: RequestHandler = async (req, res, next) => {
-  const { email, url } = req.body;
-
-  try {
-    await sendEmailByTemplate({
-      email,
-      subject: '📧 Activation du mot de passe - DoctoPlan',
-      emailTemplate: 'activateLogin.ejs',
-      dataTemplate: { url },
-    });
-    res.sendStatus(200);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export { sendResetPassword, activateLogin };
+export { sendResetPassword };
