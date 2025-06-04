@@ -1,4 +1,5 @@
 import { Resolver, Query, Arg, Authorized, Mutation } from 'type-graphql';
+import { GraphQLError } from 'graphql';
 import { Appointment } from '../entities/appointment.entity';
 import { Between, Equal, MoreThan, LessThan } from 'typeorm';
 import { UserRole } from '../entities/user.entity';
@@ -129,14 +130,23 @@ export class AppointmentResolver {
   async createAppointment(
     @Arg('appointmentInput') appointmentInput: AppointmentCreateInput,
   ): Promise<Appointment> {
-    const appointment = new Appointment();
-    appointment.start_time = appointmentInput.start_time;
-    appointment.duration = appointmentInput.duration;
-    appointment.status = appointmentInput.status || AppointmentStatus.CONFIRMED;
-    appointment.doctor.id = +appointmentInput.user_id; // Doctor ID
-    appointment.patient.id = appointmentInput.patient_id;
-    appointment.created_by.id = +appointmentInput.created_by; // secretaire ID
-    appointment.appointmentType.id = +appointmentInput.appointmentType; // Appointment type ID
-    return appointment.save();
+    try {
+      const appointment = new Appointment();
+      appointment.start_time = appointmentInput.start_time;
+      appointment.duration = appointmentInput.duration;
+      appointment.status = appointmentInput.status || AppointmentStatus.CONFIRMED;
+      appointment.doctor.id = +appointmentInput.user_id; // Doctor ID
+      appointment.patient.id = appointmentInput.patient_id;
+      appointment.created_by.id = +appointmentInput.created_by; // secretaire ID
+      appointment.appointmentType.id = +appointmentInput.appointmentType; // Appointment type ID
+      return appointment.save();
+    } catch (error) {
+      throw new GraphQLError(`Échec de la création de du rendez-vous`, {
+        extensions: {
+          code: 'USER_CREATION_FAILED',
+          originalError: error.message,
+        },
+      });
+    }
   }
 }
