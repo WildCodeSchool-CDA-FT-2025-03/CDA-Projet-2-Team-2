@@ -51,7 +51,10 @@ export class UsersWithTotal {
 @InputType()
 export class sendEmailInput {
   @Field()
-  @Matches(/^[a-zA-Z0-9._%+-]+@free\.fr$/, { message: 'Adresse mail non conforme' })
+  // 🔥 le regEx definitif devra être /^[a-zA-Z0-9._%+-]+@hopital\.gouv\.fr$/
+  @Matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/, {
+    message: 'Adresse mail non conforme',
+  })
   email: string;
 }
 
