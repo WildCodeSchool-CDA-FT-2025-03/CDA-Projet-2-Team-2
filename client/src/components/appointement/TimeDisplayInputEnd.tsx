@@ -1,7 +1,7 @@
 import { useAppointmentContext } from '@/hooks/useAppointment';
 
 export default function TimeDisplayInputEnd() {
-  const { savePatient } = useAppointmentContext();
+  const { SaveAppointment } = useAppointmentContext();
 
   return (
     <div className="flex flex-col gap-1">
@@ -17,7 +17,7 @@ export default function TimeDisplayInputEnd() {
         <input
           id="end-time"
           type="time"
-          value={savePatient.end || ''}
+          value={SaveAppointment.end || ''}
           disabled
           className="w-full h-full pl-10 pr-4 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
         />

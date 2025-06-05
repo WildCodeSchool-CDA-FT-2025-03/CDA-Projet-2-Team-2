@@ -5,7 +5,7 @@ import { PatientAppointment } from '@/types/appointement.type';
 export type AppointmentContextType = {
   selectedDepartment: string;
   selectedDay: DayPilot.Date;
-  savePatient: PatientAppointment;
+  SaveAppointment: PatientAppointment;
   handleSelectedDepartment: (value: string) => void;
   handleStartChange: (value: string) => void;
   handleDoctorChange: (value: string) => void;

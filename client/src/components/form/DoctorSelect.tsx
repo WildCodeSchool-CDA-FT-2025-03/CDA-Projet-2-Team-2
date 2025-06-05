@@ -3,7 +3,7 @@ import { useGetDoctorsByDepartementQuery } from '@/types/graphql-generated';
 import { useAppointmentContext } from '@/hooks/useAppointment';
 
 export default function DoctorSelect() {
-  const { selectedDepartment, savePatient, handleAppointment } = useAppointmentContext();
+  const { selectedDepartment, SaveAppointment, handleAppointment } = useAppointmentContext();
   const { data: datadpt } = useGetDoctorsByDepartementQuery({
     variables: { id: parseInt(selectedDepartment) },
   });
@@ -22,7 +22,7 @@ export default function DoctorSelect() {
     <div className="mb-4 max-w-xs">
       <SelectForm
         name="user_id"
-        value={savePatient.user_id || ''}
+        value={SaveAppointment.user_id || ''}
         title="Docteur"
         option={optionSelectDoctor}
         handle={handleAppointment}

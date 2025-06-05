@@ -9,7 +9,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
   const [selectedDepartment, handleSelectedDepartment] = useState(DEFAULT_DEPARTMENT);
   const [params] = useSearchParams();
 
-  const [savePatient, setSavePatient] = useState<PatientAppointment>({
+  const [SaveAppointment, setSaveAppointment] = useState<PatientAppointment>({
     user_id: '',
     date: '',
     start: '',
@@ -28,7 +28,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
 
       // ✅ Mettre la date (YYYY-MM-DD) dans DayPilot.Date
       handleSelectedDay(new DayPilot.Date(fullDate));
-      setSavePatient(prev => ({
+      setSaveAppointment(prev => ({
         ...prev,
         date: fullDate,
       }));
@@ -42,7 +42,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
         endDate.setHours(hour, minute + 30);
         const endHour = endDate.getHours().toString().padStart(2, '0');
         const endMinute = endDate.getMinutes().toString().padStart(2, '0');
-        setSavePatient(prev => ({
+        setSaveAppointment(prev => ({
           ...prev,
           start: hourMinute,
           end: `${endHour}:${endMinute}`,
@@ -57,7 +57,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
     newDate.setHours(hour, minute + 30);
     const endHour = newDate.getHours().toString().padStart(2, '0');
     const endMinute = newDate.getMinutes().toString().padStart(2, '0');
-    setSavePatient(prev => ({
+    setSaveAppointment(prev => ({
       ...prev,
       start: value,
       end: `${endHour}:${endMinute}`,
@@ -65,7 +65,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
   }, []);
 
   const handleDoctorChange = useCallback((value: string) => {
-    setSavePatient(prev => ({
+    setSaveAppointment(prev => ({
       ...prev,
       user_id: value,
     }));
@@ -73,7 +73,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
 
   const handleAppointment = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setSavePatient(prev => ({
+    setSaveAppointment(prev => ({
       ...prev,
       [name]: value,
     }));
@@ -83,7 +83,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
     () => ({
       selectedDepartment,
       selectedDay,
-      savePatient,
+      SaveAppointment,
       handleSelectedDepartment,
       handleDoctorChange,
       handleStartChange,
@@ -93,7 +93,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
     [
       selectedDepartment,
       selectedDay,
-      savePatient,
+      SaveAppointment,
       handleSelectedDepartment,
       handleDoctorChange,
       handleStartChange,
