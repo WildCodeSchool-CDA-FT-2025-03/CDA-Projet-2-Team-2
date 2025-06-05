@@ -15,21 +15,21 @@ export default function PatientFileSecretary() {
       {/* Colonne 1 */}
       <section className="flex flex-col gap-6 flex-1 min-w-[600px] max-w-[700px]">
         <div className="bg-white rounded-2xl shadow p-4">
-          <PersonnalInformation patientNum={parseInt(id)} />
+          <PersonnalInformation patientNum={id} />
         </div>{' '}
         {/* TODO: make a PatientInformations component instead of this div */}
       </section>
 
       {/* Colonne 2 */}
       <section className="flex flex-col gap-6 flex-1 min-w-[500px] max-w-[700px]">
-        <NextRdv patientNum={parseInt(id)} />
-        <AdminDocs patientNum={parseInt(id)} />
+        <NextRdv patientNum={id} />
+        <AdminDocs patientNum={id} />
       </section>
 
       {/* Colonne 3 */}
       <section className="flex flex-col gap-6 flex-1 min-w-[400px] max-w-[700px]">
-        <LastRdv patientNum={parseInt(id)} />
-        <FollowBy patientNum={parseInt(id)} />
+        <LastRdv patientNum={id} />
+        <FollowBy patientNum={id} />
       </section>
     </div>
   );

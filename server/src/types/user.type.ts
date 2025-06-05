@@ -1,14 +1,14 @@
 import { Field, InputType, Int, ObjectType } from 'type-graphql';
 import { User, UserRole, UserStatus } from '../entities/user.entity';
-import { Matches } from 'class-validator';
+import { IsEmail, Matches } from 'class-validator';
+import { Planning } from '../entities/planning.entity';
+import { CreatePlanningInput } from './planning.type';
 
 @InputType()
 export class CreateUserInput {
   @Field()
+  @IsEmail()
   email: string;
-
-  @Field()
-  password: string;
 
   @Field()
   firstname: string;
@@ -25,9 +25,6 @@ export class CreateUserInput {
   @Field({ nullable: true })
   activationDate?: string;
 
-  @Field({ nullable: true })
-  profession: string;
-
   @Field()
   departementId: number;
 
@@ -36,6 +33,9 @@ export class CreateUserInput {
 
   @Field(() => String, { nullable: true })
   status?: UserStatus;
+
+  @Field(() => [CreatePlanningInput], { nullable: true })
+  plannings?: Planning[];
 }
 
 @ObjectType()

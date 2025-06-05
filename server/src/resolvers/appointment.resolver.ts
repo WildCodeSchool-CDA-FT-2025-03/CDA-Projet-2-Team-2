@@ -23,7 +23,7 @@ export class AppointmentResolver {
 
   @Query(() => [Appointment])
   @Authorized([UserRole.SECRETARY])
-  async getDoctorByPatient(@Arg('patientId') patientId: number): Promise<Appointment[]> {
+  async getDoctorByPatient(@Arg('patientId') patientId: string): Promise<Appointment[]> {
     return Appointment.find({
       where: {
         patient: {
@@ -48,10 +48,10 @@ export class AppointmentResolver {
     });
   }
 
-  // 📌 Appointments by Doctor
+  // 📌 Next Appointments by Patient
   @Query(() => [Appointment])
   @Authorized([UserRole.SECRETARY])
-  async getNextAppointmentsByPatient(@Arg('patientId') patientId: number): Promise<Appointment[]> {
+  async getNextAppointmentsByPatient(@Arg('patientId') patientId: string): Promise<Appointment[]> {
     return Appointment.find({
       where: {
         patient: {
@@ -64,10 +64,10 @@ export class AppointmentResolver {
     });
   }
 
-  // 📌 Appointments by Doctor
+  // 📌 Last Appointments by Patient
   @Query(() => [Appointment])
   @Authorized([UserRole.SECRETARY])
-  async getLastAppointmentsByPatient(@Arg('patientId') patientId: number): Promise<Appointment[]> {
+  async getLastAppointmentsByPatient(@Arg('patientId') patientId: string): Promise<Appointment[]> {
     return Appointment.find({
       where: {
         patient: {

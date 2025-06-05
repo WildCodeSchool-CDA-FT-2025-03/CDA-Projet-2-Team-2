@@ -14,7 +14,7 @@ export class PatientDocInput {
 
   @Field()
   @IsNumber()
-  patientId: number;
+  patientId: string;
 
   @Field()
   @IsNumber()

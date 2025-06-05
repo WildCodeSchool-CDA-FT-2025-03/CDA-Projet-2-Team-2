@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  useGetAllUsersQuery,
-  useCreateUserMutation,
-  useCreateDoctorPlanningMutation,
-} from '@/types/graphql-generated';
+import { useGetAllUsersQuery, useCreateUserMutation } from '@/types/graphql-generated';
 import { ApolloError } from '@apollo/client';
 import UserPersonalForm from '@/components/user/UserPersonalForm';
 import UserProfessionalForm from '@/components/user/UserProfessionalForm';
@@ -19,14 +15,12 @@ type FormDataType = {
   lastname: string;
   firstname: string;
   email: string;
-  password: string;
   role: string;
   status: string;
   activationDate: string | null;
   departementId: number;
   gender: string;
   tel: string;
-  profession: string;
 };
 
 export type Planning = {
@@ -41,14 +35,12 @@ const initialFormData: FormDataType = {
   lastname: '',
   firstname: '',
   email: '',
-  password: '',
   role: '',
   status: 'active',
   activationDate: null,
   departementId: 0,
   gender: '',
   tel: '',
-  profession: '',
 };
 
 const days = [
@@ -69,7 +61,6 @@ const initialPlanning: Planning = days.reduce((acc, day) => {
 export default function CreateUser({ id }: CreateUserModalProps) {
   const { data, refetch } = useGetAllUsersQuery();
   const [createUser] = useCreateUserMutation();
-  const [createPlanning] = useCreateDoctorPlanningMutation();
   const [error, setError] = useState('');
   const [isDoctor, setIsDoctor] = useState(false);
   const [isDisable, setIsDisable] = useState(false);
@@ -78,20 +69,18 @@ export default function CreateUser({ id }: CreateUserModalProps) {
   const navigate = useNavigate();
   useEffect(() => {
     if (id) {
-      const user = data?.getAllUsers?.find(user => user.id === id);
+      const user = data?.getAllUsers?.users.find(user => user.id === id);
       if (user) {
         setFormData({
           lastname: user.lastname,
           firstname: user.firstname,
           email: user.email,
-          password: '',
           role: user.role,
           status: user.status || 'active',
           departementId: Number(user.departement?.id),
           activationDate: user.activationDate || null,
           gender: user.gender || '',
           tel: user.tel || '',
-          profession: user.profession || '',
         });
       }
     }
@@ -123,43 +112,46 @@ export default function CreateUser({ id }: CreateUserModalProps) {
       setIsDisable(true);
     }
     try {
-      if (!id) {
-        const createdUser = await createUser({
-          variables: { input: { ...formData, departementId: +formData.departementId } },
-        });
+      let planningInput: Record<string, string | null> = {};
+      if (isDoctor) {
+        planningInput = Object.keys(userPlanning).reduce(
+          (acc, day) => {
+            const dayLower = day.toLowerCase();
+            acc[`${dayLower}_start`] =
+              (userPlanning[day].off || userPlanning[day].start) === ''
+                ? null
+                : userPlanning[day].start;
+            acc[`${dayLower}_end`] =
+              userPlanning[day].off || userPlanning[day].end === '' ? null : userPlanning[day].end;
+            return acc;
+          },
+          {} as Record<string, string | null>,
+        );
+      }
 
-        if (isDoctor && createdUser.data) {
-          const planningInput = Object.keys(userPlanning).reduce(
-            (acc, day) => {
-              const dayLower = day.toLowerCase();
-              acc[`${dayLower}_start`] =
-                (userPlanning[day].off || userPlanning[day].start) === ''
-                  ? null
-                  : userPlanning[day].start;
-              acc[`${dayLower}_end`] =
-                userPlanning[day].off || userPlanning[day].end === ''
-                  ? null
-                  : userPlanning[day].end;
-              return acc;
+      if (!id) {
+        await createUser({
+          variables: {
+            input: {
+              ...formData,
+              departementId: +formData.departementId,
+              ...(isDoctor && {
+                plannings: [
+                  {
+                    start: formData.activationDate ?? new Date().toDateString(),
+                    end: null,
+                    ...planningInput,
+                  },
+                ],
+              }),
             },
-            {} as Record<string, string | null>,
-          );
-          await createPlanning({
-            variables: {
-              createDoctorPlanningId: createdUser.data?.createUser.id,
-              input: {
-                start: new Date().toISOString(),
-                end: null,
-                ...planningInput,
-              },
-            },
-          });
-        }
+          },
+        });
       } else {
         // updateUser
       }
       await refetch();
-      navigate('/users');
+      navigate('/admin/users');
     } catch (err) {
       setError(
         err instanceof ApolloError

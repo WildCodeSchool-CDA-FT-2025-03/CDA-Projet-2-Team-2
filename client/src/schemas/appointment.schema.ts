@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const GET_LAST_APPOINTEMENTS = gql`
-  query GetLastAppointmentsByPatient($patientId: Float!) {
+  query GetLastAppointmentsByPatient($patientId: String!) {
     getLastAppointmentsByPatient(patientId: $patientId) {
       id
       doctor {
@@ -17,7 +17,7 @@ export const GET_LAST_APPOINTEMENTS = gql`
 `;
 
 export const GET_NEXT_APPOINTEMENTS = gql`
-  query GetNextAppointmentsByPatient($patientId: Float!) {
+  query GetNextAppointmentsByPatient($patientId: String!) {
     getNextAppointmentsByPatient(patientId: $patientId) {
       id
       doctor {
@@ -33,7 +33,7 @@ export const GET_NEXT_APPOINTEMENTS = gql`
 `;
 
 export const GET_DOCTOR_BY_PATIENT = gql`
-  query GetDoctorByPatient($patientId: Float!) {
+  query GetDoctorByPatient($patientId: String!) {
     getDoctorByPatient(patientId: $patientId) {
       doctor {
         id

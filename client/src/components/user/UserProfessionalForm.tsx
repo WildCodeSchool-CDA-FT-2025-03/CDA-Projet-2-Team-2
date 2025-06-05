@@ -30,19 +30,6 @@ export default function UserProfessionalForm({ handleInputChange, formData }: Us
     <section className="w-full md:w-2/5">
       <h3 className="text-blue mb-2">Information professionnelles</h3>
       <SelectForm
-        title="Profession"
-        name="profession"
-        option={[
-          { key: '', value: 'Sélectionner une profession' },
-          ...(data?.getDepartements?.map(department => ({
-            key: department.id,
-            value: department.label,
-          })) || []),
-        ]}
-        value={formData.profession ?? ''}
-        handle={e => handleInputChange(e, 'profession')}
-      />
-      <SelectForm
         title="Service"
         name="departementId"
         required={true}
