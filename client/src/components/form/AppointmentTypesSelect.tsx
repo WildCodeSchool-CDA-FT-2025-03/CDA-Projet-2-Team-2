@@ -3,7 +3,7 @@ import { useGetAppointmentTypesQuery } from '@/types/graphql-generated';
 import { useAppointmentContext } from '@/hooks/useAppointment';
 
 export default function AppointmentTypesSelect() {
-  const { savePatient, HandleAppointment } = useAppointmentContext();
+  const { savePatient, handleAppointment } = useAppointmentContext();
   const { data: dataapp } = useGetAppointmentTypesQuery();
 
   const optionSelectAppointment =
@@ -23,7 +23,7 @@ export default function AppointmentTypesSelect() {
         value={savePatient.appointmentType || ''}
         title="Type de rendez-vous"
         option={optionSelectAppointment}
-        handle={HandleAppointment}
+        handle={handleAppointment}
       />
     </div>
   );

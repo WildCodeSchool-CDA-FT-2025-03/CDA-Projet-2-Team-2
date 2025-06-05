@@ -6,7 +6,7 @@ import { PatientAppointment } from '@/types/appointement.type';
 
 export function CreateAppointmentContext({ children }: { children: ReactNode }) {
   const DEFAULT_DEPARTMENT = '1';
-  const [selectedDepartment, setSelectedDepartment] = useState(DEFAULT_DEPARTMENT);
+  const [selectedDepartment, handleSelectedDepartment] = useState(DEFAULT_DEPARTMENT);
   const [params] = useSearchParams();
 
   const [savePatient, setSavePatient] = useState<PatientAppointment>({
@@ -17,7 +17,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
     appointmentType: '',
   });
 
-  const [selectedDay, setSelectedDay] = useState<DayPilot.Date>(
+  const [selectedDay, handleSelectedDay] = useState<DayPilot.Date>(
     new DayPilot.Date(DayPilot.Date.today()), // valeur par défaut = aujourd'hui
   );
 
@@ -27,7 +27,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
       const [fullDate, timePart] = dateParam.split('T');
 
       // ✅ Mettre la date (YYYY-MM-DD) dans DayPilot.Date
-      setSelectedDay(new DayPilot.Date(fullDate));
+      handleSelectedDay(new DayPilot.Date(fullDate));
       setSavePatient(prev => ({
         ...prev,
         date: fullDate,
@@ -71,7 +71,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
     }));
   }, []);
 
-  const HandleAppointment = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleAppointment = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setSavePatient(prev => ({
       ...prev,
@@ -84,23 +84,21 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
       selectedDepartment,
       selectedDay,
       savePatient,
-      setSavePatient,
-      setSelectedDepartment,
+      handleSelectedDepartment,
       handleDoctorChange,
       handleStartChange,
-      HandleAppointment,
-      setSelectedDay,
+      handleAppointment,
+      handleSelectedDay,
     }),
     [
       selectedDepartment,
       selectedDay,
       savePatient,
-      setSavePatient,
-      setSelectedDepartment,
+      handleSelectedDepartment,
       handleDoctorChange,
       handleStartChange,
-      HandleAppointment,
-      setSelectedDay,
+      handleAppointment,
+      handleSelectedDay,
     ],
   );
   return <AppointmentContext.Provider value={contextValue}>{children}</AppointmentContext.Provider>;

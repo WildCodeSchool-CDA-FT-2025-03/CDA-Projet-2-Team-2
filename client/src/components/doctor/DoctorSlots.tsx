@@ -15,7 +15,7 @@ export default function DoctorSlots() {
     selectedDay,
     handleStartChange,
     handleDoctorChange,
-    setSelectedDepartment,
+    handleSelectedDepartment,
   } = useAppointmentContext();
 
   const checkDoctorAvailability = async () => {
@@ -47,7 +47,7 @@ export default function DoctorSlots() {
           <DepartmentSelect
             value={selectedDepartment}
             onChange={newLabel => {
-              setSelectedDepartment(newLabel);
+              handleSelectedDepartment(newLabel);
             }}
           />
         </div>

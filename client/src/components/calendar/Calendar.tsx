@@ -2,7 +2,7 @@ import { DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import { useAppointmentContext } from '@/hooks/useAppointment';
 
 export default function Calendar() {
-  const { selectedDay, setSelectedDay } = useAppointmentContext();
+  const { selectedDay, handleSelectedDay } = useAppointmentContext();
   return (
     <>
       <DayPilotNavigator
@@ -11,7 +11,7 @@ export default function Calendar() {
         skipMonths={1}
         locale="fr-fr"
         selectionDay={selectedDay} // toujours un DayPilot.Date valide
-        onTimeRangeSelected={args => setSelectedDay(args.day)} // gestion des changements
+        onTimeRangeSelected={args => handleSelectedDay(args.day)} // gestion des changements
       />
     </>
   );
