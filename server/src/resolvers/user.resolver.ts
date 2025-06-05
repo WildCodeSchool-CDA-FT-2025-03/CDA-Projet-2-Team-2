@@ -12,6 +12,7 @@ import { ResetPasswordInput, sendEmailInput } from '../types/user.type';
 import { Planning } from '../entities/planning.entity';
 import { CreatePlanningInput } from '../types/planning.type';
 import { dataSource } from '../database/client';
+import type { MyContext } from '../types/myContext.type';
 
 @Resolver()
 export class UserResolver {
@@ -35,10 +36,23 @@ export class UserResolver {
   }
 
   @Query(() => User)
-  @Authorized([UserRole.ADMIN])
-  async getUserById(@Arg('id') id: string) {
+  @Authorized([UserRole.ADMIN, UserRole.SECRETARY])
+  async getUserById(@Arg('id') id: string, @Ctx() context: MyContext) {
     try {
-      return await User.findOneByOrFail({ id: +id });
+      let user;
+
+      if (context.user?.role === UserRole.SECRETARY) {
+        user = await User.findOneByOrFail({
+          id: +id,
+          role: UserRole.DOCTOR,
+        });
+      } else {
+        user = await User.findOneByOrFail({
+          id: +id,
+        });
+      }
+
+      return user;
     } catch (error) {
       throw new GraphQLError(`l'utilisateur avec l'id ${id} n'existe pas`, {
         extensions: {
