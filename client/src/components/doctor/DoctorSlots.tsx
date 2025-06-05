@@ -13,10 +13,8 @@ export default function DoctorSlots() {
   const {
     selectedDepartment,
     selectedDay,
-    savePatient,
-    setStartTime,
     handleStartChange,
-    setSavePatient,
+    handleDoctorChange,
     setSelectedDepartment,
   } = useAppointmentContext();
 
@@ -39,9 +37,8 @@ export default function DoctorSlots() {
   };
 
   const handleSlotClick = (slot: DoctorAppointmentSlot) => {
-    setStartTime(slot.debut_libre.split(':').slice(0, 2).join(':'));
     handleStartChange(slot.debut_libre.split(':').slice(0, 2).join(':'));
-    setSavePatient({ ...savePatient, user_id: slot.user_id });
+    handleDoctorChange(slot.user_id);
   };
   return (
     <>

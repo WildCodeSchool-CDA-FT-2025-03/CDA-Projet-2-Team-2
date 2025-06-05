@@ -20,8 +20,6 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
   const [selectedDay, setSelectedDay] = useState<DayPilot.Date>(
     new DayPilot.Date(DayPilot.Date.today()), // valeur par défaut = aujourd'hui
   );
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
 
   useEffect(() => {
     const dateParam = params.get('date');
@@ -30,39 +28,46 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
 
       // ✅ Mettre la date (YYYY-MM-DD) dans DayPilot.Date
       setSelectedDay(new DayPilot.Date(fullDate));
+      setSavePatient(prev => ({
+        ...prev,
+        date: fullDate,
+      }));
 
       // ✅ Si l'heure est présente, on la traite
       if (timePart) {
         const hourMinute = timePart.slice(0, 5); // "14:00"
-        setStartTime(hourMinute);
-
         // Calcul automatique de fin (+30 min)
         const [hour, minute] = hourMinute.split(':').map(Number);
-        const end = new Date();
-        end.setHours(hour, minute + 30);
-        const endHour = end.getHours().toString().padStart(2, '0');
-        const endMinute = end.getMinutes().toString().padStart(2, '0');
-        setEndTime(`${endHour}:${endMinute}`);
+        const endDate = new Date();
+        endDate.setHours(hour, minute + 30);
+        const endHour = endDate.getHours().toString().padStart(2, '0');
+        const endMinute = endDate.getMinutes().toString().padStart(2, '0');
         setSavePatient(prev => ({
           ...prev,
-          date: fullDate,
+          start: hourMinute,
+          end: `${endHour}:${endMinute}`,
         }));
       }
     }
   }, [params]);
 
   const handleStartChange = useCallback((value: string) => {
-    setStartTime(value);
     const [hour, minute] = value.split(':').map(Number);
     const newDate = new Date();
     newDate.setHours(hour, minute + 30);
     const endHour = newDate.getHours().toString().padStart(2, '0');
     const endMinute = newDate.getMinutes().toString().padStart(2, '0');
-    setEndTime(`${endHour}:${endMinute}`);
     setSavePatient(prev => ({
       ...prev,
       start: value,
       end: `${endHour}:${endMinute}`,
+    }));
+  }, []);
+
+  const handleDoctorChange = useCallback((value: string) => {
+    setSavePatient(prev => ({
+      ...prev,
+      user_id: value,
     }));
   }, []);
 
@@ -78,12 +83,10 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
     () => ({
       selectedDepartment,
       selectedDay,
-      startTime,
-      endTime,
       savePatient,
       setSavePatient,
-      setStartTime,
       setSelectedDepartment,
+      handleDoctorChange,
       handleStartChange,
       HandleAppointment,
       setSelectedDay,
@@ -91,12 +94,10 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
     [
       selectedDepartment,
       selectedDay,
-      startTime,
-      endTime,
       savePatient,
       setSavePatient,
-      setStartTime,
       setSelectedDepartment,
+      handleDoctorChange,
       handleStartChange,
       HandleAppointment,
       setSelectedDay,

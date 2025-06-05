@@ -5,14 +5,12 @@ import { PatientAppointment } from '@/types/appointement.type';
 export type AppointmentContextType = {
   selectedDepartment: string;
   selectedDay: DayPilot.Date;
-  startTime: string;
-  endTime: string;
   savePatient: PatientAppointment;
   setSavePatient: (value: PatientAppointment) => void;
   setSelectedDepartment: (value: string) => void;
   handleStartChange: (value: string) => void;
+  handleDoctorChange: (value: string) => void;
   HandleAppointment: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  setStartTime: (value: string) => void;
   setSelectedDay: (value: DayPilot.Date) => void;
 };
 
