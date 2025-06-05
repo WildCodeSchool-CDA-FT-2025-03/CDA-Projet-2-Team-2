@@ -47,6 +47,18 @@ export class UsersWithTotal {
   total: number;
 }
 
+// 👮 verification that the email corresponds to the domain @hopital.gouv.fr
+@InputType()
+export class sendEmailInput {
+  @Field()
+  // 🔥 le regEx definitif devra être /^[a-zA-Z0-9._%+-]+@hopital\.gouv\.fr$/
+  @Matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/, {
+    message: 'Adresse mail non conforme',
+  })
+  email: string;
+}
+
+// 👮 checking password entry rules
 @InputType()
 export class ResetPasswordInput {
   @Field()

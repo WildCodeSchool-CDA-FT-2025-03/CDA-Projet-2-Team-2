@@ -24,7 +24,9 @@ export default function ForgotPassword() {
   const onSubmit = async (input: FormValues) => {
     setError('');
     try {
-      const { data } = await sendResetPasswordMutation({ variables: { email: input.email } });
+      const { data } = await sendResetPasswordMutation({
+        variables: { email: { email: input.email } },
+      });
       if (data) {
         toast.success(`Un mail à été envoyé à l'adresse ${input.email}`);
         setMessage(`Un mail à été envoyé à l'adresse ${input.email}`);
@@ -74,7 +76,7 @@ export default function ForgotPassword() {
             {...register('email', {
               required: "⚠️ L'email est obligatoire",
               pattern: {
-                value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+                value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/, // 🔥 le regEx definitif devra être /^[a-zA-Z0-9._%+-]+@hopital\.gouv\.fr$/
                 message: "⚠️ L'email n'est pas valide",
               },
             })}

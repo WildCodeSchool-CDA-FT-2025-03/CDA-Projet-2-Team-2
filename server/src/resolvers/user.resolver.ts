@@ -8,7 +8,7 @@ import argon2 from 'argon2';
 import { ILike } from 'typeorm';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
 import jwt from 'jsonwebtoken';
-import { ResetPasswordInput } from '../types/user.type';
+import { ResetPasswordInput, sendEmailInput } from '../types/user.type';
 import { Planning } from '../entities/planning.entity';
 import { CreatePlanningInput } from '../types/planning.type';
 import { dataSource } from '../database/client';
@@ -51,10 +51,9 @@ export class UserResolver {
 
   // 📋 checks if the email exists and requests sending of the reset email
   @Mutation(() => Boolean)
-  async sendResetPassword(@Arg('email') email: string): Promise<boolean> {
+  async sendResetPassword(@Arg('email') { email }: sendEmailInput): Promise<boolean> {
     try {
       const userExist = await User.findOneBy({ email });
-
       if (userExist) {
         try {
           // 🔗 creating the jwt token and password reset url
@@ -71,13 +70,21 @@ export class UserResolver {
             body: JSON.stringify({ email, url }),
           });
           if (response.ok) {
+            // ♻️ log the password reset request
+            await log('Demande de réinitialisation de mot de passe', {
+              email: email,
+            });
             return true;
           }
         } catch (error) {
           return error;
         }
       }
-      return false;
+      // log suspicious password reset request
+      await log('⚠️ Demande de réinitialisation suspecte de mot de passe', {
+        email: email,
+      });
+      return false; // the user does not exist
     } catch (error) {
       return error;
     }
@@ -101,6 +108,13 @@ export class UserResolver {
       const hashedPassword = await argon2.hash(password);
       userUpdate.password = hashedPassword;
       await userUpdate.save();
+
+      // 📋 log the user's password reset action
+      await log('Nouveau mot de passe utilisateur', {
+        user: userUpdate.id,
+        email: userUpdate.email,
+        role: userUpdate.role,
+      });
       return true;
     } catch (error) {
       throw new Error(error);
