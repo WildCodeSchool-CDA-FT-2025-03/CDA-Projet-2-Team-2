@@ -30,7 +30,7 @@ type EventClickArgs = {
 };
 
 export default function AgendaWithNavigator() {
-  const DEFAULT_DEPARTMENT = 'Cardiologie';
+  const DEFAULT_DEPARTMENT = '1';
   const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState(DEFAULT_DEPARTMENT);

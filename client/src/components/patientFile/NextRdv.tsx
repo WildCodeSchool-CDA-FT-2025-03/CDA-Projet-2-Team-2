@@ -1,6 +1,7 @@
+import { useNavigate } from 'react-router-dom';
+import { useGetNextAppointmentsByPatientQuery } from '@/types/graphql-generated';
 import ModuleList from '../ModuleList';
 import inputPersonnal from '@/types/numPatient.type';
-import { useGetNextAppointmentsByPatientQuery } from '@/types/graphql-generated';
 import { Rdv } from '@/types/appointement.type';
 
 let dataNextRdv: Rdv[] = [];
@@ -9,6 +10,7 @@ export default function NextRdv({ patientNum }: inputPersonnal) {
   const GetNextAppointmentsByPatient = useGetNextAppointmentsByPatientQuery({
     variables: { patientId: patientNum },
   });
+  const navigate = useNavigate();
 
   if (GetNextAppointmentsByPatient.loading) return <p>Loading...</p>;
   if (GetNextAppointmentsByPatient.error) return <p>Error</p>;
@@ -17,8 +19,18 @@ export default function NextRdv({ patientNum }: inputPersonnal) {
     dataNextRdv = GetNextAppointmentsByPatient.data.getNextAppointmentsByPatient;
 
   return (
-    <article className="bg-white rounded-2xl shadow p-4">
-      <h2 className="text-xl font-semibold mb-4">Prochains rendez-vous</h2>
+    <article className="bg-white rounded-2xl shadow p-4 relative">
+      <h2 className="text-xl font-semibold mb-4">
+        Prochains rendez-vous
+        <button
+          type="button"
+          className="absolute right-6 top-4 px-3 py-1 bg-blue text-white cursor-pointer rounded-md"
+          aria-label="Ajouter un document administratif"
+          onClick={() => navigate('/secretary/appointement/createByPatient/' + patientNum)}
+        >
+          +
+        </button>
+      </h2>
       <ModuleList<Rdv>
         data={dataNextRdv}
         getKey={item => item.id}

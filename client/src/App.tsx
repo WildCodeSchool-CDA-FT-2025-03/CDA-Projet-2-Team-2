@@ -13,6 +13,7 @@ import User from '@/pages/User';
 import Logs from '@/pages/Logs';
 import CreateUser from '@/pages/CreateUser';
 import NewAppointementByDoctor from './pages/NewAppointementByDoctor';
+import NewAppointementByPatient from './pages/NewAppointementByPatient';
 import Agent from '@/pages/Agent';
 import ResetPassword from './pages/ResetPassword';
 
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
           {
             path: '/secretary/appointement/create',
             element: <NewAppointementByDoctor />,
+          },
+          {
+            path: '/secretary/appointement/createByPatient/:patientId',
+            element: <NewAppointementByPatient />,
           },
           {
             path: '/agent',

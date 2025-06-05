@@ -44,8 +44,8 @@ export const CREATE_USER = gql`
 `;
 
 export const GET_DOCTORS_BY_DEPARTEMENT = gql`
-  query GetDoctorsByDepartement($label: String!) {
-    getDoctorsByDepartement(label: $label) {
+  query GetDoctorsByDepartement($id: Float!) {
+    getDoctorsByDepartement(id: $id) {
       id
       email
       role

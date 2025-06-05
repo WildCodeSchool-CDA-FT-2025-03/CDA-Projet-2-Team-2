@@ -20,6 +20,7 @@ export class doctorAppointmentSlotResolver {
   ): Promise<DoctorAppointmentSlot[] | null> {
     return await DoctorAppointmentSlot.find({
       where: { departement_id: departement_id.toString(), jour: date },
+      order: { user_id: 'ASC', debut_libre: 'ASC' },
     });
   }
 }

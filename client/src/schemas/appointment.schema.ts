@@ -75,3 +75,17 @@ export const GET_APPOINTMENTS_BY_DOCTOR_AND_DATE = gql`
     }
   }
 `;
+
+export const GET_DOCTOR_SLOT_BY_DPT = gql`
+  query GetDoctorSlotByDepartement($date: String!, $departementId: Float!) {
+    getDoctorSlotByDepartement(date: $date, departement_id: $departementId) {
+      id
+      debut_libre
+      fin_libre
+      firstname
+      jour
+      lastname
+      user_id
+    }
+  }
+`;

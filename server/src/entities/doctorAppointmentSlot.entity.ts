@@ -114,11 +114,12 @@ import { Field, ObjectType } from 'type-graphql';
       )
     )
     SELECT
+      ROW_NUMBER() OVER (ORDER BY l.jour, l.debut_libre) AS id,
       jour,
       l.user_id,
       u.firstname,
       u.lastname,
-      u."departementId",
+      u."departementId" departement_id,
       debut_libre,
       fin_libre
     FROM libres l
@@ -128,6 +129,10 @@ import { Field, ObjectType } from 'type-graphql';
   `,
 })
 export class DoctorAppointmentSlot extends BaseEntity {
+  @Field()
+  @ViewColumn()
+  id: number;
+
   @Field()
   @ViewColumn()
   jour: string;
