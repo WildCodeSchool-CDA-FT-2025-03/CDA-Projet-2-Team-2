@@ -37,7 +37,11 @@ export class AuthResolver {
       `token=${token}; HttpOnly; Secure; Max-Age=${1 * 24 * 60 * 60 * 1000}`,
     );
 
-    return { user };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = user;
+    const plainUser = Object.assign(new User(), userWithoutPassword);
+
+    return { user: plainUser };
   }
 
   @Query(() => User, { nullable: true })

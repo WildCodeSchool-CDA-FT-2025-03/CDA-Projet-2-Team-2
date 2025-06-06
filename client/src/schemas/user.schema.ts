@@ -23,6 +23,23 @@ export const GET_USERS = gql`
   }
 `;
 
+export const GET_USER_BY_ID = gql`
+  query GetUserById($id: String!) {
+    getUserById(id: $id) {
+      id
+      email
+      role
+      firstname
+      lastname
+      profession
+      departement {
+        id
+        label
+      }
+    }
+  }
+`;
+
 export const CREATE_USER = gql`
   mutation CreateUser($input: CreateUserInput!) {
     createUser(input: $input) {

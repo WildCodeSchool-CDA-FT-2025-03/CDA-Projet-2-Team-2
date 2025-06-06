@@ -35,18 +35,31 @@ export class UserResolver {
   }
 
   @Query(() => User)
-  @Authorized([UserRole.ADMIN])
-  async getUserById(@Arg('id') id: string) {
-    try {
-      return await User.findOneByOrFail({ id: +id });
-    } catch (error) {
-      throw new GraphQLError(`l'utilisateur avec l'id ${id} n'existe pas`, {
+  @Authorized([UserRole.ADMIN, UserRole.SECRETARY])
+  async getUserById(@Arg('id') id: string, @Ctx() context: { user: User }): Promise<User> {
+    let user;
+
+    if (context.user?.role === UserRole.SECRETARY) {
+      user = await User.findOneBy({
+        id: +id,
+        role: UserRole.DOCTOR,
+      });
+    } else {
+      user = await User.findOneBy({
+        id: +id,
+      });
+    }
+
+    if (!user) {
+      throw new GraphQLError(`L'utilisateur avec l'id ${id} n'existe pas`, {
         extensions: {
           code: 'USER_NOT_FOUND',
-          originalError: error.message,
+          originalError: 'Aucun utilisateur trouvé',
         },
       });
     }
+
+    return user;
   }
 
   // 📋 checks if the email exists and requests sending of the reset email
