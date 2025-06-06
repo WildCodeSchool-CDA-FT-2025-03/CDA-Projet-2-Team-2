@@ -9,14 +9,19 @@ export class doctorAppointmentSlotResolver {
     @Arg('doctorId') doctorId: number,
     @Arg('date') date: string,
   ): Promise<DoctorAppointmentSlot[] | null> {
-    const doctorAppointmentSlot = await redisClient.get(`getDoctorSlot_${doctorId}`);
+    const doctorAppointmentSlot = await redisClient.get(
+      `getDoctorSlot_${doctorId}_${new Date(date).toLocaleDateString()}`,
+    );
     if (doctorAppointmentSlot) {
       return JSON.parse(doctorAppointmentSlot);
     }
     const doctorAppointment = await DoctorAppointmentSlot.find({
       where: { user_id: doctorId.toString(), jour: date },
     });
-    redisClient.set(`getDoctorSlot_${doctorId}`, JSON.stringify(doctorAppointment));
+    redisClient.set(
+      `getDoctorSlot_${doctorId}_${new Date(date).toLocaleDateString()}`,
+      JSON.stringify(doctorAppointment),
+    );
     return doctorAppointment;
   }
 
@@ -26,7 +31,7 @@ export class doctorAppointmentSlotResolver {
     @Arg('date') date: string,
   ): Promise<DoctorAppointmentSlot[] | null> {
     const doctorAppointmentByDepartement = await redisClient.get(
-      `getDoctorAppointmentByDepartement_${departement_id}`,
+      `getDoctorAppointmentByDepartement_${departement_id}_${new Date(date).toLocaleDateString()}`,
     );
 
     if (doctorAppointmentByDepartement) {
@@ -39,7 +44,7 @@ export class doctorAppointmentSlotResolver {
     });
 
     redisClient.set(
-      `getDoctorAppointmentByDepartement_${departement_id}`,
+      `getDoctorAppointmentByDepartement_${departement_id}_${new Date(date).toLocaleDateString()}`,
       JSON.stringify(doctorAppointmentSlot),
     );
 
