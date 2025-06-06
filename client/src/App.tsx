@@ -70,11 +70,11 @@ const router = createBrowserRouter([
             element: <PatientFileSecretary />,
           },
           {
-            path: '/secretary/appointement/create',
+            path: '/secretary/doctor/:id/appointment/create',
             element: <NewAppointementByDoctor />,
           },
           {
-            path: '/secretary/appointement/createByPatient/:patientId',
+            path: '/secretary/patient/:id/appointment/create',
             element: <NewAppointementByPatient />,
           },
           {
