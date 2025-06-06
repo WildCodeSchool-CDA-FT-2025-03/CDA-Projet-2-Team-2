@@ -26,7 +26,7 @@ export default function NextRdv({ patientNum }: inputPersonnal) {
           type="button"
           className="absolute right-6 top-4 px-3 py-1 bg-blue text-white cursor-pointer rounded-md"
           aria-label="Ajouter un document administratif"
-          onClick={() => navigate('/secretary/appointement/createByPatient/' + patientNum)}
+          onClick={() => navigate('/secretary/patient/' + patientNum + '/appointment/create')}
         >
           +
         </button>

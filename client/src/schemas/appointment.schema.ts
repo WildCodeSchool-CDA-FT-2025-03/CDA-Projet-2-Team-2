@@ -89,3 +89,11 @@ export const GET_DOCTOR_SLOT_BY_DPT = gql`
     }
   }
 `;
+
+export const MUTATION_CREATE_APPOINTMENT = gql`
+  mutation createAppointment($appointmentInput: AppointmentCreateInput!) {
+    createAppointment(appointmentInput: $appointmentInput) {
+      id
+    }
+  }
+`;
