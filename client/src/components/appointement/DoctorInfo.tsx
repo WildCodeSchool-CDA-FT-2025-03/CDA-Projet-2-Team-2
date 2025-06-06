@@ -1,4 +1,6 @@
-import { Doctor } from '@/types/doctor.type';
+import { GetUserByIdQuery } from '@/types/graphql-generated';
+
+type Doctor = GetUserByIdQuery['getUserById'];
 
 export default function DoctorInfo({ doctor }: { doctor: Doctor }) {
   return (
@@ -8,7 +10,7 @@ export default function DoctorInfo({ doctor }: { doctor: Doctor }) {
         <h2>
           Créer un rendez-vous avec{' '}
           <span className="text-accent">
-            {doctor.firstname} {doctor.lastname}, {doctor.departement?.label}
+            {doctor.firstname} {doctor.lastname}, {doctor.departement?.label ?? 'Aucun département'}
           </span>
         </h2>
       </div>
