@@ -38,6 +38,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_DATABASE=${DB_DATABASE}
       - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     healthcheck:
       test: [ "CMD-SHELL", "wget -q -O - http://localhost:4000 2>&1 | grep -q 'Bad Request' && exit 0 || exit 1" ]
       interval: 10s
@@ -163,9 +165,6 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
-    environment:
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
