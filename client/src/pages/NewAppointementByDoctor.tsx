@@ -5,9 +5,10 @@ import {
   useSearchPatientsQuery,
   useGetAppointmentTypesQuery,
   useGetAppointmentsByDoctorAndDateQuery,
+  useGetUserByIdQuery,
+  GetUserByIdQuery,
 } from '@/types/graphql-generated';
 import { Patient } from '@/types/patient.type';
-import { Doctor } from '@/types/doctor.type';
 import { getDisabledTimes, AppointmentSlot } from '@/utils/getAppointementTimeStartDisabled';
 import { generateTimeOptions } from '@/utils/generatedTimeOptions';
 import SelectForm from '@/components/form/SelectForm';
@@ -26,25 +27,19 @@ export default function NewAppointementByDoctor() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [selectedMotif, setSelectedMotif] = useState('');
+
+  const doctorIdString = params.get('doctor') ?? '';
+  const doctorId = doctorIdString ? parseInt(doctorIdString, 10) : undefined;
 
   const {
-    data: patientData,
-    loading: loadingPatients,
-    error: errorPatients,
-  } = useSearchPatientsQuery({
-    variables: { query: searchQuery },
-    skip: searchQuery.length < 2,
+    data: doctorData,
+    loading: doctorLoading,
+    error: doctorError,
+  } = useGetUserByIdQuery({
+    variables: { id: doctorIdString },
+    skip: !doctorIdString,
   });
-
-  const searchSources = [
-    {
-      name: 'Patients',
-      items: patientData?.searchPatients ?? [],
-      loading: loadingPatients,
-      error: errorPatients ? errorPatients.message : null,
-      getKey: (patient: Patient) => `patient-${patient.id}`,
-    },
-  ];
 
   const { data: appointmentTypesData } = useGetAppointmentTypesQuery();
   const consultationOptions = [
@@ -55,9 +50,8 @@ export default function NewAppointementByDoctor() {
     })) ?? []),
   ];
 
-  const doctorId = Number(params.get('doctor'));
   const { data: appointmentsData } = useGetAppointmentsByDoctorAndDateQuery({
-    variables: { doctorId, date: selectedDay.toString().slice(0, 10) },
+    variables: { doctorId: doctorId ?? 0, date: selectedDay.toString().slice(0, 10) },
     skip: !doctorId || !selectedDay,
   });
 
@@ -97,22 +91,36 @@ export default function NewAppointementByDoctor() {
     }
   }, [params]);
 
-  const doctorMock: Doctor = {
-    id: '123',
-    firstname: 'Emilie',
-    lastname: 'Masser',
-    profession: 'Pedospsychiatre',
-    departement: { label: 'Pédiatrie' },
-  };
+  const {
+    data: patientData,
+    loading: loadingPatients,
+    error: errorPatients,
+  } = useSearchPatientsQuery({
+    variables: { query: searchQuery },
+    skip: searchQuery.length < 2,
+  });
+
+  const searchSources = [
+    {
+      name: 'Patients',
+      items: patientData?.searchPatients ?? [],
+      loading: loadingPatients,
+      error: errorPatients ? errorPatients.message : null,
+      getKey: (patient: Patient) => `patient-${patient.id}`,
+    },
+  ];
+
+  const doctor: GetUserByIdQuery['getUserById'] | undefined = doctorData?.getUserById;
+
+  if (doctorLoading) return <p>Chargement...</p>;
+  if (doctorError) return <p>Erreur lors du chargement du médecin.</p>;
 
   return (
     <div className="w-full sm:w-[80%] max-w-screen-xl m-auto">
-      <div className="pl-3 sm:pl-0">
-        <DoctorInfo doctor={doctorMock} />
-      </div>
+      <div className="pl-3 sm:pl-0">{doctor && <DoctorInfo doctor={doctor} />}</div>
 
       <section className="bg-bgBodyColor p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border-borderColor mt-4">
-        <div className="flex flex-col lg:flex-row w-full justify-center items-center space-y-4  gap-10 lg:gap-35">
+        <div className="flex flex-col lg:flex-row w-full justify-center items-center space-y-4 gap-10 lg:gap-35">
           <aside>
             <DayPilotNavigator
               selectMode="Day"
@@ -124,18 +132,20 @@ export default function NewAppointementByDoctor() {
             />
           </aside>
 
-          <section className=" flex flex-col gap-2 w-full lg:w-max justify-center items-center">
+          <section className="flex flex-col gap-2 w-full lg:w-max justify-center items-center">
             <div className="flex flex-col gap-4 max-w-[375px] lg:max-w-[500px] sm:max-w-[420px] w-full">
-              <UserItem<Doctor> user={doctorMock}>
-                {d => (
-                  <p>
-                    <span className="font-bold">
-                      {d.firstname} {d.lastname}
-                    </span>{' '}
-                    - {d.departement?.label ?? 'service'}
-                  </p>
-                )}
-              </UserItem>
+              {doctor && (
+                <UserItem user={doctor}>
+                  {d => (
+                    <p>
+                      <span className="font-bold">
+                        {d.firstname} {d.lastname}
+                      </span>{' '}
+                      - {d.departement?.label ?? 'Aucun département'}
+                    </p>
+                  )}
+                </UserItem>
+              )}
 
               <PatientSearch
                 searchQuery={searchQuery}
@@ -149,10 +159,13 @@ export default function NewAppointementByDoctor() {
 
               <SelectForm
                 name="motifs"
-                value=""
+                value={selectedMotif}
                 title="Motif de consultation"
                 option={consultationOptions}
-                handle={value => console.warn('Motif sélectionné :', value)}
+                handle={e => {
+                  const selectedValue = e.target.value;
+                  setSelectedMotif(selectedValue);
+                }}
               />
 
               <DateTimeSection
