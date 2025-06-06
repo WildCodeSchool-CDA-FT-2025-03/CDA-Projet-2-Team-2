@@ -12,7 +12,6 @@ import { ResetPasswordInput, sendEmailInput } from '../types/user.type';
 import { Planning } from '../entities/planning.entity';
 import { CreatePlanningInput } from '../types/planning.type';
 import { dataSource } from '../database/client';
-import type { MyContext } from '../types/myContext.type';
 
 @Resolver()
 export class UserResolver {
@@ -37,30 +36,30 @@ export class UserResolver {
 
   @Query(() => User)
   @Authorized([UserRole.ADMIN, UserRole.SECRETARY])
-  async getUserById(@Arg('id') id: string, @Ctx() context: MyContext) {
-    try {
-      let user;
+  async getUserById(@Arg('id') id: string, @Ctx() context: { user: User }): Promise<User> {
+    let user;
 
-      if (context.user?.role === UserRole.SECRETARY) {
-        user = await User.findOneByOrFail({
-          id: +id,
-          role: UserRole.DOCTOR,
-        });
-      } else {
-        user = await User.findOneByOrFail({
-          id: +id,
-        });
-      }
+    if (context.user?.role === UserRole.SECRETARY) {
+      user = await User.findOneBy({
+        id: +id,
+        role: UserRole.DOCTOR,
+      });
+    } else {
+      user = await User.findOneBy({
+        id: +id,
+      });
+    }
 
-      return user;
-    } catch (error) {
-      throw new GraphQLError(`l'utilisateur avec l'id ${id} n'existe pas`, {
+    if (!user) {
+      throw new GraphQLError(`L'utilisateur avec l'id ${id} n'existe pas`, {
         extensions: {
           code: 'USER_NOT_FOUND',
-          originalError: error.message,
+          originalError: 'Aucun utilisateur trouvé',
         },
       });
     }
+
+    return user;
   }
 
   // 📋 checks if the email exists and requests sending of the reset email
