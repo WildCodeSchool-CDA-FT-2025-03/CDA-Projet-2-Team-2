@@ -15,7 +15,14 @@
     "format:file": "prettier --check",
     "codegen": "graphql-codegen",
     "codegen:watch": "graphql-codegen --watch",
-    "test-component": "vitest"
+    "test-component": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:codegen": "playwright codegen http://localhost:7000",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:install": "playwright install"
   },
   "dependencies": {
     "@apollo/client": "^3.13.5",
