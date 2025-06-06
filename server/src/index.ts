@@ -7,7 +7,6 @@ import { grpcClient } from './utils/grpcClient';
 
 import 'dotenv/config';
 import 'reflect-metadata';
-import { getUserFromToken } from './utils/jwt.utils';
 
 async function startServer() {
   await dataSource.initialize();
@@ -20,17 +19,13 @@ async function startServer() {
 
   const { url } = await startStandaloneServer(server, {
     listen: { port: parseInt(process.env.PORT as string) || 4000 },
-    context: async ({ req, res }) => {
-      const user = await getUserFromToken(req.headers.cookie || '');
-
-      return {
-        req,
-        res,
-        grpcClient,
-        user,
-      };
-    },
+    context: async ({ req, res }) => ({
+      req,
+      res,
+      grpcClient,
+    }),
   });
+
   grpcClient.createLog('Server has started', { server: 'started' });
 
   console.info(`🚀 Server ready at ${url}`);
