@@ -8,9 +8,10 @@ export type AppointmentContextType = {
   SaveAppointment: PatientAppointment;
   handleSelectedDepartment: (value: string) => void;
   handleStartChange: (value: string) => void;
-  handleDoctorChange: (value: string) => void;
+  handleTypeChange: (value: string, name: string) => void;
   handleAppointment: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleSelectedDay: (value: DayPilot.Date) => void;
+  handleSubmitAppointment: () => void;
 };
 
 export const AppointmentContext = createContext<AppointmentContextType | undefined>(undefined);
