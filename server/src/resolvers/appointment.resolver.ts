@@ -1,10 +1,11 @@
 import { Resolver, Query, Arg, Authorized, Mutation } from 'type-graphql';
 import { GraphQLError } from 'graphql';
-import { Appointment } from '../entities/appointment.entity';
+import { Appointment, AppointmentStatus } from '../entities/appointment.entity';
 import { Between, Equal, MoreThan, LessThan } from 'typeorm';
-import { UserRole } from '../entities/user.entity';
+import { UserRole, User } from '../entities/user.entity';
+import { Patient } from '../entities/patient.entity';
 import { AppointmentCreateInput } from '../types/appointment.type';
-import { AppointmentStatus } from '../entities/appointment.entity';
+import { AppointmentType } from '../entities/appointment-type.entity';
 
 @Resolver()
 export class AppointmentResolver {
@@ -130,15 +131,55 @@ export class AppointmentResolver {
   async createAppointment(
     @Arg('appointmentInput') appointmentInput: AppointmentCreateInput,
   ): Promise<Appointment> {
+    const checkDoctor = await User.findOneBy({ id: +appointmentInput.user_id });
+    if (!checkDoctor) {
+      throw new GraphQLError('Docteur non trouvé', {
+        extensions: {
+          code: 'DOCTOR_NOT_FOUND',
+        },
+      });
+    }
+
+    const checkSecretary = await User.findOneBy({ id: +appointmentInput.created_by });
+    if (!checkSecretary) {
+      throw new GraphQLError('Secretaire non trouvé', {
+        extensions: {
+          code: 'SECRETARY_NOT_FOUND',
+        },
+      });
+    }
+
+    const checkPatient = await Patient.findOneBy({ id: appointmentInput.patient_id });
+    if (!checkPatient) {
+      throw new GraphQLError('Patient non trouvé', {
+        extensions: {
+          code: 'PATIENT_NOT_FOUND',
+        },
+      });
+    }
+
+    const checkAppointmentType = await AppointmentType.findOneBy({
+      id: +appointmentInput.appointmentType,
+    });
+    if (!checkAppointmentType) {
+      throw new GraphQLError('Rendez-vous non trouvé', {
+        extensions: {
+          code: 'APPOINTMENT_TYPE_NOT_FOUND',
+        },
+      });
+    }
+
     try {
       const appointment = new Appointment();
-      appointment.start_time = appointmentInput.start_time;
+      appointment.start_time = new Date(appointmentInput.start_time);
       appointment.duration = appointmentInput.duration;
       appointment.status = appointmentInput.status || AppointmentStatus.CONFIRMED;
-      appointment.doctor.id = +appointmentInput.user_id; // Doctor ID
-      appointment.patient.id = appointmentInput.patient_id;
-      appointment.created_by.id = +appointmentInput.created_by; // secretaire ID
-      appointment.appointmentType.id = +appointmentInput.appointmentType; // Appointment type ID
+      appointment.doctor = checkDoctor; // Doctor ID
+      appointment.patient = checkPatient;
+      appointment.created_by = checkSecretary; // secretaire ID
+      appointment.status = AppointmentStatus.CONFIRMED;
+      appointment.departement = checkDoctor.departement;
+      appointment.appointmentType = checkAppointmentType; // Appointment type ID
       return appointment.save();
     } catch (error) {
       throw new GraphQLError(`Échec de la création de du rendez-vous`, {
