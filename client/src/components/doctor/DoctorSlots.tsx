@@ -14,7 +14,7 @@ export default function DoctorSlots() {
     selectedDepartment,
     selectedDay,
     handleStartChange,
-    handleDoctorChange,
+    handleTypeChange,
     handleSelectedDepartment,
   } = useAppointmentContext();
 
@@ -38,7 +38,7 @@ export default function DoctorSlots() {
 
   const handleSlotClick = (slot: DoctorAppointmentSlot) => {
     handleStartChange(slot.debut_libre.split(':').slice(0, 2).join(':'));
-    handleDoctorChange(slot.user_id);
+    handleTypeChange(slot.user_id, 'user_id');
   };
   return (
     <>
