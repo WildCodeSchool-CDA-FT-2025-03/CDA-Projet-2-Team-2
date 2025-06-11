@@ -5,7 +5,6 @@ import {
   useGetUserByIdQuery,
   useGetAppointmentTypesQuery,
   useGetAppointmentsByDoctorAndDateQuery,
-  useSearchPatientsQuery,
   GetUserByIdQuery,
 } from '@/types/graphql-generated';
 import { getDisabledTimes } from '@/utils/getAppointementTimeStartDisabled';
@@ -56,28 +55,7 @@ export default function NewAppointementByDoctorContent() {
 
   const disabledTimes = getDisabledTimes(selectedDay, appointments, generateTimeOptions());
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-
-  const {
-    data: patientData,
-    loading: loadingPatients,
-    error: errorPatients,
-  } = useSearchPatientsQuery({
-    variables: { query: searchQuery },
-    skip: searchQuery.length < 2,
-  });
-
-  const searchSources = [
-    {
-      name: 'Patients',
-      items: patientData?.searchPatients ?? [],
-      loading: loadingPatients,
-      error: errorPatients ? errorPatients.message : null,
-      getKey: (patient: Patient) => `patient-${patient.id}`,
-    },
-  ];
 
   const doctor: GetUserByIdQuery['getUserById'] | undefined = doctorData?.getUserById;
 
@@ -106,11 +84,6 @@ export default function NewAppointementByDoctorContent() {
 
         <section className="flex flex-col gap-4">
           <PatientSearch
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            searchSources={searchSources}
             selectedPatient={selectedPatient}
             setSelectedPatient={setSelectedPatient}
           />

@@ -1,26 +1,33 @@
-import { Patient } from '@/types/patient.type';
+import { useState } from 'react';
+import { useSearchPatientsQuery } from '@/types/graphql-generated';
 import UserItem from '@/components/user/UserItem';
 import SearchBar, { SearchSource } from '@/components/form/SearchBar';
+import { Patient } from '@/types/patient.type';
 
 type PatientSearchProps = {
-  searchQuery: string;
-  setSearchQuery: (q: string) => void;
-  isOpen: boolean;
-  setIsOpen: (o: boolean) => void;
-  searchSources: SearchSource<Patient>[];
   selectedPatient: Patient | null;
   setSelectedPatient: (p: Patient) => void;
 };
 
-export default function PatientSearch({
-  searchQuery,
-  setSearchQuery,
-  isOpen,
-  setIsOpen,
-  searchSources,
-  selectedPatient,
-  setSelectedPatient,
-}: PatientSearchProps) {
+export default function PatientSearch({ selectedPatient, setSelectedPatient }: PatientSearchProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { data, loading, error } = useSearchPatientsQuery({
+    variables: { query: searchQuery },
+    skip: searchQuery.length < 2,
+  });
+
+  const searchSources: SearchSource<Patient>[] = [
+    {
+      name: 'Patients',
+      items: data?.searchPatients ?? [],
+      loading,
+      error: error ? error.message : null,
+      getKey: (patient: Patient) => `patient-${patient.id}`,
+    },
+  ];
+
   return (
     <div className="w-full">
       <SearchBar<Patient>
