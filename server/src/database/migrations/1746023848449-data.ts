@@ -4,7 +4,7 @@ export class Data1746023848449 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `INSERT INTO city
-        SELECT id,cast(zip_code as varchar(15)),city FROM citytemp;`,
+        SELECT id,cast(postal_code as varchar(15)),city FROM citytemp;`,
     );
 
     await queryRunner.query(
