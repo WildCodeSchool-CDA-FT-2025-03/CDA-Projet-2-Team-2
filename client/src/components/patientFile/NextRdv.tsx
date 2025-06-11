@@ -19,7 +19,7 @@ export default function NextRdv({ patientNum }: inputPersonnal) {
     dataNextRdv = GetNextAppointmentsByPatient.data.getNextAppointmentsByPatient;
 
   return (
-    <article className="bg-white rounded-2xl shadow p-4 relative">
+    <article className="bg-white rounded-2xl shadow p-4 mb-4 relative">
       <h2 className="text-xl font-semibold mb-4">
         Prochains rendez-vous
         <button

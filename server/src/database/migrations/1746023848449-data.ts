@@ -52,7 +52,7 @@ export class Data1746023848449 implements MigrationInterface {
             max(c.id)
         FROM mytable m
         LEFT JOIN city c
-            ON substr(c.postal_code,1,5) = substr(m.code_postal,1,5)
+            ON substr(c.zip_code,1,5) = substr(m.code_postal,1,5)
         GROUP BY
             m.nom_patient,
             m.social_number,
@@ -112,12 +112,12 @@ export class Data1746023848449 implements MigrationInterface {
               CAST(m.date AS DATE) + INTERVAL '1 year' + CAST(m.rdv_début AS TIME)
           end,
           case
-			when m.durée = 45 then
-				60
-			when m.durée = 15 then
-				30
-			else
-				 m.durée
+            when m.durée = 45 then
+              60
+            when m.durée = 15 then
+              30
+            else
+              m.durée
           end,
           'confirmed',
           u.id,

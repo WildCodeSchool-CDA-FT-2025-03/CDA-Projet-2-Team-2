@@ -1,18 +1,21 @@
-import { Request, Response, RequestHandler } from "express";
-import fs from "fs";
-import "dotenv/config";
+import { Request, Response, RequestHandler, Express } from 'express';
+import fs from 'fs';
+import 'dotenv/config';
 
 class PatientFile {
-  static deletefile = (filename: Express.Multer.File) => {
-    const pathfile = filename.path;
-    fs.unlink(pathfile, (err: NodeJS.ErrnoException | null) => {
-      if (err) {
-        return -1;
-      } else {
-        return 0;
-      }
+  static deletefile = (file: Express.Multer.File): Promise<number> => {
+    const pathfile = file.path;
+    return new Promise((resolve) => {
+      fs.unlink(pathfile, (err) => {
+        if (err) {
+          console.error('Erreur lors de la suppression du fichier:', err);
+          resolve(-1);
+        } else {
+          resolve(0);
+        }
+      });
     });
-  }
+  };
 
   static upload: RequestHandler = (async (req: Request, res: Response) => {
     const file = req.file as Express.Multer.File;
@@ -36,11 +39,11 @@ class PatientFile {
     `;
 
     const variables = {
-      "docInput": {
-        "name": req.body.name,
-        "url": file.filename,
-        "patientId": +req.body.patientId,
-        "docTypeId": +req.body.type,
+      docInput: {
+        name: req.body.name,
+        url: file.filename,
+        patientId: req.body.patientId,
+        docTypeId: +req.body.type,
       },
     };
 
@@ -64,9 +67,11 @@ class PatientFile {
       const result = await response.json();
       if (result.errors) {
         this.deletefile(file);
+        console.error(result.errors);
         return res.sendStatus(500);
       }
     } catch (error) {
+      console.error(error);
       this.deletefile(file);
       return res.sendStatus(500);
     }
