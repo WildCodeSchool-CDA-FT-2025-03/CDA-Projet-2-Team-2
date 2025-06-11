@@ -7,7 +7,7 @@ export const PATIENT_QUERY = gql`
       city {
         id
         city
-        postal_code
+        zip_code
       }
       email
       firstname
@@ -55,7 +55,7 @@ export const PATIENT_UPDATE_MUTATION = gql`
       social_number
       city {
         city
-        postal_code
+        zip_code
       }
     }
   }

@@ -1,8 +1,9 @@
-import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Mutation, Query, Resolver, Ctx } from 'type-graphql';
+import log from '../utils/log';
 import { Patient } from '../entities/patient.entity';
 import { PatientInput } from '../types/patient.type';
 import { City } from '../entities/city.entity';
-import { UserRole } from '../entities/user.entity';
+import { UserRole, User } from '../entities/user.entity';
 import { ILike } from 'typeorm';
 
 @Resolver()
@@ -37,7 +38,10 @@ export class PatientResolver {
 
   @Mutation(() => Patient)
   @Authorized([UserRole.SECRETARY, UserRole.DOCTOR])
-  async updatePatient(@Arg('patientData') patientData: PatientInput): Promise<Patient | null> {
+  async updatePatient(
+    @Arg('patientData') patientData: PatientInput,
+    @Ctx() context: { user: User },
+  ): Promise<Patient | null> {
     const patient = await Patient.findOne({
       where: { id: patientData.id },
     });
@@ -47,7 +51,7 @@ export class PatientResolver {
     }
 
     const newcity = await City.findOne({
-      where: { postal_code: patientData.postal_code, city: patientData.city },
+      where: { zip_code: patientData.zip_code, city: patientData.city },
     });
 
     patient.firstname = patientData.firstname;
@@ -67,6 +71,11 @@ export class PatientResolver {
       patient.city = newcity;
     }
     await patient.save();
+
+    await log('Modification patient', {
+      updated_by: context.user.id,
+      patient: patient.id,
+    });
 
     return patient;
   }
