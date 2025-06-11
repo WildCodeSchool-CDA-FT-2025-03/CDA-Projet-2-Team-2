@@ -23,14 +23,12 @@ export class LogResolver {
         createAt: log.create_at,
       }));
 
-      // Apply search filter if provided
       if (search) {
         logs = logs.filter((log) => log.titre.toLowerCase().includes(search.toLowerCase()));
       }
 
       const total = logs.length;
 
-      // Apply pagination
       if (offset !== undefined) {
         logs = logs.slice(offset);
       }
