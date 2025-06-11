@@ -1,13 +1,14 @@
-import DateDisplayInput from '@/components/appointement/DateDisplayInput';
-import TimeDisplayInputEnd from '@/components/appointement/TimeDisplayInputEnd';
-import TimeSelectStart from '@/components/appointement/TimeSelectStart';
-import DoctorSelect from '@/components/form/DoctorSelect';
-import AppointmentTypesSelect from '@/components/form/AppointmentTypesSelect';
+import { useParams } from 'react-router-dom';
 import DoctorSlots from '@/components/doctor/DoctorSlots';
 import { CreateAppointmentContext } from '@/contexts/createappointment.context';
 import Calendar from '@/components/calendar/Calendar';
+import FormAppointmentPatient from '@/components/appointement/FormAppointmentPatient';
 
 export default function NewAppointementByPatient() {
+  const { id } = useParams();
+  if (id === undefined) {
+    return <div className="flex items-center justify-center h-screen">Patient not found</div>;
+  }
   return (
     <>
       <CreateAppointmentContext>
@@ -26,18 +27,7 @@ export default function NewAppointementByPatient() {
           <aside>
             <Calendar />
           </aside>
-          <section className="flex flex-col gap-4">
-            <DoctorSelect />
-            <AppointmentTypesSelect />
-            <section className="flex flex-col gap-2">
-              {/* Ligne des champs : Jour, Début, Fin */}
-              <div className="flex gap-4 items-end whitespace-nowrap">
-                <DateDisplayInput />
-                <TimeSelectStart />
-                <TimeDisplayInputEnd />
-              </div>
-            </section>
-          </section>
+          <FormAppointmentPatient patient_id={id} />
         </section>
       </CreateAppointmentContext>
     </>
