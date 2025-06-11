@@ -7,8 +7,10 @@
     "prepare": "husky",
     "lint:client": "cd client && npm run lint",
     "lint:server": "cd server && npm run lint",
+    "lint:mail": "cd mail && npm run lint",
     "format:client": "cd client && npm run format",
     "format:server": "cd server && npm run format",
+    "format:mail": "cd mail && npm run format",
     "check": "npm run lint:client && npm run lint:server && npm run format:client && npm run format:server",
     "dev": "concurrently -n \"client,server\" -c \"cyan.bold,green.bold\" \"npm run dev:client\" \"npm run dev:server\"",
     "dev:docker": "docker compose up",
@@ -26,6 +28,10 @@
     "server/**/*.{js,ts,mjs}": [
       "npm --prefix server run lint:file",
       "npm --prefix server run format:file"
+    ],
+      "mail/**/*.{js,ts}": [
+      "npm --prefix mail run lint:file",
+      "npm --prefix mail run format:file"
     ]
   },
   "devDependencies": {

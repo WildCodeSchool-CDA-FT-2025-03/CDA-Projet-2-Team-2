@@ -89,8 +89,15 @@ export class UserResolver {
             });
             return true;
           }
+          return false;
         } catch (error) {
-          return error;
+          console.error(error);
+          throw new GraphQLError("Impossible d'envoyer l'email", {
+            extensions: {
+              code: 'SEND_MAIL_ERROR',
+              originalError: "Une erreur s'est produite dans l'envoi de l'email",
+            },
+          });
         }
       }
       // log suspicious password reset request
@@ -99,7 +106,13 @@ export class UserResolver {
       });
       return false; // the user does not exist
     } catch (error) {
-      return error;
+      console.error(error); // pour eviter une erreur Eslint
+      throw new GraphQLError('Erreur lors de la verification utilisateur', {
+        extensions: {
+          code: 'USER_ERROR',
+          originalError: 'Impossible de réaliser la vérification utilisateur',
+        },
+      });
     }
   }
 
@@ -115,7 +128,12 @@ export class UserResolver {
       // then check that the user exists
       const userUpdate = await User.findOneBy({ email });
       if (!userUpdate) {
-        throw new Error('Utilisateur inconnu');
+        throw new GraphQLError('Impossible de modifier le mot de passe', {
+          extensions: {
+            code: 'USER_NOT_FOUND',
+            originalError: 'Utilisateur non trouvé',
+          },
+        });
       }
       // ⚙️ hash and update new password
       const hashedPassword = await argon2.hash(password);
@@ -130,7 +148,13 @@ export class UserResolver {
       });
       return true;
     } catch (error) {
-      throw new Error(error);
+      console.error(error);
+      throw new GraphQLError('Impossible de changer le mot de passe', {
+        extensions: {
+          code: 'USER_ERROR',
+          originalError: "Une erreur s'est produit dans le changement de mot de passe",
+        },
+      });
     }
   }
 
