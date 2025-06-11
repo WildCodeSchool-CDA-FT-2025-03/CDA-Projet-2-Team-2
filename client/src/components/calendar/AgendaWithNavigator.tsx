@@ -111,7 +111,7 @@ export default function AgendaWithNavigator() {
     setModalContent({
       title: 'Créer un rendez-vous',
       message: `Souhaitez-vous créer un rendez-vous le ${date.slice(0, 16).replace('T', ' à ')} ?`,
-      onConfirm: () => navigate(`/secretary/appointement/create?doctor=${doctorId}&date=${date}`),
+      onConfirm: () => navigate(`/secretary/doctor/${doctorId}/appointment/create?date=${date}`),
     });
 
     setModalOpen(true);
@@ -165,7 +165,7 @@ export default function AgendaWithNavigator() {
                   const doctor = item as Doctor;
                   return (
                     <Link
-                      to="/secretary-dashboard"
+                      to="/secretary"
                       className="block p-2 border-b last:border-b-0 hover:bg-gray-100"
                       onClick={onSelect}
                     >
