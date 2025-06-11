@@ -29,7 +29,7 @@ jobs:
   lint-server:
     name: Lint Server
     runs-on: ubuntu-latest
-    steps:
+    steps: 
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -46,6 +46,28 @@ jobs:
 
       - name: Run ESLint
         run: npm run lint:server
+
+  lint-mail:
+    name: Lint Mail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm run install:mail
+
+      - name: Run ESLint
+        run: npm run lint:mail
+
 
   format-check:
     name: Format Check
@@ -65,9 +87,13 @@ jobs:
           npm ci
           npm run install:client
           npm run install:server
+          npm run install:mail
 
       - name: Check Client Formatting
         run: npm run format:client
 
       - name: Check Server Formatting
         run: npm run format:server
+
+      - name: Check Mail Formatting
+        run: npm run format:mail

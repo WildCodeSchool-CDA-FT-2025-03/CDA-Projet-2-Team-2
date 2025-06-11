@@ -18,7 +18,8 @@
     "dev:server": "cd server && npm run dev",
     "install:all": "npm install && cd client && npm install && cd ../server && npm install",
     "install:client": "cd client && npm install",
-    "install:server": "cd server && npm install"
+    "install:server": "cd server && npm install",
+    "install:mail": "cd mail && npm install"
   },
   "lint-staged": {
     "client/**/*.{js,jsx,ts,tsx}": [
@@ -29,7 +30,7 @@
       "npm --prefix server run lint:file",
       "npm --prefix server run format:file"
     ],
-      "mail/**/*.{js,ts}": [
+    "mail/**/*.{js,ts}": [
       "npm --prefix mail run lint:file",
       "npm --prefix mail run format:file"
     ]
