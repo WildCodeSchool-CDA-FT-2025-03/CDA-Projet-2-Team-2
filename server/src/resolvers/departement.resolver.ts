@@ -3,17 +3,24 @@ import { Departement, DepartementStatus } from '../entities/departement.entity';
 import { GraphQLError } from 'graphql';
 import { DepartementInput } from '../types/departement.type';
 import { UserRole } from '../entities/user.entity';
+import redisClient from '../database/redis';
 
 @Resolver()
 export class DepartementResolver {
   @Query(() => [Departement])
   @Authorized([UserRole.SECRETARY, UserRole.DOCTOR, UserRole.ADMIN, UserRole.AGENT])
   async getDepartements(): Promise<Departement[]> {
-    return await Departement.find({
+    const cachedDepartements = await redisClient.get('departements');
+    if (cachedDepartements) {
+      return JSON.parse(cachedDepartements);
+    }
+    const departements = await Departement.find({
       relations: {
         user: true,
       },
     });
+    redisClient.set('departements', JSON.stringify(departements), { EX: 60 * 60 * 24 * 30 });
+    return departements;
   }
 
   @Mutation(() => Boolean)
