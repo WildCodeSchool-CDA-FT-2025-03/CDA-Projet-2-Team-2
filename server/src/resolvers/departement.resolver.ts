@@ -66,7 +66,6 @@ export class DepartementResolver {
     department.level = data.level;
     department.save();
     redisClient.del('departements');
-    console.info('department cache deleted');
     return true;
   }
 
