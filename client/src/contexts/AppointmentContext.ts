@@ -12,6 +12,8 @@ export type AppointmentContextType = {
   handleAppointment: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleSelectedDay: (value: DayPilot.Date) => void;
   handleSubmitAppointment: () => void;
+  needToBeRefresh: boolean;
+  setNeedToBeRefresh: (value: boolean) => void;
 };
 
 export const AppointmentContext = createContext<AppointmentContextType | undefined>(undefined);
