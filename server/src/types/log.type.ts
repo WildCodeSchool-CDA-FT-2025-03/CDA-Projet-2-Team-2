@@ -1,5 +1,19 @@
 import { Field, Int, ObjectType } from 'type-graphql';
-import { Log } from '../entities/log.entity';
+
+@ObjectType()
+export class Log {
+  @Field()
+  id?: string;
+
+  @Field()
+  titre: string;
+
+  @Field(() => String)
+  metadata: string; // JSON string representation
+
+  @Field()
+  createAt?: string;
+}
 
 @ObjectType()
 export class LogsResponse {
