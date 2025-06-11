@@ -34,6 +34,7 @@ export class DepartementResolver {
       newDepartement.level = data.level;
 
       await newDepartement.save();
+      redisClient.del('departements');
       return true;
     } catch (error) {
       console.error(error);
