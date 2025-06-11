@@ -51,10 +51,8 @@ export default function AgendaWithNavigator() {
     selectedDate,
   );
 
-  // ✅ Récupère le contexte
   const { needToBeRefresh, setNeedToBeRefresh } = useAppointmentContext();
 
-  // ✅ useEffect pour rafraîchir les rendez-vous automatiquement
   useEffect(() => {
     if (needToBeRefresh) {
       refetchAppointments();
