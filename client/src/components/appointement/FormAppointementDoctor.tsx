@@ -32,7 +32,6 @@ export default function FormAppointementDoctor({
 
   const disabledTimes = getDisabledTimes(selectedDay, appointments, generateTimeOptions());
 
-  // 💡 Met à jour SaveAppointment.patient_id dès qu’on sélectionne un patient
   useEffect(() => {
     if (selectedPatient?.id) {
       handleTypeChange(selectedPatient.id, 'patient_id');
@@ -41,46 +40,34 @@ export default function FormAppointementDoctor({
 
   const handleSubmitInfo = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedPatient || !SaveAppointment.start) {
-      alert('Veuillez sélectionner un patient et un horaire.');
-      return;
-    }
-
-    if (!SaveAppointment.patient_id) {
-      alert('Aucun patient sélectionné. Impossible de créer le rendez-vous.');
-      return;
-    }
 
     try {
       await handleSubmitAppointment();
-      alert('Rendez-vous créé avec succès !');
       navigate('/secretary');
     } catch (error) {
       console.error('Erreur lors de la création du rendez-vous :', error);
-      alert('Erreur lors de la création.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmitInfo} className="flex flex-col gap-4 w-full">
-      <PatientSearch selectedPatient={selectedPatient} setSelectedPatient={setSelectedPatient} />
+    <div className="w-full max-w-md mx-auto">
+      <form onSubmit={handleSubmitInfo} className="flex flex-col gap-4 w-full max-w-md">
+        <PatientSearch selectedPatient={selectedPatient} setSelectedPatient={setSelectedPatient} />
 
-      <SelectForm
-        name="appointmentType"
-        value={SaveAppointment.appointmentType}
-        title="Motif de consultation"
-        option={appointmentTypes}
-        handle={handleAppointment}
-      />
+        <SelectForm
+          name="appointmentType"
+          value={SaveAppointment.appointmentType}
+          title="Motif de consultation"
+          option={appointmentTypes}
+          handle={handleAppointment}
+        />
 
-      <DateTimeSection disabledTimes={disabledTimes} />
+        <DateTimeSection disabledTimes={disabledTimes} />
 
-      <button
-        type="submit"
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-      >
-        Créer le rendez-vous
-      </button>
-    </form>
+        <button type="submit" className="standard-button mt-4 transition">
+          Créer le rendez-vous
+        </button>
+      </form>
+    </div>
   );
 }
