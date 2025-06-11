@@ -65,6 +65,8 @@ export class DepartementResolver {
     department.wing = data.wing;
     department.level = data.level;
     department.save();
+    redisClient.del('departements');
+    console.info('department cache deleted');
     return true;
   }
 
@@ -85,6 +87,7 @@ export class DepartementResolver {
         : DepartementStatus.ACTIVE;
 
     await Departement.update({ id: department.id }, { ...department });
+    redisClient.del('departements');
     return true;
   }
 }
