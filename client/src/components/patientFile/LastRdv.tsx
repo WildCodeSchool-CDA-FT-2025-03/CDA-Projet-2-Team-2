@@ -17,7 +17,7 @@ export default function LastRdv({ patientNum }: inputPersonnal) {
     dataLastRdv = GetLastAppointmentsByPatient.data.getLastAppointmentsByPatient;
 
   return (
-    <article className="bg-white rounded-2xl shadow p-4">
+    <article className="bg-white rounded-2xl shadow p-4 mb-4">
       <h2 className="text-xl font-semibold mb-4">Derniers rendez-vous</h2>
       <ModuleList<Rdv>
         data={dataLastRdv}

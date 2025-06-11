@@ -62,7 +62,7 @@ export class PatientInput {
 
   @Field()
   @Matches(/[\d]*/)
-  postal_code: string;
+  zip_code: string;
 
   @Field()
   city: string;

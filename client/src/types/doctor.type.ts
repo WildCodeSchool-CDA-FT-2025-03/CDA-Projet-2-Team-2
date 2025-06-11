@@ -2,6 +2,6 @@ export type Doctor = {
   id: string;
   firstname: string;
   lastname: string;
-  profession: string;
+  profession?: string;
   departement: { label: string };
 };

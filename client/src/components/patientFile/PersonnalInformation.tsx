@@ -23,10 +23,12 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
     const fetchUser = async () => {
       setPersonnalInfo({
         ...patientByID,
-        city: {
-          ...patientByID.city,
-          patients: [],
-        },
+        city: patientByID.city
+          ? {
+              ...patientByID.city,
+              patients: [],
+            }
+          : null,
         patientDocs: [],
       });
     };
@@ -46,8 +48,9 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
       setPersonnalInfo(() => ({
         ...savePatient,
         ['city']: {
-          ...savePatient.city,
-          postal_code: cp,
+          id: '0',
+          patients: [],
+          zip_code: cp,
           city: ville,
         },
       }));
@@ -65,7 +68,7 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
     if (savePatient.phone_number.match(/^[\d+ .]*$/) === null) {
       errorMsg.push('Le numéro de téléphone ne doit contenir que des chiffres');
     }
-    if (savePatient.city.postal_code.match(/^[\d]*$/) === null) {
+    if (savePatient.city?.zip_code.match(/^[\d]*$/) === null) {
       errorMsg.push('Le code postal ne doit contenir que des chiffres');
     }
     if (savePatient.birth_date.match(/^[\d]{4}-[\d]{2}-[\d]{2}/) === null) {
@@ -94,8 +97,8 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
           gender: savePatient.gender,
           note: savePatient.note,
           email: savePatient.email || '',
-          postal_code: savePatient.city.postal_code,
-          city: savePatient.city.city,
+          zip_code: savePatient.city?.zip_code || '',
+          city: savePatient.city?.city || '',
         },
       },
     });
@@ -191,8 +194,8 @@ export default function PersonnalInformation({ patientNum }: inputPersonnal) {
         />
         <InputFormCP
           handle={HandleCPVille}
-          value={(savePatient && savePatient.city.postal_code) || ''}
-          valuecity={(savePatient && savePatient.city.city) || ''}
+          value={(savePatient && savePatient.city?.zip_code) || '00000'}
+          valuecity={(savePatient && savePatient.city?.city) || ''}
         />
         <InputForm
           title="Personne à contacter"

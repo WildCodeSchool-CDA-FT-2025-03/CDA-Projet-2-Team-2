@@ -35,11 +35,11 @@ export async function seedTestAppointments() {
       createdDepartments.push(department);
     }
 
-    let testCity = await City.findOne({ where: { postal_code: '75001' } });
+    let testCity = await City.findOne({ where: { zip_code: '75001' } });
     if (!testCity) {
       console.info('Creating test city: Paris');
       testCity = new City();
-      testCity.postal_code = '75001';
+      testCity.zip_code = '75001';
       testCity.city = 'Paris';
       await testCity.save();
     } else {
