@@ -1,25 +1,32 @@
 import {
   useChangeDepartmentStatusMutation,
-  useGetDepartementsQuery,
+  useGetAllDepartementsWithPaginationQuery,
 } from '@/types/graphql-generated';
 import { useState } from 'react';
 import CreateDepartmentModal from '../components/department/CreateDepartmentModal';
 import StatusModal from '@/components/StatusModal';
+import Pagination from '@/components/logs/Pagination';
 
 export default function Department() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState<boolean>(false);
   const [departmentId, setDepartmentId] = useState<string | null>(null);
-  const { loading, error, data, refetch } = useGetDepartementsQuery();
   const [searchTerm, setSearchTerm] = useState('');
   const [updateStatus] = useChangeDepartmentStatusMutation();
+  const [currentPage, setCurrentPage] = useState(0);
+  const depPerPage = 8;
+  const { loading, error, data, refetch } = useGetAllDepartementsWithPaginationQuery({
+    variables: {
+      page: currentPage,
+      limit: depPerPage,
+      search: searchTerm,
+    },
+  });
 
-  if (error) return <p>Error</p>;
-  if (loading) return <p>Loading</p>;
-
-  const filteredDepartments = data?.getDepartements.filter(department =>
-    department.label.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredDepartments = data?.getAllDepartementsWithPagination.departements;
+  const totalDepartments = data?.getAllDepartementsWithPagination?.total || 0;
+  const totalPages = Math.ceil(totalDepartments / depPerPage);
+  const handlePaginatation = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const updateDepartmentStatus = async () => {
     if (departmentId) {
@@ -30,10 +37,12 @@ export default function Department() {
   };
   return (
     <>
-      <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4 h-screen">
+      <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4">
         <div className="w-full align-center flex flex-col gap-4 h-full p-12">
           <div className="flex items-center mb-4">
             <h2 className="text-xl mr-5 m- font-semibold text-gray-700">Gestion des services</h2>
+            {error && <p>Erro</p>}
+            {loading && <p>Loading</p>}
             <>
               <button
                 className="bg-blue text-white px-4 py-2 rounded-md"
@@ -56,17 +65,23 @@ export default function Department() {
           </div>
           <div className="bg-bgBodyColor  items-center mb-4">
             <div className="bg-white m-4 w-2/5 relative border border-borderColor rounded-full">
+              <label htmlFor="dep" className="sr-only">
+                Chercher un service
+              </label>
               <input
                 type="text"
                 id="dep"
                 className="w-full px-10 py-3 border border-borderColor rounded-full focus:outline-none focus:ring-1 focus:ring-borderColor"
                 placeholder="Chercher un service"
                 onChange={e => setSearchTerm(e.target.value)}
+                aria-label="Chercher un service"
               />
               <img
                 src="/public/search-icon.svg"
-                alt="search icon"
+                alt=""
+                role="presentation"
                 className="absolute right-3 top-1/2 -translate-y-1/2"
+                aria-hidden="true"
               />
             </div>
             {filteredDepartments?.map(department => (
@@ -113,6 +128,13 @@ export default function Department() {
               </div>
             ))}
           </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePaginatation}
+            totalItems={totalDepartments}
+            pageSize={depPerPage}
+          />
         </div>
       </div>
     </>
