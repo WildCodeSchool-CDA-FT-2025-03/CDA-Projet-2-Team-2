@@ -51,13 +51,13 @@ export default function NewAppointementByDoctorContent() {
 
   return (
     <>
-      <div className="flex flex-col w-3/4">
-        <section className="flex flex-col gap-4 self-start">
+      <div className="w-[90%] max-w-5xl flex flex-col gap-6">
+        <section className="flex flex-col gap-4 self-start  ">
           {doctorData?.getUserById && <DoctorInfo doctor={doctorData.getUserById} />}
         </section>
       </div>
 
-      <section className="bg-bgBodyColor md:w-3/4 p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border-borderColor flex flex-col lg:flex-row items-center lg:items-start justify-center gap-10 lg:gap-14 xl:gap-10">
+      <section className="bg-bgBodyColor w-[90%] max-w-5xl mx-auto p-4 sm:p-6 md:p-12 lg:p-24 rounded-sm shadow-md border border-borderColor flex flex-col lg:flex-row items-center lg:items-start justify-center gap-4">
         <aside>
           <DayPilotNavigator
             selectMode="Day"
