@@ -30,5 +30,5 @@ transporter.verify((error, success) => {
 });
 
 app.listen(port, () => {
-  console.log(`🖥️  Server to manage emails is running on http://localhost:${port}`);
+  console.info(`🖥️  Server to manage emails is running on http://localhost:${port}`);
 });
