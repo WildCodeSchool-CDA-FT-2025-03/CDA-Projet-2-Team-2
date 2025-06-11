@@ -4,6 +4,7 @@ import { DayPilot } from '@daypilot/daypilot-lite-react';
 import { useSearchParams, useMatch } from 'react-router-dom';
 import { PatientAppointment } from '@/types/appointement.type';
 import { useCreateAppointmentMutation } from '@/types/graphql-generated';
+import { toast } from 'react-toastify';
 
 export function CreateAppointmentContext({ children }: { children: ReactNode }) {
   const patientMatch = useMatch('/secretary/patient/:id/appointment/create');
@@ -12,6 +13,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
   const DEFAULT_DEPARTMENT = '1';
   const [selectedDepartment, handleSelectedDepartment] = useState(DEFAULT_DEPARTMENT);
   const [params] = useSearchParams();
+  const [needToBeRefresh, setNeedToBeRefresh] = useState(false);
 
   const [SaveAppointment, setSaveAppointment] = useState<PatientAppointment>({
     user_id: '',
@@ -120,27 +122,42 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
    * fonction pour enregistrer un formulaire
    */
   const handleSubmitAppointment = useCallback(async () => {
+    if (!SaveAppointment.patient_id || !SaveAppointment.start || !SaveAppointment.appointmentType) {
+      toast.warn('Veuillez sélectionner un patient, un horaire et un motif de consultation.');
+      throw new Error('Validation manquante');
+    }
     // Logique de soumission du formulaire
     const timedebut = SaveAppointment.start;
     const timefin = SaveAppointment.end;
     const [hour1, minute1] = timedebut.split(':').map(Number);
     const [hour2, minute2] = timefin.split(':').map(Number);
     const minutesDifference = (hour2 - hour1) * 60 + (minute2 - minute1);
-    const { errors, data: dataSaveAppointment } = await createAppointment({
-      variables: {
-        appointmentInput: {
-          user_id: SaveAppointment.user_id,
-          start_time: selectedDay.toString().split('T')[0] + 'T' + SaveAppointment.start + ':00',
-          departement: selectedDepartment,
-          duration: minutesDifference,
-          appointmentType: SaveAppointment.appointmentType,
-          patient_id: SaveAppointment.patient_id, // Assurez-vous que l'ID est défini ou initialisé
-          created_by: '50', // ID de l'utilisateur qui crée le rendez-vous
+    try {
+      const { errors, data: dataSaveAppointment } = await createAppointment({
+        variables: {
+          appointmentInput: {
+            user_id: SaveAppointment.user_id,
+            start_time: selectedDay.toString().split('T')[0] + 'T' + SaveAppointment.start + ':00',
+            departement: selectedDepartment,
+            duration: minutesDifference,
+            appointmentType: SaveAppointment.appointmentType,
+            patient_id: SaveAppointment.patient_id,
+            created_by: '50', // à remplacer par l’ID du secrétaire connecté
+          },
         },
-      },
-    });
-    if (!dataSaveAppointment || errors) {
-      throw new Error('Erreur lors de la création du rendez-vous');
+      });
+
+      if (!dataSaveAppointment || errors) {
+        toast.error('Erreur lors de la création du rendez-vous.');
+        throw new Error('Erreur lors de la création du rendez-vous');
+      }
+
+      toast.success('Rendez-vous créé avec succès ! 🚀');
+      setNeedToBeRefresh(true);
+    } catch (error) {
+      console.error('Erreur lors de la création du rendez-vous :', error);
+      toast.error('Erreur lors de la création.');
+      throw error;
     }
   }, [SaveAppointment, createAppointment, selectedDepartment, selectedDay]);
 
@@ -155,6 +172,8 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
       handleAppointment,
       handleSelectedDay,
       handleSubmitAppointment,
+      setNeedToBeRefresh,
+      needToBeRefresh,
     }),
     [
       selectedDepartment,
@@ -166,6 +185,8 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
       handleAppointment,
       handleSelectedDay,
       handleSubmitAppointment,
+      setNeedToBeRefresh,
+      needToBeRefresh,
     ],
   );
   return <AppointmentContext.Provider value={contextValue}>{children}</AppointmentContext.Provider>;
