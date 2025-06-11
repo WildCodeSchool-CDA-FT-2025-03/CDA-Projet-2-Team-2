@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import {
   useGetUserByIdQuery,
@@ -17,8 +17,7 @@ import DateTimeSection from '@/components/appointement/DateTimeSection';
 import { Patient } from '@/types/patient.type';
 
 export default function NewAppointementByDoctorContent() {
-  const [params] = useSearchParams();
-  const doctorIdString = params.get('doctor') ?? '';
+  const { id: doctorIdString } = useParams();
   const doctorId = doctorIdString ? parseInt(doctorIdString, 10) : undefined;
 
   const { selectedDay, handleSelectedDay, SaveAppointment, handleAppointment } =
@@ -29,7 +28,7 @@ export default function NewAppointementByDoctorContent() {
     loading: doctorLoading,
     error: doctorError,
   } = useGetUserByIdQuery({
-    variables: { id: doctorIdString },
+    variables: { id: doctorIdString || '' },
     skip: !doctorIdString,
   });
 
