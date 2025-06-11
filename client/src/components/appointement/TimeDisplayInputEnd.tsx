@@ -8,7 +8,7 @@ export default function TimeDisplayInputEnd() {
       <label htmlFor="end-time" className="text-sm text-blue-900 font-semibold">
         Fin
       </label>
-      <div className="relative w-[134px] h-[60px]">
+      <div className="relative w-[136px] h-[60px]">
         <img
           src="/alarm-clock-off.svg"
           alt="Icône fin"
