@@ -1,5 +1,6 @@
 import { Resolver, Query, Arg, Authorized, Mutation } from 'type-graphql';
 import { GraphQLError } from 'graphql';
+import log from '../utils/log';
 import { Appointment, AppointmentStatus } from '../entities/appointment.entity';
 import { Between, Equal, MoreThan, LessThan } from 'typeorm';
 import { UserRole, User } from '../entities/user.entity';
@@ -168,24 +169,44 @@ export class AppointmentResolver {
         },
       });
     }
+    const start_date_input = new Date(appointmentInput.start_time);
+    const now = new Date();
+    const threeMonthsLater = new Date();
+    threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
+    if (start_date_input >= now && start_date_input < threeMonthsLater) {
+      try {
+        const appointment = new Appointment();
+        appointment.start_time = start_date_input;
+        appointment.duration = appointmentInput.duration;
+        appointment.status = appointmentInput.status || AppointmentStatus.CONFIRMED;
+        appointment.doctor = checkDoctor; // Docteur
+        appointment.patient = checkPatient; // Patient
+        appointment.created_by = checkSecretary; // Secretaire
+        appointment.status = AppointmentStatus.CONFIRMED;
+        appointment.departement = checkDoctor.departement; // Docteur service
+        appointment.appointmentType = checkAppointmentType; // Rendez-vous type
+        const appointmentreturn = await appointment.save();
 
-    try {
-      const appointment = new Appointment();
-      appointment.start_time = new Date(appointmentInput.start_time);
-      appointment.duration = appointmentInput.duration;
-      appointment.status = appointmentInput.status || AppointmentStatus.CONFIRMED;
-      appointment.doctor = checkDoctor; // Doctor ID
-      appointment.patient = checkPatient;
-      appointment.created_by = checkSecretary; // secretaire ID
-      appointment.status = AppointmentStatus.CONFIRMED;
-      appointment.departement = checkDoctor.departement;
-      appointment.appointmentType = checkAppointmentType; // Appointment type ID
-      return appointment.save();
-    } catch (error) {
+        await log('Création rendez-vous', {
+          created_by: checkSecretary.id,
+          appointment: appointmentreturn.id,
+          patient: checkPatient.id,
+          doctor: checkDoctor.id,
+        });
+
+        return appointmentreturn;
+      } catch (error) {
+        throw new GraphQLError(`Échec de la création de du rendez-vous`, {
+          extensions: {
+            code: 'APPOINTMENT_CREATION_FAILED',
+            originalError: error.message,
+          },
+        });
+      }
+    } else {
       throw new GraphQLError(`Échec de la création de du rendez-vous`, {
         extensions: {
           code: 'APPOINTMENT_CREATION_FAILED',
-          originalError: error.message,
         },
       });
     }

@@ -7,7 +7,7 @@ type ModuleListProps<T> = {
 
 export default function ModuleList<T>({ data, renderItem, getKey }: ModuleListProps<T>) {
   return (
-    <ul className="border-l-4 border-blue rounded-md shadow-sm divide-y divide-gray-100 w-full max-w-md mx-auto bg-white space-y-2">
+    <ul className="border-l-4 border-blue rounded-md shadow-sm divide-y divide-gray-100 w-full mx-auto bg-white space-y-2">
       {data.map((item, index) => (
         <li
           key={getKey(item)}

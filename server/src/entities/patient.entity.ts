@@ -68,7 +68,7 @@ export class Patient extends BaseEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @Field(() => City)
+  @Field(() => City, { nullable: true })
   @ManyToOne(() => City, (city) => city.patients)
   city: City;
 
