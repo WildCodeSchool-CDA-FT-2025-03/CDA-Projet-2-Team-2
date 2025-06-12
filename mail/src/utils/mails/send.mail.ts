@@ -23,26 +23,3 @@ export const sendEmailByTemplate = async ({
     html: emailHtml,
   });
 };
-
-export const sendAppointementConfirmation = async (
-  email: string,
-  doctor: string,
-  date: string,
-  hour: string
-): Promise<void> => {
-  const subject = 'Confirmation de votre rendez-vous';
-  const emailTemplate = 'appointementConfirmation.ejs';
-
-  const dataTemplate = {
-    doctor,
-    date,
-    hour,
-  };
-
-  await sendEmailByTemplate({
-    email,
-    subject,
-    emailTemplate,
-    dataTemplate,
-  });
-};
