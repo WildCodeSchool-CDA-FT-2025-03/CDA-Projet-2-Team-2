@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DayPilot, DayPilotCalendar, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
@@ -14,6 +14,7 @@ import { useSearchPatientsQuery, useSearchDoctorsQuery } from '@/types/graphql-g
 import { Doctor } from '@/types/doctor.type';
 import { Patient } from '@/types/patient.type';
 import ConfirmationModal from '../modals/ConfirmationModal';
+import { useAppointmentContext } from '@/hooks/useAppointment';
 
 type EventClickArgs = {
   e: {
@@ -46,7 +47,19 @@ export default function AgendaWithNavigator() {
   const doctorIds = useMemo(() => visibleResources.map(r => Number(r.id)), [visibleResources]);
   const selectedDate = useMemo(() => startDate.toDate(), [startDate]);
 
-  const { appointments } = useAppointmentsData(doctorIds, selectedDate);
+  const { appointments, refetch: refetchAppointments } = useAppointmentsData(
+    doctorIds,
+    selectedDate,
+  );
+
+  const { needToBeRefresh, setNeedToBeRefresh } = useAppointmentContext();
+
+  useEffect(() => {
+    if (needToBeRefresh) {
+      refetchAppointments();
+      setNeedToBeRefresh(false);
+    }
+  }, [needToBeRefresh, refetchAppointments, setNeedToBeRefresh]);
 
   const {
     data: patientData,
