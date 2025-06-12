@@ -145,6 +145,16 @@
   .calendar_default_cornerright {
     height: 50px !important;
   }
+
+  .navigator_default_main {
+    border: 0px !important;
+  }
+
+  .navigator_default_title,
+  .navigator_default_titleleft,
+  .navigator_default_titleright {
+    border-top: 0px !important;
+  }
 }
 
 /******* CALENDAR ELEMENT WITHOUT TAILWIND **********/
