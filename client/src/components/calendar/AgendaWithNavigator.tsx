@@ -8,16 +8,14 @@ import useResources from '@/hooks/useResources';
 import useSyncAgendaWithLegalLimit from '@/hooks/useSyncAgendaWithLegalLimit';
 import { useAppointmentContext } from '@/hooks/useAppointment';
 
-import { useSearchPatientsQuery, useSearchDoctorsQuery } from '@/types/graphql-generated';
 import type { Appointment } from '@/types/CalendarEvent.type';
-import type { Patient } from '@/types/patient.type';
-import type { Doctor } from '@/types/doctor.type';
 
 import AgendaHeader from './AgendaHeader';
 import AgendaPagination from './AgendaPagination';
 import AgendaCalendar from './AgendaCalendar';
 import AgendaDateNavigator from './AgendaDateNavigator';
 import ConfirmationModal from '../modals/ConfirmationModal';
+import useSearchSources from '@/hooks/useSearchSources';
 
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = '1';
@@ -64,40 +62,7 @@ export default function AgendaWithNavigator() {
     }
   }, [needToBeRefresh, refetchAppointments, setNeedToBeRefresh]);
 
-  const {
-    data: patientData,
-    loading: loadingPatients,
-    error: errorPatients,
-  } = useSearchPatientsQuery({
-    variables: { query: searchQuery },
-    skip: searchQuery.length < 2,
-  });
-
-  const {
-    data: doctorData,
-    loading: loadingDoctors,
-    error: errorDoctors,
-  } = useSearchDoctorsQuery({
-    variables: { query: searchQuery },
-    skip: searchQuery.length < 2,
-  });
-
-  const searchSources = [
-    {
-      name: 'Patients',
-      items: (patientData?.searchPatients ?? []) as Array<Patient | Doctor>,
-      loading: loadingPatients,
-      error: errorPatients?.message ?? null,
-      getKey: (patient: Patient | Doctor) => `patient-${patient.id}`,
-    },
-    {
-      name: 'Médecins',
-      items: (doctorData?.searchDoctors ?? []) as Array<Patient | Doctor>,
-      loading: loadingDoctors,
-      error: errorDoctors?.message ?? null,
-      getKey: (doctor: Patient | Doctor) => `doctor-${doctor.id}`,
-    },
-  ];
+  const searchSources = useSearchSources(searchQuery);
 
   function handleEventClick(args: { e: { data: Appointment } }) {
     const event = args.e.data;
