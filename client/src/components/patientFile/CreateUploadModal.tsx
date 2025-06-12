@@ -108,7 +108,7 @@ export default function CreateUploadModal({
                 Annuler
               </button>
               <button type="submit" className="cta mx-auto">
-                Submit
+                Valider
               </button>
             </div>
           </form>
