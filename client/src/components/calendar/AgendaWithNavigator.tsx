@@ -1,20 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DayPilot } from '@daypilot/daypilot-lite-react';
+import { useNavigate } from 'react-router-dom';
+
 import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import useResources from '@/hooks/useResources';
-import type { Appointment } from '@/types/CalendarEvent.type';
-import { useNavigate } from 'react-router-dom';
-import { useSearchPatientsQuery, useSearchDoctorsQuery } from '@/types/graphql-generated';
-import { Doctor } from '@/types/doctor.type';
-import { Patient } from '@/types/patient.type';
-import ConfirmationModal from '../modals/ConfirmationModal';
-import { useAppointmentContext } from '@/hooks/useAppointment';
 import useSyncAgendaWithLegalLimit from '@/hooks/useSyncAgendaWithLegalLimit';
+import { useAppointmentContext } from '@/hooks/useAppointment';
+
+import { useSearchPatientsQuery, useSearchDoctorsQuery } from '@/types/graphql-generated';
+import type { Appointment } from '@/types/CalendarEvent.type';
+import type { Patient } from '@/types/patient.type';
+import type { Doctor } from '@/types/doctor.type';
+
 import AgendaHeader from './AgendaHeader';
 import AgendaPagination from './AgendaPagination';
 import AgendaCalendar from './AgendaCalendar';
 import AgendaDateNavigator from './AgendaDateNavigator';
+import ConfirmationModal from '../modals/ConfirmationModal';
 
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = '1';
@@ -24,14 +27,19 @@ export default function AgendaWithNavigator() {
   const [isOpen, setIsOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [showAddPatientModal, setShowAddPatientModal] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: '', message: '', onConfirm: () => {} });
+  const [modalContent, setModalContent] = useState({
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
+
   const navigate = useNavigate();
 
   const {
-    selectedAgendaDate: startDate, // <- the central state: the selected date
-    handleDateSelectionWithLimit, // <- secure date selection function
-    agendaCalendarRef: calendarRef, // <- ref to manipulate
-    agendaNavigatorRef: navigatorRef, // <- ref to manipulate
+    selectedAgendaDate: startDate,
+    handleDateSelectionWithLimit,
+    agendaCalendarRef: calendarRef,
+    agendaNavigatorRef: navigatorRef,
   } = useSyncAgendaWithLegalLimit((title, message, onConfirm) => {
     setModalContent({ title, message, onConfirm });
     setModalOpen(true);
@@ -79,14 +87,14 @@ export default function AgendaWithNavigator() {
       name: 'Patients',
       items: (patientData?.searchPatients ?? []) as Array<Patient | Doctor>,
       loading: loadingPatients,
-      error: errorPatients ? errorPatients.message : null,
+      error: errorPatients?.message ?? null,
       getKey: (patient: Patient | Doctor) => `patient-${patient.id}`,
     },
     {
       name: 'Médecins',
       items: (doctorData?.searchDoctors ?? []) as Array<Patient | Doctor>,
       loading: loadingDoctors,
-      error: errorDoctors ? errorDoctors.message : null,
+      error: errorDoctors?.message ?? null,
       getKey: (doctor: Patient | Doctor) => `doctor-${doctor.id}`,
     },
   ];
@@ -150,7 +158,7 @@ export default function AgendaWithNavigator() {
         searchSources={searchSources}
       />
 
-      {/* DESKTOP PAGINATION CONTROLS*/}
+      {/* DESKTOP PAGINATION CONTROLS */}
       <section
         className="hidden lg:flex justify-end items-center gap-4 mb-4"
         role="navigation"
