@@ -31,7 +31,7 @@ export default function AgendaHeader({
   searchSources,
 }: AgendaHeaderProps) {
   return (
-    <section className="flex flex-col md:flex-row lg:justify-between md:items-center gap-4 mb-6">
+    <section className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
       <div className="flex justify-center lg:justify-start w-full">
         <DepartmentSelect
           value={selectedDepartment}
@@ -55,7 +55,7 @@ export default function AgendaHeader({
         )}
       </div>
 
-      <div className="flex justify-center md:justify-end w-full">
+      <div className="flex justify-center lg:justify-end w-full">
         <div className="w-full max-w-xs">
           <SearchBar<Patient | Doctor>
             placeholder="Rechercher un patient ou un médecin..."
