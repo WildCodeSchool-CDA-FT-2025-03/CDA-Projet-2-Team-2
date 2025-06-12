@@ -187,6 +187,25 @@ export class AppointmentResolver {
         appointment.appointmentType = checkAppointmentType; // Rendez-vous type
         const appointmentreturn = await appointment.save();
 
+        try {
+          const response = await fetch(`${process.env.SERVER_SEND_MAIL}/mail/appointment/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: checkPatient.email,
+              doctor: `${checkDoctor.firstname} ${checkDoctor.lastname}`,
+              date: appointment.start_time.toISOString().split('T')[0],
+              hour: appointment.start_time.toISOString().split('T')[1].slice(0, 5), // HH:MM
+            }),
+          });
+
+          if (!response.ok) {
+            console.error('Échec de l’envoi du mail de confirmation de rendez-vous');
+          }
+        } catch (mailError) {
+          console.error('Erreur lors de l’appel à l’API mail :', mailError);
+        }
+
         await log('Création rendez-vous', {
           created_by: checkSecretary.id,
           appointment: appointmentreturn.id,

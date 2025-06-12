@@ -152,22 +152,6 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
         toast.error('Erreur lors de la création du rendez-vous.');
         throw new Error('Erreur lors de la création du rendez-vous');
       }
-
-      // 🚀 SENDING CONFIRMATION EMAIL TO PATIENT 🚀
-      await fetch(`${import.meta.env.VITE_SERVER_API_MAIL}/mail/appointment/create`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: dataSaveAppointment.createAppointment.patient.email,
-          doctor:
-            dataSaveAppointment.createAppointment.doctor.firstname +
-            ' ' +
-            dataSaveAppointment.createAppointment.doctor.lastname,
-          date: SaveAppointment.date,
-          hour: SaveAppointment.start,
-        }),
-      });
-
       toast.success('Rendez-vous créé avec succès ! 🚀');
       setNeedToBeRefresh(true);
     } catch (error) {
