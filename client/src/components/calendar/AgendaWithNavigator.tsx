@@ -230,7 +230,10 @@ export default function AgendaWithNavigator() {
       </section>
 
       <section className="flex flex-col lg:flex-row gap-10 mt-6">
-        <aside aria-label="Navigateur de date" className="flex justify-center lg:justify-start">
+        <aside
+          aria-label="Navigateur de date"
+          className="flex justify-center lg:justify-start bg-white border-1 p-7 rounded-md border-gray-300"
+        >
           <DayPilotNavigator
             selectMode="Day"
             showMonths={1}
