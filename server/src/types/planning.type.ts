@@ -6,7 +6,7 @@ export class CreatePlanningInput {
   start: string;
 
   @Field(() => String, { nullable: true })
-  end: Date;
+  end: string;
 
   @Field(() => String, { nullable: true })
   monday_start: string;
