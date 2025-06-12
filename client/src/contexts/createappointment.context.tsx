@@ -132,6 +132,7 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
     const [hour1, minute1] = timedebut.split(':').map(Number);
     const [hour2, minute2] = timefin.split(':').map(Number);
     const minutesDifference = (hour2 - hour1) * 60 + (minute2 - minute1);
+
     try {
       const { errors, data: dataSaveAppointment } = await createAppointment({
         variables: {
@@ -151,6 +152,21 @@ export function CreateAppointmentContext({ children }: { children: ReactNode }) 
         toast.error('Erreur lors de la création du rendez-vous.');
         throw new Error('Erreur lors de la création du rendez-vous');
       }
+
+      // 🚀 SENDING CONFIRMATION EMAIL TO PATIENT 🚀
+      await fetch(`${import.meta.env.VITE_SERVER_API_MAIL}/mail/appointment/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: dataSaveAppointment.createAppointment.patient.email,
+          doctor:
+            dataSaveAppointment.createAppointment.doctor.firstname +
+            ' ' +
+            dataSaveAppointment.createAppointment.doctor.lastname,
+          date: SaveAppointment.date,
+          hour: SaveAppointment.start,
+        }),
+      });
 
       toast.success('Rendez-vous créé avec succès ! 🚀');
       setNeedToBeRefresh(true);
