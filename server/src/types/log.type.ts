@@ -9,7 +9,7 @@ export class Log {
   titre: string;
 
   @Field(() => String)
-  metadata: string; // JSON string representation
+  metadata: string;
 
   @Field()
   createAt?: string;
