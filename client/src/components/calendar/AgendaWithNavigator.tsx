@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { DayPilot, DayPilotCalendar, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
+import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import useResources from '@/hooks/useResources';
 import type { Appointment } from '@/types/CalendarEvent.type';
-import { roundStartToNextHalfHour } from '@/utils/roundStartToNextHalfHour';
 import { useNavigate } from 'react-router-dom';
 import { useSearchPatientsQuery, useSearchDoctorsQuery } from '@/types/graphql-generated';
 import { Doctor } from '@/types/doctor.type';
@@ -14,6 +13,7 @@ import { useAppointmentContext } from '@/hooks/useAppointment';
 import useSyncAgendaWithLegalLimit from '@/hooks/useSyncAgendaWithLegalLimit';
 import AgendaHeader from './AgendaHeader';
 import AgendaPagination from './AgendaPagination';
+import AgendaCalendar from './AgendaCalendar';
 
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = '1';
@@ -191,53 +191,14 @@ export default function AgendaWithNavigator() {
           />
         </section>
 
-        <article className="flex-1" aria-label="Agenda de tous les médecins et leurs rendez-vous">
-          <DayPilotCalendar
-            ref={calendarRef}
-            viewType="Resources"
-            startDate={startDate}
-            timeFormat="Clock24Hours"
-            locale="fr-fr"
-            columns={visibleResources.map(resource => ({
-              name: resource.name,
-              id: resource.id,
-              html: `
-                <div class="flex items-center gap-3 p-2">
-                  <img src="${resource.avatar}" alt="${resource.name}" class="w-8 h-8 object-cover" />
-                  <div>
-                    <div class="text-sm font-semibold text-blue">${resource.name}</div>
-                    <div class="text-xs text-gray-400">${resource.speciality}</div>
-                  </div>
-                </div>
-              `,
-            }))}
-            events={appointments.map((event: Appointment) => {
-              const doctorId = event.doctor_id;
-              const snappedStart = roundStartToNextHalfHour(event.start_time);
-              const snappedEnd = new Date(snappedStart);
-              snappedEnd.setMinutes(snappedStart.getMinutes() + 30);
-
-              return {
-                id: event.id,
-                text: event.patient_name,
-                html: `
-                  <div style="background-color: #e2e8f0; line-height:1.2;">
-                    <p style="font-weight: 600; font-size: 11px;">${event.patient_name}</p>
-                    <p style="color: #4b5563; font-size: 10px;">
-                      ${event.appointment_type}
-                      <span class="text-xs text-gray-400">Début: ${event.start_time.slice(11, 16)}</span>
-                    </p>
-                  </div>
-                `,
-                start: new DayPilot.Date(snappedStart.toISOString()),
-                end: new DayPilot.Date(snappedEnd.toISOString()),
-                resource: doctorId,
-              };
-            })}
-            onEventClick={handleEventClick}
-            onTimeRangeSelected={handleTimeRangeSelected}
-          />
-        </article>
+        <AgendaCalendar
+          calendarRef={calendarRef}
+          startDate={startDate}
+          appointments={appointments}
+          visibleResources={visibleResources}
+          onEventClick={handleEventClick}
+          onTimeRangeSelected={handleTimeRangeSelected}
+        />
 
         <ConfirmationModal
           isOpen={modalOpen}
