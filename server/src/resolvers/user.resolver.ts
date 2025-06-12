@@ -186,13 +186,10 @@ export class UserResolver {
     });
   }
 
-  @Mutation(() => User)
+  @Mutation(() => Boolean)
   @Authorized([UserRole.ADMIN])
   @UseMiddleware(AuthMiddleware)
-  async createUser(
-    @Ctx() context: { user: User },
-    @Arg('input') input: CreateUserInput,
-  ): Promise<User> {
+  async createUser(@Ctx() context: { user: User }, @Arg('input') input: CreateUserInput) {
     const userExist = await User.findOneBy({ email: input.email });
     if (userExist) {
       throw new GraphQLError('User with this email already exists', {
@@ -208,17 +205,8 @@ export class UserResolver {
       throw new GraphQLError('Department not found');
     }
     try {
-      const newUser = new User();
       await dataSource.transaction(async (transactionalEntityManager) => {
-        newUser.email = input.email;
-        newUser.firstname = input.firstname;
-        newUser.lastname = input.lastname;
-        newUser.role = input.role as UserRole;
-        newUser.gender = input.gender;
-        newUser.tel = input.tel;
-        newUser.activationDate = input.activationDate ?? new Date().toDateString();
-        newUser.status = input.status as UserStatus;
-        newUser.departement = departement;
+        const newUser = this.setUserData(new User(), input, departement);
         await transactionalEntityManager.save(newUser);
         await log('User created', {
           userId: newUser.id,
@@ -228,8 +216,7 @@ export class UserResolver {
         });
 
         if (input.role === UserRole.DOCTOR && input.plannings) {
-          const planning = input.plannings[0];
-          const newPlanning = this.createPlanning(planning);
+          const newPlanning = this.createPlanning(new Planning(), input.plannings[0]);
           newPlanning.user = newUser;
           await transactionalEntityManager.save(newPlanning);
           await log('User planning created', {
@@ -240,7 +227,7 @@ export class UserResolver {
           });
         }
       });
-      return newUser;
+      return true;
     } catch (error) {
       console.error(error);
       throw new GraphQLError(`Échec de la création de l'utilisateur`, {
@@ -259,8 +246,7 @@ export class UserResolver {
     return `${timeStr.replace('h', ':')}:00`;
   }
 
-  createPlanning(input: Planning) {
-    const newPlanning = new Planning();
+  createPlanning(newPlanning: Planning, input: CreatePlanningInput) {
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
     days.forEach((day: string) => {
@@ -287,6 +273,52 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @Authorized([UserRole.ADMIN])
+  @UseMiddleware(AuthMiddleware)
+  async updateUser(
+    @Ctx() context: { user: User },
+    @Arg('id') id: string,
+    @Arg('input') input: CreateUserInput,
+  ) {
+    const user = await User.findOne({
+      where: { id: +id },
+      relations: ['departement', 'plannings'],
+    });
+    if (!user) {
+      throw new GraphQLError('User non trouvé', {
+        extensions: {
+          code: 'User_NOT_FOUND',
+        },
+      });
+    }
+    try {
+      await dataSource.transaction(async (transactionalEntityManager) => {
+        const updateUser = this.setUserData(user, input, user.departement);
+        await transactionalEntityManager.save(updateUser);
+        if (user.role === UserRole.DOCTOR && input.plannings) {
+          const newPlanning = this.createPlanning(user.plannings[0], input.plannings[0]);
+          await transactionalEntityManager.save(newPlanning);
+        }
+
+        await log('User update', {
+          userId: updateUser.id,
+          email: updateUser.email,
+          role: updateUser.role,
+          createdBy: context.user.id,
+        });
+      });
+    } catch (error) {
+      throw new GraphQLError(`Échec de la mise à jour de l'utilisateur`, {
+        extensions: {
+          code: 'USER_UPDATE_FAILED',
+          originalError: error.message,
+        },
+      });
+    }
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @Authorized([UserRole.ADMIN])
   async changeStatusStatus(@Arg('id') id: string) {
     const user = await User.findOneBy({ id: +id });
     if (!user) {
@@ -301,5 +333,20 @@ export class UserResolver {
 
     await User.update({ id: user.id }, { ...user });
     return true;
+  }
+
+  setUserData(user: User, input: CreateUserInput, departement: Departement) {
+    if (user.email !== input.email) {
+      user.email = input.email;
+    }
+    user.firstname = input.firstname;
+    user.lastname = input.lastname;
+    user.role = input.role as UserRole;
+    user.gender = input.gender;
+    user.tel = input.tel;
+    user.activationDate = input.activationDate ?? new Date().toDateString();
+    user.status = input.status as UserStatus;
+    user.departement = departement;
+    return user;
   }
 }

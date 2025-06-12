@@ -42,21 +42,7 @@ export const GET_USER_BY_ID = gql`
 
 export const CREATE_USER = gql`
   mutation CreateUser($input: CreateUserInput!) {
-    createUser(input: $input) {
-      id
-      email
-      role
-      departement {
-        label
-        id
-      }
-      firstname
-      lastname
-      status
-      activationDate
-      gender
-      tel
-    }
+    createUser(input: $input)
   }
 `;
 
