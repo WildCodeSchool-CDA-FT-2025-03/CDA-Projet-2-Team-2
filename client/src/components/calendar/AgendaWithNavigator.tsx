@@ -5,6 +5,7 @@ import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import PaginationControls from './PaginationControls';
 import useResources from '@/hooks/useResources';
 import DepartmentSelect from '@/components/form/DepartmentSelect';
+import CreatePatient from '@/components/patientFile/CreatePatient';
 import SearchBar from '@/components/form/SearchBar';
 import type { Appointment } from '@/types/CalendarEvent.type';
 import { roundStartToNextHalfHour } from '@/utils/roundStartToNextHalfHour';
@@ -98,6 +99,7 @@ export default function AgendaWithNavigator() {
     },
   ];
   const [modalOpen, setModalOpen] = useState(false);
+  const [showAddPatientModal, setshowAddPatientModal] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', message: '', onConfirm: () => {} });
   const navigate = useNavigate();
 
@@ -145,6 +147,23 @@ export default function AgendaWithNavigator() {
               setCurrentPage(0);
             }}
           />
+          <button
+            type="button"
+            className="px-3 py-1 bg-blue text-white cursor-pointer rounded-md h-10 mt-8 ml-8"
+            onClick={() => setshowAddPatientModal(true)}
+            aria-label="Ajouter un document administratif"
+          >
+            Créer un patient
+          </button>
+          {showAddPatientModal && (
+            <div className="fixed inset-0 z-50 flex justify-center  items-center bg-bgModalColor backdrop-blur-xs">
+              <CreatePatient
+                onClose={() => {
+                  setshowAddPatientModal(false);
+                }}
+              />
+            </div>
+          )}
         </div>
         <div className="flex justify-center md:justify-end w-full">
           <div className="w-full max-w-xs">
