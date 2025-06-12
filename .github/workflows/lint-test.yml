@@ -108,6 +108,7 @@ jobs:
           npm run install:client
           npm run install:server
           npm run install:mail
+          npm run install:upload
 
       - name: Check Client Formatting
         run: npm run format:client
