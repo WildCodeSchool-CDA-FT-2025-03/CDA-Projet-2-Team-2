@@ -94,6 +94,16 @@ export const MUTATION_CREATE_APPOINTMENT = gql`
   mutation createAppointment($appointmentInput: AppointmentCreateInput!) {
     createAppointment(appointmentInput: $appointmentInput) {
       id
+      start_time
+      patient {
+        email
+        firstname
+        lastname
+      }
+      doctor {
+        firstname
+        lastname
+      }
     }
   }
 `;
