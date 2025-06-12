@@ -240,7 +240,22 @@ export default function AgendaWithNavigator() {
             skipMonths={1}
             locale="fr-fr"
             selectionDay={startDate}
-            onTimeRangeSelected={args => setStartDate(args.day)}
+            onTimeRangeSelected={args => {
+              const selected = args.day;
+              const today = DayPilot.Date.today();
+              const threeMonthsLater = today.addMonths(3);
+
+              if (selected > threeMonthsLater) {
+                setModalContent({
+                  title: 'Date indisponible',
+                  message: `Les rendez-vous ne sont disponibles que jusqu'à ${threeMonthsLater.toString('dd/MM/yyyy')}.`,
+                  onConfirm: () => {}, // No action needed
+                });
+                setModalOpen(true);
+              } else {
+                setStartDate(selected);
+              }
+            }}
           />
         </aside>
 
