@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { DayPilot, DayPilotCalendar, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
-import PaginationControls from './PaginationControls';
 import useResources from '@/hooks/useResources';
 import type { Appointment } from '@/types/CalendarEvent.type';
 import { roundStartToNextHalfHour } from '@/utils/roundStartToNextHalfHour';
@@ -14,6 +13,7 @@ import ConfirmationModal from '../modals/ConfirmationModal';
 import { useAppointmentContext } from '@/hooks/useAppointment';
 import useSyncAgendaWithLegalLimit from '@/hooks/useSyncAgendaWithLegalLimit';
 import AgendaHeader from './AgendaHeader';
+import AgendaPagination from './AgendaPagination';
 
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = '1';
@@ -149,16 +149,18 @@ export default function AgendaWithNavigator() {
         searchSources={searchSources}
       />
 
+      {/* DESKTOP PAGINATION CONTROLS*/}
       <section
         className="hidden lg:flex justify-end items-center gap-4 mb-4"
         role="navigation"
         aria-label="Pagination desktop"
       >
-        <PaginationControls
+        <AgendaPagination
           currentPage={currentPage}
           onPageChange={setCurrentPage}
           pageSize={pageSize}
           totalItems={resources.length}
+          isMobile={false}
         />
       </section>
 
@@ -178,13 +180,14 @@ export default function AgendaWithNavigator() {
           />
         </aside>
 
-        <section className="lg:hidden" role="navigation" aria-label="Pagination mobile">
-          <PaginationControls
+        {/* MOBILE PAGINATION CONTROLS */}
+        <section className="lg:hidden mb-4" role="navigation" aria-label="Pagination mobile">
+          <AgendaPagination
             currentPage={currentPage}
             onPageChange={setCurrentPage}
             pageSize={pageSize}
             totalItems={resources.length}
-            className="mb-4"
+            isMobile={true}
           />
         </section>
 
