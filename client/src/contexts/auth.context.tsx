@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setUser(null);
-    // Then i will remove the token from the backend in a other PR to not make to much 🦉
+    // Then i will remove the token from the backend in a other PR too not make to much 🦉
   }, [setUser]);
 
   const contextValue = useMemo<AuthContextType>(
