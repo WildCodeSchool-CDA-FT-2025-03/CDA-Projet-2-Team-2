@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { DayPilot, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
+import { DayPilot } from '@daypilot/daypilot-lite-react';
 import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import useResources from '@/hooks/useResources';
@@ -14,6 +14,7 @@ import useSyncAgendaWithLegalLimit from '@/hooks/useSyncAgendaWithLegalLimit';
 import AgendaHeader from './AgendaHeader';
 import AgendaPagination from './AgendaPagination';
 import AgendaCalendar from './AgendaCalendar';
+import AgendaDateNavigator from './AgendaDateNavigator';
 
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = '1';
@@ -165,20 +166,11 @@ export default function AgendaWithNavigator() {
       </section>
 
       <section className="flex flex-col lg:flex-row gap-10 mt-6">
-        <aside
-          aria-label="Navigateur de date"
-          className="flex justify-center lg:justify-start bg-white border-1 p-7 rounded-md border-gray-300"
-        >
-          <DayPilotNavigator
-            ref={navigatorRef}
-            selectMode="Day"
-            showMonths={1}
-            skipMonths={1}
-            locale="fr-fr"
-            selectionDay={startDate}
-            onTimeRangeSelected={args => handleDateSelectionWithLimit(args.day)}
-          />
-        </aside>
+        <AgendaDateNavigator
+          navigatorRef={navigatorRef}
+          startDate={startDate}
+          onDateSelect={handleDateSelectionWithLimit}
+        />
 
         {/* MOBILE PAGINATION CONTROLS */}
         <section className="lg:hidden mb-4" role="navigation" aria-label="Pagination mobile">
