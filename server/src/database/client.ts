@@ -9,6 +9,7 @@ import { Log } from '../entities/log.entity';
 import { PatientDoc } from '../entities/patient-doc.entity';
 import { DocType } from '../entities/doc-type.entity';
 import { DoctorAppointmentSlot } from '../entities/doctorAppointmentSlot.entity';
+import { Note } from '../entities/note.entity';
 
 import 'dotenv/config';
 import { Appointment } from '../entities/appointment.entity';
@@ -33,6 +34,7 @@ export const dataSource = new DataSource({
     DocType,
     PatientDoc,
     DoctorAppointmentSlot,
+    Note,
   ],
   synchronize: true,
   migrations: ['src/database/migrations/*.ts'],
