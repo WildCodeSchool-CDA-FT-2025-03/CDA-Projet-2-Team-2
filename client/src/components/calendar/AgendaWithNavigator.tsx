@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DayPilot, DayPilotCalendar, DayPilotNavigator } from '@daypilot/daypilot-lite-react';
 import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import PaginationControls from './PaginationControls';
 import useResources from '@/hooks/useResources';
 import DepartmentSelect from '@/components/form/DepartmentSelect';
+import CreatePatient from '@/components/patientFile/CreatePatient';
 import SearchBar from '@/components/form/SearchBar';
 import type { Appointment } from '@/types/CalendarEvent.type';
 import { roundStartToNextHalfHour } from '@/utils/roundStartToNextHalfHour';
@@ -13,6 +14,7 @@ import { useSearchPatientsQuery, useSearchDoctorsQuery } from '@/types/graphql-g
 import { Doctor } from '@/types/doctor.type';
 import { Patient } from '@/types/patient.type';
 import ConfirmationModal from '../modals/ConfirmationModal';
+import { useAppointmentContext } from '@/hooks/useAppointment';
 
 type EventClickArgs = {
   e: {
@@ -45,7 +47,19 @@ export default function AgendaWithNavigator() {
   const doctorIds = useMemo(() => visibleResources.map(r => Number(r.id)), [visibleResources]);
   const selectedDate = useMemo(() => startDate.toDate(), [startDate]);
 
-  const { appointments } = useAppointmentsData(doctorIds, selectedDate);
+  const { appointments, refetch: refetchAppointments } = useAppointmentsData(
+    doctorIds,
+    selectedDate,
+  );
+
+  const { needToBeRefresh, setNeedToBeRefresh } = useAppointmentContext();
+
+  useEffect(() => {
+    if (needToBeRefresh) {
+      refetchAppointments();
+      setNeedToBeRefresh(false);
+    }
+  }, [needToBeRefresh, refetchAppointments, setNeedToBeRefresh]);
 
   const {
     data: patientData,
@@ -85,6 +99,7 @@ export default function AgendaWithNavigator() {
     },
   ];
   const [modalOpen, setModalOpen] = useState(false);
+  const [showAddPatientModal, setshowAddPatientModal] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', message: '', onConfirm: () => {} });
   const navigate = useNavigate();
 
@@ -111,7 +126,7 @@ export default function AgendaWithNavigator() {
     setModalContent({
       title: 'Créer un rendez-vous',
       message: `Souhaitez-vous créer un rendez-vous le ${date.slice(0, 16).replace('T', ' à ')} ?`,
-      onConfirm: () => navigate(`/secretary/appointement/create?doctor=${doctorId}&date=${date}`),
+      onConfirm: () => navigate(`/secretary/doctor/${doctorId}/appointment/create?date=${date}`),
     });
 
     setModalOpen(true);
@@ -132,6 +147,23 @@ export default function AgendaWithNavigator() {
               setCurrentPage(0);
             }}
           />
+          <button
+            type="button"
+            className="px-3 py-1 bg-blue text-white cursor-pointer rounded-md h-10 mt-8 ml-8"
+            onClick={() => setshowAddPatientModal(true)}
+            aria-label="Ajouter un document administratif"
+          >
+            Créer un patient
+          </button>
+          {showAddPatientModal && (
+            <div className="fixed inset-0 z-50 flex justify-center  items-center bg-bgModalColor backdrop-blur-xs">
+              <CreatePatient
+                onClose={() => {
+                  setshowAddPatientModal(false);
+                }}
+              />
+            </div>
+          )}
         </div>
         <div className="flex justify-center md:justify-end w-full">
           <div className="w-full max-w-xs">
@@ -165,7 +197,7 @@ export default function AgendaWithNavigator() {
                   const doctor = item as Doctor;
                   return (
                     <Link
-                      to="/secretary-dashboard"
+                      to="/secretary"
                       className="block p-2 border-b last:border-b-0 hover:bg-gray-100"
                       onClick={onSelect}
                     >
@@ -198,7 +230,10 @@ export default function AgendaWithNavigator() {
       </section>
 
       <section className="flex flex-col lg:flex-row gap-10 mt-6">
-        <aside aria-label="Navigateur de date" className="flex justify-center lg:justify-start">
+        <aside
+          aria-label="Navigateur de date"
+          className="flex justify-center lg:justify-start bg-white border-1 p-7 rounded-md border-gray-300"
+        >
           <DayPilotNavigator
             selectMode="Day"
             showMonths={1}

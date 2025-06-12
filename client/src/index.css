@@ -90,7 +90,7 @@
   }
 
   .standard-button {
-    @apply w-auto h-10 px-4 py-2 text-white bg-blue hover:bg-white hover:text-blue hover:border-blue focus:bg-white focus:text-blue focus:border-blue border-2 rounded-[6px] transition duration-300 ease-in-out;
+    @apply w-auto h-10 px-4 py-2 text-white bg-blue hover:bg-white hover:text-blue hover:border-blue focus:bg-white focus:text-blue focus:border-blue border-2 border-blue rounded-[6px] transition duration-300 ease-in-out;
   }
 
   .standard-button-red {
@@ -144,6 +144,16 @@
   .calendar_default_corner,
   .calendar_default_cornerright {
     height: 50px !important;
+  }
+
+  .navigator_default_main {
+    border: 0px !important;
+  }
+
+  .navigator_default_title,
+  .navigator_default_titleleft,
+  .navigator_default_titleright {
+    border-top: 0px !important;
   }
 }
 

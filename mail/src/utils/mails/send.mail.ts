@@ -1,4 +1,3 @@
-import path from 'path';
 import { sendEmail } from '../transporter';
 import ejs from 'ejs';
 
@@ -6,7 +5,7 @@ type EmailOptions = {
   email: string;
   subject: string;
   emailTemplate: string; // 💡 represents file that represents the body of the email to be sent (.ejs file)
-  dataTemplate: { url: string }; // 💡 object that represents the values ​​to include in the body of the email (for exemple, username or any other value)
+  dataTemplate: { url: string }; //
 };
 export const sendEmailByTemplate = async ({
   email,
