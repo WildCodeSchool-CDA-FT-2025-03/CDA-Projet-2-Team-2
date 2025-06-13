@@ -10,7 +10,6 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Détecter la taille d'écran
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -22,14 +21,12 @@ export default function Header() {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  // Fermer le menu quand on passe en desktop
   useEffect(() => {
     if (!isMobile) {
       setIsMenuOpen(false);
     }
   }, [isMobile]);
 
-  // Fermer le menu au clic sur un lien
   const handleMenuItemClick = () => {
     setIsMenuOpen(false);
   };
@@ -51,7 +48,6 @@ export default function Header() {
           </span>
         </div>
 
-        {/* Menu Desktop */}
         <div className="hidden md:flex items-center gap-6">
           <div className="flex items-center gap-3">
             <LinkButton />
@@ -64,7 +60,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Burger Menu Button */}
         <div className="md:hidden">
           <motion.button
             onClick={toggleMenu}
@@ -83,11 +78,9 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Menu Mobile */}
       <AnimatePresence>
         {isMenuOpen && isMobile && (
           <>
-            {/* Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -97,7 +90,6 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             />
 
-            {/* Menu Panel */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -106,7 +98,6 @@ export default function Header() {
               className="absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 z-50"
             >
               <div className="px-6 py-4 space-y-4">
-                {/* Message de bienvenue sur mobile */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -119,7 +110,6 @@ export default function Header() {
                   </span>
                 </motion.div>
 
-                {/* Navigation Items */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
