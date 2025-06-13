@@ -1,6 +1,6 @@
 import Logo from '@/components/Logo';
 import { useAuth } from '@/hooks/useAuth';
-import { LinkButton } from './LinkButton';
+import { LinkButton } from '@/components/layout/LinkButton';
 
 export default function Header() {
   const { user, logout } = useAuth();
