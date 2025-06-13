@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <header className="w-full px-6 py-3" role="banner">
       <div className="flex items-center justify-between">
-        <Link to={rolePath} className="flex items-center gap-4">
+        <Link to={rolePath === '/' ? '/login' : rolePath} className="flex items-center gap-4">
           <Logo />
           <p className="text-blue font-medium">
             Bienvenue{' '}
