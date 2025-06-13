@@ -25,6 +25,23 @@ export default function AgendaDateNavigator({
         locale="fr-fr"
         selectionDay={startDate}
         onTimeRangeSelected={args => onDateSelect(args.day)}
+        onBeforeCellRender={args => {
+          const today = DayPilot.Date.today().getDatePart();
+
+          // Don't make disabled today
+          if (args.cell.isToday) return;
+
+          const cellDay = parseInt(args.cell.html);
+          const jsDate = startDate instanceof DayPilot.Date ? startDate.toDate() : startDate;
+          const year = jsDate.getFullYear();
+          const month = jsDate.getMonth();
+
+          const cellDate = new DayPilot.Date(new Date(year, month, cellDay)).getDatePart();
+
+          if (cellDate < today) {
+            args.cell.cssClass = 'past-date-disabled';
+          }
+        }}
       />
     </aside>
   );

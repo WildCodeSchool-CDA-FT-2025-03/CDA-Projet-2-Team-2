@@ -3,14 +3,13 @@ import { DayPilot, DayPilotCalendar, DayPilotNavigator } from '@daypilot/daypilo
 import { useNavigate } from 'react-router-dom';
 
 type UseSyncAgendaWithLegalLimit = {
-  selectedAgendaDate: DayPilot.Date; // <- the central state: the selected date
-  updateAgendaDate: (newDate: DayPilot.Date) => void; // <- to manually update the date
-  agendaCalendarRef: React.RefObject<DayPilotCalendar | null>; // <- ref to manipulate
-  agendaNavigatorRef: React.RefObject<DayPilotNavigator | null>; // <- ref to manipulate
-  handleDateSelectionWithLimit: (selectedDate: DayPilot.Date) => void; // <- secure date selection function
+  selectedAgendaDate: DayPilot.Date;
+  updateAgendaDate: (newDate: DayPilot.Date) => void;
+  agendaCalendarRef: React.RefObject<DayPilotCalendar | null>;
+  agendaNavigatorRef: React.RefObject<DayPilotNavigator | null>;
+  handleDateSelectionWithLimit: (selectedDate: DayPilot.Date) => void;
 };
 
-//Added: props to allow opening an external modal
 export default function useSyncAgendaWithLegalLimit(
   openModal?: (
     title: string,
@@ -26,38 +25,49 @@ export default function useSyncAgendaWithLegalLimit(
 
   const navigate = useNavigate();
 
+  const resetToToday = () => {
+    const today = DayPilot.Date.today();
+    setSelectedAgendaDate(today);
+    agendaCalendarRef.current?.control?.update({ startDate: today });
+    agendaNavigatorRef.current?.control?.select(today);
+    navigate('/secretary');
+  };
+
   const handleDateSelectionWithLimit = (selectedDate: DayPilot.Date) => {
     const today = DayPilot.Date.today();
-    const maxAllowedDate = today.addMonths(3);
-
+    const maxDate = today.addMonths(3);
     const calendar = agendaCalendarRef.current?.control;
     const navigator = agendaNavigatorRef.current?.control;
 
-    if (selectedDate > maxAllowedDate) {
-      // If a modal function is provided, it is called
+    // ❌ Date before today
+    if (selectedDate < today) {
       if (openModal) {
         openModal(
-          'Date non autorisée',
-          `Les rendez-vous ne peuvent pas dépasser le ${maxAllowedDate.toString('dd/MM/yyyy')}.`,
-          () => {
-            setSelectedAgendaDate(today);
-            calendar?.update({ startDate: today });
-            navigator?.select(today);
-            navigate('/secretary');
-          },
+          'Date invalide',
+          `Il est impossible de créer un rendez-vous pour une date antérieure à aujourd’hui (${today.toString('dd/MM/yyyy')}).`,
+          resetToToday,
         );
       } else {
-        // if no modal connected
-        setSelectedAgendaDate(today);
-        calendar?.update({ startDate: today });
-        navigator?.select(today);
-        navigate('/secretary');
+        resetToToday();
       }
-
       return;
     }
 
-    // Else, everything is fine.
+    // ❌ Date beyond the 3 month limit
+    if (selectedDate > maxDate) {
+      if (openModal) {
+        openModal(
+          'Date non autorisée',
+          `Les rendez-vous ne peuvent pas dépasser le ${maxDate.toString('dd/MM/yyyy')}.`,
+          resetToToday,
+        );
+      } else {
+        resetToToday();
+      }
+      return;
+    }
+
+    // ✅ Valid date
     setSelectedAgendaDate(selectedDate);
     calendar?.update({ startDate: selectedDate });
     navigator?.select(selectedDate);
