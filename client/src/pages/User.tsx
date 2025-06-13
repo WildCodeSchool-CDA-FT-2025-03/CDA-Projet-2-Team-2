@@ -57,7 +57,7 @@ export default function User() {
             placeholder="Chercher un utilistateur"
           />
           <img
-            src="/public/search-icon.svg"
+            src="/search-icon.svg"
             alt="search icon"
             className="absolute right-3 top-1/2 -translate-y-1/2"
           />
