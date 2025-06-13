@@ -60,37 +60,23 @@ export default function NoteSecretary({ id, dateNote, onClose, Noterefetch }: No
 
   const handleSubmitInfo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (saveNote.id !== 0) {
-      const { data: dataupdate, errors: errorsupdate } = await UpdateNoteMutation({
-        variables: {
-          updateNoteNoteData2: saveNote,
-        },
-      });
-      if (dataupdate) {
-        toast.success('Note créé avec succès ! 🚀');
-        onClose();
-        await Noterefetch({ dateNote: dateNote.toString().slice(0, 10) });
-      }
-      if (errorsupdate) {
-        toast.error('Erreur lors de la création de la note.');
-        throw new Error('Erreur lors de la création de la note');
-      }
-    } else {
-      const { data: datacreate, errors: errorscreate } = await CreateNoteMutation({
-        variables: {
-          noteData: saveNote,
-        },
-      });
 
-      if (datacreate) {
-        toast.success('Note créé avec succès ! 🚀');
-        onClose();
-        await Noterefetch({ dateNote: dateNote.toString().slice(0, 10) });
-      }
-      if (errorscreate) {
-        toast.error('Erreur lors de la création de la note.');
-        throw new Error('Erreur lors de la création de la note');
-      }
+    const isUpdate = saveNote.id !== 0;
+
+    const { data: datasave, errors: errorssave } = isUpdate
+      ? await UpdateNoteMutation({ variables: { updateNoteNoteData2: saveNote } })
+      : await CreateNoteMutation({ variables: { noteData: saveNote } });
+
+    if (datasave) {
+      toast.success('Note ' + isUpdate ? 'modifié' : 'créée' + ' avec succès ! 🚀');
+      onClose();
+      await Noterefetch({ dateNote: dateNote.toString().slice(0, 10) });
+    }
+    if (errorssave) {
+      toast.error('Erreur lors de la ' + isUpdate ? 'modification' : 'création' + ' de la note.');
+      throw new Error(
+        'Erreur lors de la ' + isUpdate ? 'modification' : 'création' + ' de la note',
+      );
     }
   };
 
