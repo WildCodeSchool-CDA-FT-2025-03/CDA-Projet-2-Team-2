@@ -54,6 +54,7 @@ export default function DoctorSlots() {
         <div className="flex justify-center md:justify-end w-full">
           <div className="w-full max-w-xs">
             <button
+              type="button"
               className="w-full bg-blue text-white rounded-md px-4 py-2 hover:bg-blue-600 mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onClick={() => {
                 checkDoctorAvailability();
