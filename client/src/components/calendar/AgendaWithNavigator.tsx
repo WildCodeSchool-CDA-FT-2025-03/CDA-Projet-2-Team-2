@@ -140,6 +140,7 @@ export default function AgendaWithNavigator() {
           onConfirm={() => {
             setModalOpen(false);
             modalContent.onConfirm();
+            navigate('/secretary');
           }}
           onCancel={() => {
             setModalOpen(false);
