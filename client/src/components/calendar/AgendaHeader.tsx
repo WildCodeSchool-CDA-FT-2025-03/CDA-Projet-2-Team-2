@@ -42,7 +42,7 @@ export default function AgendaHeader({
         />
         <button
           type="button"
-          className="px-3 py-1 bg-blue text-white cursor-pointer rounded-md h-10 mt-8 ml-8"
+          className="px-3 py-1 bg-blue text-white cursor-pointer rounded-md h-10 mt-8 ml-8 text-sm sm:text-base leading-none sm:leading-normal "
           onClick={() => setShowAddPatientModal(true)}
           aria-label="Ajouter un document administratif"
         >
