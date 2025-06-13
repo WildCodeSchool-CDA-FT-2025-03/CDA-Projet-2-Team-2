@@ -1,7 +1,11 @@
 import { useParams } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function DoctorAgendaPage() {
-  const { doctorId } = useParams();
+  const { doctorId: paramDoctorId } = useParams();
+  const { user } = useAuth();
+
+  const doctorId = paramDoctorId ? Number(paramDoctorId) : user?.id;
 
   return (
     <div className="p-8">

@@ -87,7 +87,7 @@ const router = createBrowserRouter([
             element: <Agent />,
           },
           {
-            path: '/doctor/:id/agenda',
+            path: '/doctor',
             element: <DoctorAgendaPage />,
           },
         ],
