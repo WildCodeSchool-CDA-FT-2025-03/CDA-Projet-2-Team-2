@@ -15,33 +15,30 @@ import { Doctor } from '@/types/doctor.type';
 import { Patient } from '@/types/patient.type';
 import ConfirmationModal from '../modals/ConfirmationModal';
 import { useAppointmentContext } from '@/hooks/useAppointment';
-
-type EventClickArgs = {
-  e: {
-    data: {
-      id: string;
-      text: string;
-      start: DayPilot.Date;
-      end: DayPilot.Date;
-      resource: string | number;
-      patient_name: string;
-      appointment_type: string;
-      [key: string]: unknown;
-    };
-  };
-};
+import useSyncAgendaWithLegalLimit from '@/hooks/useSyncAgendaWithLegalLimit';
 
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = '1';
-  const [startDate, setStartDate] = useState<DayPilot.Date>(DayPilot.Date.today());
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState(DEFAULT_DEPARTMENT);
-
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [showAddPatientModal, setShowAddPatientModal] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: '', message: '', onConfirm: () => {} });
+  const navigate = useNavigate();
+
+  const {
+    selectedAgendaDate: startDate, // <- the central state: the selected date
+    handleDateSelectionWithLimit, // <- secure date selection function
+    agendaCalendarRef: calendarRef, // <- ref to manipulate
+    agendaNavigatorRef: navigatorRef, // <- ref to manipulate
+  } = useSyncAgendaWithLegalLimit((title, message, onConfirm) => {
+    setModalContent({ title, message, onConfirm });
+    setModalOpen(true);
+  });
 
   const { resources } = useResources(selectedDepartment);
-
   const pageSize = useResponsiveAgendaPageSize();
   const visibleResources = resources.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   const doctorIds = useMemo(() => visibleResources.map(r => Number(r.id)), [visibleResources]);
@@ -51,7 +48,6 @@ export default function AgendaWithNavigator() {
     doctorIds,
     selectedDate,
   );
-
   const { needToBeRefresh, setNeedToBeRefresh } = useAppointmentContext();
 
   useEffect(() => {
@@ -83,9 +79,6 @@ export default function AgendaWithNavigator() {
     {
       name: 'Patients',
       items: (patientData?.searchPatients ?? []) as Array<Patient | Doctor>,
-      /* 🚨 searchBar(sources) expects a homogeneous array: SearchSource<Patient | Doctor>[] (if there are two data sources).
-        TypeScript does not accept: SearchSource<Patient>[] and SearchSource<Doctor>[] are not equivalent to SearchSource<Patient | Doctor>[].
-        You must make a union*/
       loading: loadingPatients,
       error: errorPatients ? errorPatients.message : null,
       getKey: (patient: Patient | Doctor) => `patient-${patient.id}`,
@@ -98,20 +91,14 @@ export default function AgendaWithNavigator() {
       getKey: (doctor: Patient | Doctor) => `doctor-${doctor.id}`,
     },
   ];
-  const [modalOpen, setModalOpen] = useState(false);
-  const [showAddPatientModal, setshowAddPatientModal] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: '', message: '', onConfirm: () => {} });
-  const navigate = useNavigate();
 
-  function handleEventClick(args: EventClickArgs) {
+  function handleEventClick(args: { e: { data: Appointment } }) {
     const event = args.e.data;
-
     setModalContent({
       title: 'Modifier le rendez-vous',
       message: `Voulez-vous modifier le rendez-vous de ${event.patient_name} ?`,
-      onConfirm: () => navigate('/secretary'), // TODO: navigate to update rdv event.id
+      onConfirm: () => navigate('/secretary'),
     });
-
     setModalOpen(true);
   }
 
@@ -120,15 +107,28 @@ export default function AgendaWithNavigator() {
     end: DayPilot.Date;
     resource: string | number;
   }) {
+    const selectedDate = args.start;
+    const today = DayPilot.Date.today();
+    const threeMonthsLater = today.addMonths(3);
+
+    if (selectedDate > threeMonthsLater) {
+      setModalContent({
+        title: 'Date non disponible',
+        message: `Les rendez-vous ne peuvent pas être créés après le ${threeMonthsLater.toString('dd/MM/yyyy')}.`,
+        onConfirm: () => handleDateSelectionWithLimit(today),
+      });
+      setModalOpen(true);
+      return;
+    }
+
     const doctorId = args.resource;
-    const date = args.start.toString();
+    const date = selectedDate.toString();
 
     setModalContent({
       title: 'Créer un rendez-vous',
       message: `Souhaitez-vous créer un rendez-vous le ${date.slice(0, 16).replace('T', ' à ')} ?`,
       onConfirm: () => navigate(`/secretary/doctor/${doctorId}/appointment/create?date=${date}`),
     });
-
     setModalOpen(true);
   }
 
@@ -150,18 +150,14 @@ export default function AgendaWithNavigator() {
           <button
             type="button"
             className="px-3 py-1 bg-blue text-white cursor-pointer rounded-md h-10 mt-8 ml-8"
-            onClick={() => setshowAddPatientModal(true)}
+            onClick={() => setShowAddPatientModal(true)}
             aria-label="Ajouter un document administratif"
           >
             Créer un patient
           </button>
           {showAddPatientModal && (
             <div className="fixed inset-0 z-50 flex justify-center  items-center bg-bgModalColor backdrop-blur-xs">
-              <CreatePatient
-                onClose={() => {
-                  setshowAddPatientModal(false);
-                }}
-              />
+              <CreatePatient onClose={() => setShowAddPatientModal(false)} />
             </div>
           )}
         </div>
@@ -215,7 +211,6 @@ export default function AgendaWithNavigator() {
         </div>
       </section>
 
-      {/* Pagination desktop */}
       <section
         className="hidden lg:flex justify-end items-center gap-4 mb-4"
         role="navigation"
@@ -235,12 +230,13 @@ export default function AgendaWithNavigator() {
           className="flex justify-center lg:justify-start bg-white border-1 p-7 rounded-md border-gray-300"
         >
           <DayPilotNavigator
+            ref={navigatorRef}
             selectMode="Day"
             showMonths={1}
             skipMonths={1}
             locale="fr-fr"
             selectionDay={startDate}
-            onTimeRangeSelected={args => setStartDate(args.day)}
+            onTimeRangeSelected={args => handleDateSelectionWithLimit(args.day)}
           />
         </aside>
 
@@ -256,6 +252,7 @@ export default function AgendaWithNavigator() {
 
         <article className="flex-1" aria-label="Agenda de tous les médecins et leurs rendez-vous">
           <DayPilotCalendar
+            ref={calendarRef}
             viewType="Resources"
             startDate={startDate}
             timeFormat="Clock24Hours"
@@ -283,14 +280,14 @@ export default function AgendaWithNavigator() {
                 id: event.id,
                 text: event.patient_name,
                 html: `
-                <div style="background-color: #e2e8f0; line-height:1.2;">
-                  <p style="font-weight: 600; font-size: 11px;">${event.patient_name}</p>
-                  <p style="color: #4b5563; font-size: 10px;">
-                    ${event.appointment_type} 
-                    <span class="text-xs text-gray-400">Debut: ${event.start_time.slice(11, 16)}</span>
-                  </p>
-                </div>
-              `,
+                  <div style="background-color: #e2e8f0; line-height:1.2;">
+                    <p style="font-weight: 600; font-size: 11px;">${event.patient_name}</p>
+                    <p style="color: #4b5563; font-size: 10px;">
+                      ${event.appointment_type}
+                      <span class="text-xs text-gray-400">Début: ${event.start_time.slice(11, 16)}</span>
+                    </p>
+                  </div>
+                `,
                 start: new DayPilot.Date(snappedStart.toISOString()),
                 end: new DayPilot.Date(snappedEnd.toISOString()),
                 resource: doctorId,
@@ -300,6 +297,7 @@ export default function AgendaWithNavigator() {
             onTimeRangeSelected={handleTimeRangeSelected}
           />
         </article>
+
         <ConfirmationModal
           isOpen={modalOpen}
           title={modalContent.title}
