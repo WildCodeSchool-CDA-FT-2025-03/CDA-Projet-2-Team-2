@@ -56,7 +56,7 @@ function SearchBarCP({ cpdefault, handle }: inputFormProps) {
             onChange={handleChangeCP}
           />
           <img
-            src="/public/search-icon.svg"
+            src="/search-icon.svg"
             alt="search icon"
             className="absolute right-3 top-1/2 -translate-y-1/2"
           />
