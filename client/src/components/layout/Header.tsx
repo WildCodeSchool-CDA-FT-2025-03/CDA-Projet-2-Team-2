@@ -4,13 +4,17 @@ import Logo from '@/components/Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { LinkButton } from '@/components/layout/LinkButton';
 
+import { getPathFromRole } from '@/utils/getPathFromRole';
+
 export default function Header() {
   const { user, logout } = useAuth();
+
+  const rolePath = getPathFromRole(user?.role || '');
 
   return (
     <header className="w-full px-6 py-3" role="banner">
       <div className="flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-4">
+        <Link to={rolePath} className="flex items-center gap-4">
           <Logo />
           <p className="text-blue font-medium">
             Bienvenue{' '}
