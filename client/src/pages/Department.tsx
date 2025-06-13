@@ -77,7 +77,7 @@ export default function Department() {
                 aria-label="Chercher un service"
               />
               <img
-                src="/public/search-icon.svg"
+                src="/search-icon.svg"
                 alt=""
                 role="presentation"
                 className="absolute right-3 top-1/2 -translate-y-1/2"
