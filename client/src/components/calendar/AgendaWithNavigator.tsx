@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DayPilot } from '@daypilot/daypilot-lite-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,7 +6,6 @@ import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
 import useResources from '@/hooks/useResources';
 import useSyncAgendaWithLegalLimit from '@/hooks/useSyncAgendaWithLegalLimit';
-import { useAppointmentContext } from '@/hooks/useAppointment';
 
 import AgendaHeader from './AgendaHeader';
 import AgendaPagination from './AgendaPagination';
@@ -15,6 +14,7 @@ import AgendaDateNavigator from './AgendaDateNavigator';
 import ConfirmationModal from '../modals/ConfirmationModal';
 import useSearchSources from '@/hooks/useSearchSources';
 import useAgendaEventHandlers from '@/hooks/useAgendaEventHandlers';
+import useAgendaRefresh from '@/hooks/useAgendaRefresh';
 
 export default function AgendaWithNavigator() {
   const DEFAULT_DEPARTMENT = '1';
@@ -52,14 +52,8 @@ export default function AgendaWithNavigator() {
     doctorIds,
     selectedDate,
   );
-  const { needToBeRefresh, setNeedToBeRefresh } = useAppointmentContext();
 
-  useEffect(() => {
-    if (needToBeRefresh) {
-      refetchAppointments();
-      setNeedToBeRefresh(false);
-    }
-  }, [needToBeRefresh, refetchAppointments, setNeedToBeRefresh]);
+  useAgendaRefresh(refetchAppointments);
 
   const searchSources = useSearchSources(searchQuery);
 
