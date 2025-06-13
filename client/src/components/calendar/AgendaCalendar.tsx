@@ -1,7 +1,8 @@
 import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-react';
 import { roundStartToNextHalfHour } from '@/utils/roundStartToNextHalfHour';
 import type { Appointment } from '@/types/CalendarEvent.type';
-import { RefObject } from 'react';
+import { RefObject, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type AgendaCalendarProps = {
   calendarRef: RefObject<DayPilotCalendar | null>;
@@ -29,6 +30,36 @@ export default function AgendaCalendar({
   onEventClick,
   onTimeRangeSelected,
 }: AgendaCalendarProps) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      // Checks that the user clicked on an <a> tag
+      if (target.tagName === 'A' && target.classList.contains('doctor-name')) {
+        e.preventDefault();
+        const id = target.getAttribute('data-id');
+        if (id) {
+          navigate(`/secretary/doctor/${id}/agenda`);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, [navigate]);
+  // 🔽 This useEffect intercepts clicks on doctors' names
+  // displayed in DayPilot's columns.
+  // These links are created in an HTML string (not in JSX),
+  // so React can't automatically attach a click handler to them.
+  // We therefore listen for all clicks on the page, and filter
+  // to react only to those on <a> tags that have the "doctor-name" class.
+  // We use `navigate()` to redirect via React Router (SPA) without reloading the page,
+  // even if the link already contains an href.
+
   return (
     <article className="flex-1" aria-label="Agenda de tous les médecins et leurs rendez-vous">
       <DayPilotCalendar
@@ -44,7 +75,13 @@ export default function AgendaCalendar({
             <div class="flex items-center gap-3 p-2">
               <img src="${resource.avatar}" alt="${resource.name}" class="w-8 h-8 object-cover" />
               <div>
-                <div class="text-sm font-semibold text-blue">${resource.name}</div>
+                <a 
+                  href="/secretary/doctorAgenda/${resource.id}" 
+                  class="doctor-name text-sm font-semibold text-blue hover:underline"
+                  data-id="${resource.id}"
+                >
+                  ${resource.name}
+                </a>
                 <div class="text-xs text-gray-400">${resource.speciality}</div>
               </div>
             </div>

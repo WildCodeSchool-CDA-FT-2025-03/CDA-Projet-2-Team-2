@@ -87,7 +87,7 @@ export default function AgendaHeader({
                 const doctor = item as Doctor;
                 return (
                   <Link
-                    to="/secretary"
+                    to={`/secretary/doctor/${doctor.id}/agenda`}
                     className="block p-2 border-b last:border-b-0 hover:bg-gray-100"
                     onClick={onSelect}
                   >
