@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import Logo from '@/components/Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { LinkButton } from '@/components/layout/LinkButton';
@@ -8,7 +10,7 @@ export default function Header() {
   return (
     <header className="w-full px-6 py-3" role="banner">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <Link to="/" className="flex items-center gap-4">
           <Logo />
           <p className="text-blue font-medium">
             Bienvenue{' '}
@@ -16,7 +18,7 @@ export default function Header() {
               {user?.firstname} {user?.lastname}
             </span>
           </p>
-        </div>
+        </Link>
 
         <nav
           className="flex items-center gap-6"
