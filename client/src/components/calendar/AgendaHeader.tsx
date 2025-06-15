@@ -46,7 +46,7 @@ export default function AgendaHeader({
   return (
     <section className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
       {/* Left controls: department selector + patient creation + custom actions */}
-      <div className="flex flex-wrap items-center gap-4 w-full lg:w-auto">
+      <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 w-full lg:w-auto">
         {showDepartmentSelector && selectedDepartment && setSelectedDepartment && (
           <DepartmentSelect
             value={selectedDepartment}
@@ -61,7 +61,7 @@ export default function AgendaHeader({
           <>
             <button
               type="button"
-              className="standard-button"
+              className="standard-button w-auto whitespace-nowrap text-base"
               onClick={() => setShowAddPatientModal(true)}
             >
               Créer un patient
