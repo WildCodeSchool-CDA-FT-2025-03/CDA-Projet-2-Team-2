@@ -12,13 +12,13 @@ type AgendaHeaderProps = {
   setSelectedDepartment?: (val: string) => void;
   setCurrentPage?: (page: number) => void;
 
-  // Gestion patient (bouton + modal inclus)
+  // Patient management (button + modal included)
   enableCreatePatient?: boolean;
 
-  // Action personnalisée (ex: créer rdv, gérer congés)
+  // Optional custom action (e.g. create appointment, manage absences)
   renderActionButton?: React.ReactNode;
 
-  // Recherche
+  // Search
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   isOpen: boolean;
@@ -43,7 +43,8 @@ export default function AgendaHeader({
 
   return (
     <section className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
-      <div className="flex flex-wrap items-center justify-start gap-4 w-full lg:w-auto">
+      {/* Left controls: department selector + patient creation + custom actions */}
+      <div className="flex flex-wrap items-center gap-4 w-full lg:w-auto">
         {showDepartmentSelector && selectedDepartment && setSelectedDepartment && (
           <DepartmentSelect
             value={selectedDepartment}
@@ -58,7 +59,7 @@ export default function AgendaHeader({
           <>
             <button
               type="button"
-              className="btn btn-primary"
+              className="standard-button"
               onClick={() => setShowAddPatientModal(true)}
             >
               Créer un patient
@@ -71,9 +72,10 @@ export default function AgendaHeader({
           </>
         )}
 
-        {renderActionButton && <div className="ml-auto">{renderActionButton}</div>}
+        {renderActionButton && <div className="flex-shrink-0">{renderActionButton}</div>}
       </div>
 
+      {/* Right: Search bar */}
       <div className="flex justify-center lg:justify-end w-full">
         <div className="w-full max-w-xs">
           <SearchBar<Patient | Doctor>

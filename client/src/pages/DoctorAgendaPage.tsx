@@ -1,32 +1,44 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-
-import useSyncAgendaWithLegalLimit from '@/hooks/useSyncAgendaWithLegalLimit';
-import AgendaDateNavigator from '@/components/calendar/AgendaDateNavigator';
-import DoctorAgendaCalendar from '@/components/calendar/DoctorAgendaCalendar';
-import AgendaPagination from '@/components/calendar/AgendaPagination';
-
-import ConfirmationModal from '@/components/modals/ConfirmationModal';
 import { useMemo, useState } from 'react';
-import useAppointmentsData from '@/hooks/useAppointmentsData';
 import { DayPilot } from '@daypilot/daypilot-lite-react';
-import useAgendaEventHandlers from '@/hooks/useAgendaEventHandlers';
+
+import { useAuth } from '@/hooks/useAuth';
+import useAppointmentsData from '@/hooks/useAppointmentsData';
 import useResponsiveAgendaPageSize from '@/hooks/useResponsiveAgendaPageSize';
+import useSyncAgendaWithLegalLimit from '@/hooks/useSyncAgendaWithLegalLimit';
+import useAgendaEventHandlers from '@/hooks/useAgendaEventHandlers';
+import useSearchSources from '@/hooks/useSearchSources';
+
+import AgendaHeader from '@/components/calendar/AgendaHeader';
+import AgendaPagination from '@/components/calendar/AgendaPagination';
+import DoctorAgendaCalendar from '@/components/calendar/DoctorAgendaCalendar';
+import AgendaDateNavigator from '@/components/calendar/AgendaDateNavigator';
+import ConfirmationModal from '@/components/modals/ConfirmationModal';
 
 export default function DoctorAgendaPage() {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const { user } = useAuth();
 
+  const isDoctor = user?.role === 'doctor';
   const doctorId = id ? Number(id) : user?.id;
 
-  const navigate = useNavigate();
+  // Define the create appointment URL depending on the role
+  const appointmentCreateUrl = isDoctor
+    ? `/doctor/appointment/create`
+    : `/secretary/doctor/${doctorId}/appointment/create`;
+
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({
     title: '',
     message: '',
     onConfirm: () => {},
   });
+
+  // Search bar state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchSources = useSearchSources(searchQuery, 'doctor');
 
   const {
     selectedAgendaDate: startDate,
@@ -38,10 +50,11 @@ export default function DoctorAgendaPage() {
     setModalOpen(true);
   });
 
+  // Compute the selected week Monday
   const selectedDate = useMemo(() => {
     const date = startDate.toDate();
     const day = date.getDay(); // 0 (sunday) → 6 (saturday)
-    const diff = day === 0 ? -6 : 1 - day; // calculate the shift to return to Monday
+    const diff = day === 0 ? -6 : 1 - day;
     const monday = new Date(date);
     monday.setDate(date.getDate() + diff);
     return monday;
@@ -62,8 +75,8 @@ export default function DoctorAgendaPage() {
   });
 
   const weekDays = useMemo(() => {
-    const monday = new Date(selectedDate); // the current monday
-    monday.setDate(monday.getDate() - monday.getDay() + 1); // make sure we start Monday well
+    const monday = new Date(selectedDate);
+    monday.setDate(monday.getDate() - monday.getDay() + 1);
     return Array.from({ length: 7 }, (_, i) => {
       const date = new Date(monday);
       date.setDate(monday.getDate() + i);
@@ -71,14 +84,34 @@ export default function DoctorAgendaPage() {
     });
   }, [selectedDate]);
 
-  const pageSize = useResponsiveAgendaPageSize(); // ex: 3 in mobile
+  const pageSize = useResponsiveAgendaPageSize();
   const [currentPage, setCurrentPage] = useState(0);
-
   const visibleDays = weekDays.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
   return (
     <div className="py-6 px-6 md:px-24" role="region" aria-label="Agenda hebdomadaire du médecin">
-      <h1 className="text-2xl font-bold mb-4">Planning du médecin</h1>
+      <AgendaHeader
+        showDepartmentSelector={false}
+        renderActionButton={
+          doctorId && (
+            <button
+              className="standard-button text-base"
+              onClick={() =>
+                navigate(appointmentCreateUrl, {
+                  state: { from: '/doctor/agenda' },
+                })
+              }
+            >
+              Créer un rendez-vous
+            </button>
+          )
+        }
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        isOpen={isSearchOpen}
+        setIsOpen={setIsSearchOpen}
+        searchSources={searchSources}
+      />
 
       {/* PAGINATION CONTROLS DESKTOP */}
       <section
@@ -90,7 +123,7 @@ export default function DoctorAgendaPage() {
           currentPage={currentPage}
           onPageChange={setCurrentPage}
           pageSize={pageSize}
-          totalItems={7} // week days
+          totalItems={7}
           isMobile={true}
         />
       </section>
@@ -121,6 +154,7 @@ export default function DoctorAgendaPage() {
           onEventClick={handleEventClick}
           onTimeRangeSelected={handleTimeRangeSelected}
         />
+
         <ConfirmationModal
           isOpen={modalOpen}
           title={modalContent.title}
