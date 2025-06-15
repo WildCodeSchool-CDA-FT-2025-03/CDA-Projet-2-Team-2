@@ -32,7 +32,7 @@ export default function DoctorAgendaPage() {
   const displayedDoctor = isDoctor ? user : doctorData?.getUserById;
 
   const appointmentCreateUrl = isDoctor
-    ? `/doctor/${doctorId}/appointment/create`
+    ? `/doctor/appointment/create`
     : `/secretary/doctor/${doctorId}/appointment/create`;
 
   const [modalOpen, setModalOpen] = useState(false);
