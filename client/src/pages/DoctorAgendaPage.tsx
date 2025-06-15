@@ -25,7 +25,7 @@ export default function DoctorAgendaPage() {
 
   // Define the create appointment URL depending on the role
   const appointmentCreateUrl = isDoctor
-    ? `/doctor/appointment/create`
+    ? `/doctor/${doctorId}/appointment/create`
     : `/secretary/doctor/${doctorId}/appointment/create`;
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -90,12 +90,13 @@ export default function DoctorAgendaPage() {
 
   return (
     <div className="py-6 px-6 md:px-24" role="region" aria-label="Agenda hebdomadaire du médecin">
-      <AgendaHeader
-        showDepartmentSelector={false}
-        renderActionButton={
-          doctorId && (
+      {/* Header: Button + Title + SearchBar */}
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:gap-4 lg:items-center">
+          {/* Left: Button + Title */}
+          <div className="flex items-center gap-4 flex-wrap min-h-[42px]">
             <button
-              className="standard-button text-base"
+              className="standard-button text-base whitespace-nowrap"
               onClick={() =>
                 navigate(appointmentCreateUrl, {
                   state: { from: '/doctor/agenda' },
@@ -104,16 +105,34 @@ export default function DoctorAgendaPage() {
             >
               Créer un rendez-vous
             </button>
-          )
-        }
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        isOpen={isSearchOpen}
-        setIsOpen={setIsSearchOpen}
-        searchSources={searchSources}
-      />
 
-      {/* PAGINATION CONTROLS DESKTOP */}
+            <h1 className="text-base lg:text-lg font-medium flex items-center gap-2 leading-none">
+              {user?.role === 'doctor' ? 'Votre emploi du temps' : 'Emploi du temps de'}
+              <span className="text-2xl">👩‍⚕️</span>
+              <span className="text-accent font-bold">
+                {user?.firstname} {user?.lastname}
+              </span>
+              {user?.departement?.label && (
+                <span className="text-sm text-blue">,{user?.departement.label}</span>
+              )}
+            </h1>
+          </div>
+
+          {/* Right: Search bar */}
+          <div className="w-full lg:w-auto">
+            <AgendaHeader
+              showDepartmentSelector={false}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              isOpen={isSearchOpen}
+              setIsOpen={setIsSearchOpen}
+              searchSources={searchSources}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Pagination controls desktop */}
       <section
         className="hidden lg:flex justify-end items-center gap-4 mb-4"
         role="navigation"
@@ -135,7 +154,7 @@ export default function DoctorAgendaPage() {
           onDateSelect={handleDateSelectionWithLimit}
         />
 
-        {/* PAGINATION CONTROLS MOBILE */}
+        {/* Pagination controls mobile */}
         <section className="lg:hidden mb-4" role="navigation" aria-label="Pagination mobile">
           <AgendaPagination
             currentPage={currentPage}
