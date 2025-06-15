@@ -43,7 +43,7 @@ export default function NewAppointementByDoctorContent() {
     })) ?? []),
   ];
 
-  const { data: appointmentsData } = useGetAppointmentsByDoctorAndDateQuery({
+  const { data: appointmentsData, refetch } = useGetAppointmentsByDoctorAndDateQuery({
     variables: {
       doctorId: Number(doctorId) || 0,
       date: selectedDay.toString().slice(0, 10),
@@ -88,6 +88,7 @@ export default function NewAppointementByDoctorContent() {
           setSelectedPatient={setSelectedPatient}
           appointmentTypes={appointmentTypes}
           appointments={appointments}
+          onAppointmentCreated={refetch}
         />
       </section>
     </>
