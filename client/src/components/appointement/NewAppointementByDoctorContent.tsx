@@ -22,7 +22,7 @@ export default function NewAppointementByDoctorContent() {
   const { selectedDay, handleSelectedDay } = useAppointmentContext();
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
-  // Appel GraphQL uniquement si secrétaire
+  // GraphQL call only for secretaries
   const {
     data: doctorData,
     loading: doctorLoading,
