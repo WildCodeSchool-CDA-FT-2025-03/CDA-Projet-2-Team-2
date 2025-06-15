@@ -24,6 +24,7 @@ type AgendaHeaderProps = {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   searchSources: SearchSource<Patient | Doctor>[];
+  placeholder?: string;
 };
 
 export default function AgendaHeader({
@@ -38,6 +39,7 @@ export default function AgendaHeader({
   isOpen,
   setIsOpen,
   searchSources,
+  placeholder,
 }: AgendaHeaderProps) {
   const [showAddPatientModal, setShowAddPatientModal] = useState(false);
 
@@ -79,7 +81,7 @@ export default function AgendaHeader({
       <div className="flex justify-center lg:justify-end w-full">
         <div className="w-full max-w-xs">
           <SearchBar<Patient | Doctor>
-            placeholder="Rechercher un patient ou un médecin..."
+            placeholder={placeholder || 'Chercher un patient ou un médecin'}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             isOpen={isOpen}

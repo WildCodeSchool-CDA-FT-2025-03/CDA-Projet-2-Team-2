@@ -127,6 +127,11 @@ export default function DoctorAgendaPage() {
               isOpen={isSearchOpen}
               setIsOpen={setIsSearchOpen}
               searchSources={searchSources}
+              placeholder={
+                user?.role === 'doctor'
+                  ? 'Chercher un patient'
+                  : 'Chercher un patient ou un médecin'
+              }
             />
           </div>
         </div>
