@@ -24,6 +24,8 @@ export default function DoctorAgendaCalendar({
   onEventClick,
   onTimeRangeSelected,
 }: DoctorAgendaCalendarProps) {
+  const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
   return (
     <article className="flex-1" aria-label="Agenda du médecin">
       <DayPilotCalendar
@@ -33,15 +35,18 @@ export default function DoctorAgendaCalendar({
         timeFormat="Clock24Hours"
         locale="fr-fr"
         headerDateFormat="dddd d/MM"
-        columns={visibleDays.map((date, index) => ({
-          id: index,
-          name: date.toString('dddd'),
-          html: `
-            <div class="text-sm font-semibold text-blue">
-              ${date.toString('dddd d/MM')}
-            </div>
-          `,
-        }))}
+        columns={visibleDays.map((date, index) => {
+          const label = date.toString('dddd d/MM', 'fr-fr');
+          return {
+            id: index,
+            name: capitalize(date.toString('dddd', 'fr-fr')),
+            html: `
+      <div class="text-sm font-semibold text-blue">
+        ${capitalize(label)}
+      </div>
+    `,
+          };
+        })}
         events={appointments.map(event => {
           const snappedStart = roundStartToNextHalfHour(event.start_time);
           const snappedEnd = new Date(snappedStart);
